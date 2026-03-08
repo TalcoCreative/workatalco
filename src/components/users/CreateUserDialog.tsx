@@ -89,11 +89,9 @@ export function CreateUserDialog({ open, onOpenChange }: CreateUserDialogProps) 
         // Over quota on paid tier → Midtrans payment first
         const { data: snapData, error: snapError } = await supabase.functions.invoke("midtrans-create-transaction", {
           body: {
-            order_id: `USER-${activeWorkspace?.id?.slice(0, 8)}-${Date.now()}`,
-            gross_amount: pricePerUser,
-            customer_name: fullName,
-            customer_email: email,
-            item_name: `Tambah User - ${tier.charAt(0).toUpperCase() + tier.slice(1)} Plan`,
+            companyId: activeWorkspace?.id,
+            tier,
+            userCount: 1,
           },
         });
 
