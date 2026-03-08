@@ -546,32 +546,78 @@ export default function Landing() {
             </div>
           </AnimateIn>
 
+          {/* Billing Toggle */}
+          <AnimateIn className="flex items-center justify-center gap-3 mb-10">
+            <button
+              onClick={() => setBillingCycle("monthly")}
+              className={`px-6 py-2.5 rounded-full text-sm font-bold transition-all ${
+                billingCycle === "monthly"
+                  ? "bg-primary text-primary-foreground shadow-glow-primary"
+                  : "bg-muted/50 text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              Monthly
+            </button>
+            <button
+              onClick={() => setBillingCycle("annual")}
+              className={`px-6 py-2.5 rounded-full text-sm font-bold transition-all flex items-center gap-2 ${
+                billingCycle === "annual"
+                  ? "bg-primary text-primary-foreground shadow-glow-primary"
+                  : "bg-muted/50 text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              Annual
+              <Badge className="bg-emerald-500 text-white text-[10px] px-1.5 py-0 font-bold">Hemat</Badge>
+            </button>
+          </AnimateIn>
+
           <div className="grid gap-6 lg:grid-cols-3 items-start">
-            {TIERS.map((t, i) => {
-              const users = userCounts[i] || 3;
-              const totalPrice = t.pricePerUser * users;
+            {pricingProducts.map((t: any, i: number) => {
+              const users = userCounts[i] ?? (t.default_users || 3);
+              const annualMultiplier = t.annual_multiplier || 10;
+              const isAnnual = billingCycle === "annual";
+              const monthlyPerUser = t.price_per_user;
+              const annualPerUser = Math.round((monthlyPerUser * annualMultiplier) / 12);
+              const displayPerUser = isAnnual ? annualPerUser : monthlyPerUser;
+              const monthlyTotal = monthlyPerUser * users;
+              const annualTotalFull = monthlyPerUser * users * 12;
+              const annualTotalDiscounted = monthlyPerUser * users * annualMultiplier;
+              const features: string[] = Array.isArray(t.features) ? t.features : [];
+              const excluded: string[] = Array.isArray(t.not_included) ? t.not_included : [];
+              const isPopular = t.is_popular === true;
+
               return (
-                <AnimateIn key={i} delay={i * 100}>
+                <AnimateIn key={t.id} delay={i * 100}>
                   <Card className={`relative overflow-hidden transition-all duration-500 hover:shadow-soft-xl hover:-translate-y-2 h-full ${
-                    t.popular
+                    isPopular
                       ? "ring-2 ring-primary shadow-glow-primary border-primary/20 bg-card"
                       : "border-border/20 bg-card/70"
                   }`}>
-                    {t.popular && (
+                    {isPopular && (
                       <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-primary to-primary/60" />
                     )}
                     <CardContent className="p-8 md:p-10">
-                      {t.popular && (
+                      {isPopular && (
                         <Badge className="mb-4 bg-primary/10 text-primary border-primary/20 font-bold text-[10px] uppercase tracking-wider">Most Popular</Badge>
                       )}
-                      <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-muted-foreground">{t.subtitle}</p>
+                      <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-muted-foreground">{t.description}</p>
                       <h3 className="mt-2 text-2xl font-extrabold text-foreground">{t.name}</h3>
 
                       <div className="mt-6 flex items-baseline gap-1">
-                        <span className="text-sm text-muted-foreground font-medium">Rp</span>
-                        <span className="text-5xl font-extrabold text-foreground tracking-tight">{t.price}</span>
-                        <span className="text-sm text-muted-foreground">{t.period}</span>
+                        {isAnnual && annualMultiplier < 12 && (
+                          <span className="text-lg text-muted-foreground line-through mr-1">{formatShort(monthlyPerUser)}</span>
+                        )}
+                        {!isAnnual && t.original_price_per_user && t.original_price_per_user > monthlyPerUser && (
+                          <span className="text-lg text-muted-foreground line-through mr-1">{formatShort(t.original_price_per_user)}</span>
+                        )}
+                        <span className="text-5xl font-extrabold text-foreground tracking-tight">{formatShort(displayPerUser)}</span>
+                        <span className="text-sm text-muted-foreground">/ user / bulan</span>
                       </div>
+                      {isAnnual && annualMultiplier < 12 && (
+                        <p className="text-xs text-emerald-500 font-bold mt-1">
+                          Bayar {annualMultiplier} bulan untuk 12 bulan — hemat {Math.round(((12 - annualMultiplier) / 12) * 100)}%
+                        </p>
+                      )}
 
                       {/* Interactive calculator */}
                       <div className="mt-6 rounded-2xl bg-muted/30 border border-border/15 p-5 space-y-4">
@@ -579,29 +625,40 @@ export default function Landing() {
                           <span className="flex items-center gap-1.5 text-muted-foreground font-medium">
                             <Users className="h-3.5 w-3.5" /> {users} users
                           </span>
-                          <span className="font-bold text-foreground text-lg">
-                            {formatRupiah(totalPrice)}<span className="text-xs font-normal text-muted-foreground">/bln</span>
-                          </span>
+                          <div className="text-right">
+                            {isAnnual ? (
+                              <div>
+                                <span className="text-xs text-muted-foreground line-through mr-1.5">{formatRupiah(annualTotalFull)}</span>
+                                <span className="font-bold text-foreground text-lg">
+                                  {formatRupiah(annualTotalDiscounted)}<span className="text-xs font-normal text-muted-foreground">/thn</span>
+                                </span>
+                              </div>
+                            ) : (
+                              <span className="font-bold text-foreground text-lg">
+                                {formatRupiah(monthlyTotal)}<span className="text-xs font-normal text-muted-foreground">/bln</span>
+                              </span>
+                            )}
+                          </div>
                         </div>
-                        <Slider value={[users]} onValueChange={(v) => setUserCounts(prev => ({ ...prev, [i]: v[0] }))} min={1} max={t.maxUsers} step={1} className="w-full" />
+                        <Slider value={[users]} onValueChange={(v) => setUserCounts(prev => ({ ...prev, [i]: v[0] }))} min={1} max={t.max_users} step={1} className="w-full" />
                         <div className="flex justify-between text-[10px] text-muted-foreground font-medium">
-                          <span>1 user</span><span>Max {t.maxUsers}</span>
+                          <span>1 user</span><span>Max {t.max_users}</span>
                         </div>
                       </div>
 
                       <Link to="/subscribe">
-                        <Button className={`mt-7 w-full h-13 rounded-xl font-bold text-sm ${t.popular ? "shadow-glow-primary" : ""}`} variant={t.popular ? "default" : "outline"} size="lg">
+                        <Button className={`mt-7 w-full h-13 rounded-xl font-bold text-sm ${isPopular ? "shadow-glow-primary" : ""}`} variant={isPopular ? "default" : "outline"} size="lg">
                           Pilih {t.name} <ArrowRight className="h-4 w-4 ml-1" />
                         </Button>
                       </Link>
 
                       <ul className="mt-8 space-y-3">
-                        {t.features.map((f, fi) => (
+                        {features.map((f: string, fi: number) => (
                           <li key={fi} className="flex items-start gap-2.5 text-sm text-foreground">
                             <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-primary" /> {f}
                           </li>
                         ))}
-                        {t.excluded.map((f, fi) => (
+                        {excluded.map((f: string, fi: number) => (
                           <li key={fi} className="flex items-start gap-2.5 text-sm text-muted-foreground/30">
                             <Minus className="mt-0.5 h-4 w-4 shrink-0 opacity-40" /> <span className="line-through">{f}</span>
                           </li>
