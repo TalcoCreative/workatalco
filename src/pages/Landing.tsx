@@ -267,7 +267,7 @@ export default function Landing() {
             ) : (
               <>
                 <Link to="/auth"><Button variant="ghost" size="sm" className="font-medium hidden sm:inline-flex">Login</Button></Link>
-                <Link to="/subscribe"><Button size="sm" className="shadow-glow-primary rounded-xl font-semibold">Daftar Gratis</Button></Link>
+                <Link to="/signup"><Button size="sm" className="shadow-glow-primary rounded-xl font-semibold">Free Trial</Button></Link>
               </>
             )}
           </div>
@@ -316,9 +316,9 @@ export default function Landing() {
 
           <AnimateIn delay={360}>
             <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
-              <Link to="/subscribe">
+              <Link to="/signup">
                 <Button size="lg" className="gap-2 px-10 shadow-glow-primary text-base h-14 rounded-2xl font-bold group">
-                  Mulai Gratis <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                  Mulai Free Trial <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
                 </Button>
               </Link>
               <Button size="lg" variant="outline" className="gap-2 px-8 text-base h-14 rounded-2xl font-semibold border-border/50 hover:bg-card hover:shadow-soft-lg transition-all" onClick={() => setDemoOpen(true)}>
@@ -536,6 +536,22 @@ export default function Landing() {
               Transparan, <span className="bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">Tanpa Biaya Tersembunyi</span>
             </h2>
             <p className="text-muted-foreground text-lg">Bayar per user. Scale sesuai pertumbuhan. Semua dalam IDR.</p>
+          </AnimateIn>
+
+          {/* Free Trial Banner */}
+          <AnimateIn className="mb-10">
+            <div className="rounded-2xl border border-primary/20 bg-gradient-to-r from-primary/5 via-primary/10 to-primary/5 p-6 md:p-8 flex flex-col md:flex-row items-center justify-between gap-4">
+              <div>
+                <Badge className="mb-2 bg-primary/10 text-primary border-primary/20 font-bold text-[10px] uppercase tracking-wider">Free Trial</Badge>
+                <h3 className="text-xl font-bold text-foreground">Coba Gratis 14 Hari — Akses Enterprise</h3>
+                <p className="text-sm text-muted-foreground mt-1">Akses semua fitur premium tanpa kartu kredit. Maksimal 3 user.</p>
+              </div>
+              <Link to="/signup">
+                <Button size="lg" className="gap-2 px-8 shadow-glow-primary rounded-2xl font-bold whitespace-nowrap">
+                  <Sparkles className="h-4 w-4" /> Mulai Free Trial
+                </Button>
+              </Link>
+            </div>
           </AnimateIn>
 
           <div className="grid gap-6 lg:grid-cols-3 items-start">

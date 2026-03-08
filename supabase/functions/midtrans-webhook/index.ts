@@ -115,10 +115,11 @@ serve(async (req) => {
         });
       }
 
-      // Update company's subscription_tier and max_users
+      // Update company's subscription_tier, max_users, and activate
       await supabaseAdmin.from("companies").update({
         subscription_tier: txn.tier,
         max_users: txn.user_count,
+        is_active: true,
       }).eq("id", txn.company_id);
 
       console.log(`Company ${txn.company_id} upgraded to ${txn.tier} with ${txn.user_count} users`);
