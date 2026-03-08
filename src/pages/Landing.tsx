@@ -56,29 +56,7 @@ const PRODUCT_SCREENSHOTS = [
   { title: "Finance Center", imgKey: "screenshot-finance", desc: "Pencatatan income, expense, payroll, dan laporan keuangan untuk bisnis Anda.", tag: "Finance" },
 ];
 
-const TIERS = [
-  {
-    name: "Starter", subtitle: "For Small Teams", price: "7K", pricePerUser: 7000, maxUsers: 10,
-    period: "/ user / bulan",
-    features: ["Projects & Tasks", "Schedule & Calendar", "Client Management", "Team Collaboration", "File Storage 5GB"],
-    excluded: ["HR Analytics", "Finance Module", "CEO Dashboard", "Social Media", "Recruitment"],
-    popular: false,
-  },
-  {
-    name: "Professional", subtitle: "For Growing Agencies", price: "21K", pricePerUser: 21000, maxUsers: 30,
-    period: "/ user / bulan",
-    features: ["Everything in Starter", "HR Dashboard & Analytics", "Leave & Attendance", "Meeting Management", "Asset Management", "Event Management", "Shooting Schedule", "Reports & Export"],
-    excluded: ["Finance Module", "CEO Dashboard"],
-    popular: true,
-  },
-  {
-    name: "Enterprise", subtitle: "Full Operation Suite", price: "25K", pricePerUser: 25000, maxUsers: 100,
-    period: "/ user / bulan",
-    features: ["Everything in Professional", "Finance Center", "Income Statement", "Balance Sheet", "CEO Dashboard", "Sales & Prospects", "Recruitment System", "KOL Database & Campaign", "Social Media Management", "Custom Branding", "Priority Support"],
-    excluded: [],
-    popular: false,
-  },
-];
+// TIERS now loaded from database (subscription_products)
 
 const FAQS = [
   { q: "Berapa lama free trial-nya?", a: "Setiap workspace baru mendapat 14 hari free trial dengan maksimal 3 user. Tanpa kartu kredit." },
@@ -93,9 +71,12 @@ const TESTIMONIALS = [
   { name: "Andi Pratama", role: "CEO, Studio Kreatif", text: "Akhirnya satu tool yang bisa handle semua dari project tracking sampai payroll. Produktivitas tim naik 40%.", avatar: "A" },
   { name: "Sarah Chen", role: "COO, MediaHaus", text: "Fitur editorial planning dan client hub-nya game changer banget untuk content agency kami.", avatar: "S" },
   { name: "Budi Santoso", role: "Founder, PixelCraft", text: "Pindah dari 5 tools berbeda ke WORKA menghemat jam kerja kami setiap minggu.", avatar: "B" },
-];
-
 const formatRupiah = (n: number) => "Rp " + n.toLocaleString("id-ID");
+const formatShort = (n: number) => {
+  if (n >= 1_000_000) return `Rp${(n / 1_000_000).toFixed(n % 1_000_000 === 0 ? 0 : 1)}M`;
+  if (n >= 1_000) return `Rp${(n / 1_000).toFixed(n % 1_000 === 0 ? 0 : 1)}K`;
+  return `Rp${n}`;
+};
 
 /* ─── Hooks ─── */
 function useInView(threshold = 0.12) {
