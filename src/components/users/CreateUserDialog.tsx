@@ -6,11 +6,11 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRoleOptions } from "@/hooks/usePositions";
 import { useTrialLock } from "@/hooks/useTrialLock";
 import { useWorkspace } from "@/hooks/useWorkspace";
-import { CreditCard } from "lucide-react";
+import { CreditCard, CheckCircle } from "lucide-react";
 
 declare global {
   interface Window {
@@ -45,6 +45,21 @@ export function CreateUserDialog({ open, onOpenChange }: CreateUserDialogProps) 
   const { guardAction } = useTrialLock();
   const { activeWorkspace } = useWorkspace();
 
+  // Fetch current member count
+  const { data: currentMemberCount = 0 } = useQuery({
+    queryKey: ["company-member-count", activeWorkspace?.id],
+    queryFn: async () => {
+      if (!activeWorkspace?.id) return 0;
+      const { count, error } = await supabase
+        .from("company_members")
+        .select("id", { count: "exact", head: true })
+        .eq("company_id", activeWorkspace.id);
+      if (error) throw error;
+      return count || 0;
+    },
+    enabled: !!activeWorkspace?.id && open,
+  });
+
   // Load Midtrans Snap
   useEffect(() => {
     const clientKey = import.meta.env.VITE_MIDTRANS_CLIENT_KEY;
@@ -58,8 +73,10 @@ export function CreateUserDialog({ open, onOpenChange }: CreateUserDialogProps) 
   }, []);
 
   const tier = activeWorkspace?.subscription_tier || "trial";
+  const maxUsers = activeWorkspace?.max_users || 3;
+  const hasQuota = currentMemberCount < maxUsers;
   const pricePerUser = TIER_PRICES[tier] || 0;
-  const isPaidTier = pricePerUser > 0;
+  const needsPayment = !hasQuota && pricePerUser > 0;
   const formatRupiah = (n: number) => "Rp " + n.toLocaleString("id-ID");
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -68,8 +85,8 @@ export function CreateUserDialog({ open, onOpenChange }: CreateUserDialogProps) 
     setLoading(true);
 
     try {
-      // If paid tier, create Midtrans transaction first
-      if (isPaidTier) {
+      if (needsPayment) {
+        // Over quota on paid tier → Midtrans payment first
         const { data: snapData, error: snapError } = await supabase.functions.invoke("midtrans-create-transaction", {
           body: {
             order_id: `USER-${activeWorkspace?.id?.slice(0, 8)}-${Date.now()}`,
@@ -84,10 +101,14 @@ export function CreateUserDialog({ open, onOpenChange }: CreateUserDialogProps) 
         if (snapData?.error) throw new Error(snapData.error);
 
         if (snapData?.token && window.snap) {
-          // Show Midtrans payment popup
           window.snap.pay(snapData.token, {
             onSuccess: async () => {
               toast.success("Pembayaran berhasil! Membuat user...");
+              // Increment max_users after payment
+              await supabase
+                .from("companies")
+                .update({ max_users: maxUsers + 1 })
+                .eq("id", activeWorkspace!.id);
               await createUser();
             },
             onPending: () => {
@@ -103,11 +124,11 @@ export function CreateUserDialog({ open, onOpenChange }: CreateUserDialogProps) 
               setLoading(false);
             },
           });
-          return; // Don't create user yet, wait for payment callback
+          return;
         }
       }
 
-      // Free tier or no Midtrans: create user directly
+      // Has quota or free tier → create directly
       await createUser();
     } catch (error: any) {
       toast.error(error.message || "Failed to create user");
@@ -125,6 +146,8 @@ export function CreateUserDialog({ open, onOpenChange }: CreateUserDialogProps) 
 
       toast.success("User created successfully!");
       queryClient.invalidateQueries({ queryKey: ["all-users"] });
+      queryClient.invalidateQueries({ queryKey: ["company-member-count"] });
+      queryClient.invalidateQueries({ queryKey: ["my-workspaces"] });
       onOpenChange(false);
       resetForm();
     } catch (error: any) {
@@ -194,26 +217,33 @@ export function CreateUserDialog({ open, onOpenChange }: CreateUserDialogProps) 
             </Select>
           </div>
 
-          {/* Payment info for paid tiers */}
-          {isPaidTier && (
-            <div className="rounded-xl border border-border/50 bg-muted/30 p-4 space-y-2">
-              <div className="flex items-center gap-2 text-sm font-medium">
-                <CreditCard className="h-4 w-4 text-primary" />
-                Biaya Tambah User
+          {/* Quota / Payment info */}
+          <div className="rounded-xl border border-border/50 bg-muted/30 p-4 space-y-2">
+            {hasQuota ? (
+              <div className="flex items-center gap-2 text-sm text-green-600">
+                <CheckCircle className="h-4 w-4" />
+                <span>Kuota tersedia ({currentMemberCount}/{maxUsers}) — gratis tanpa biaya tambahan</span>
               </div>
-              <div className="flex justify-between text-sm">
-                <span className="text-muted-foreground capitalize">{tier} Plan</span>
-                <span className="font-bold text-foreground">{formatRupiah(pricePerUser)}/user/bulan</span>
-              </div>
-              <p className="text-[10px] text-muted-foreground">
-                Pembayaran via Midtrans akan muncul setelah submit.
-              </p>
-            </div>
-          )}
+            ) : (
+              <>
+                <div className="flex items-center gap-2 text-sm font-medium">
+                  <CreditCard className="h-4 w-4 text-primary" />
+                  Kuota penuh ({currentMemberCount}/{maxUsers}) — biaya tambah user
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span className="text-muted-foreground capitalize">{tier} Plan</span>
+                  <span className="font-bold text-foreground">{formatRupiah(pricePerUser)}/user/bulan</span>
+                </div>
+                <p className="text-[10px] text-muted-foreground">
+                  Pembayaran via Midtrans akan muncul setelah submit.
+                </p>
+              </>
+            )}
+          </div>
 
           <Button type="submit" className="w-full gap-2" disabled={loading}>
-            {isPaidTier && <CreditCard className="h-4 w-4" />}
-            {loading ? "Processing..." : isPaidTier ? `Bayar & Create User (${formatRupiah(pricePerUser)})` : "Create User"}
+            {needsPayment && <CreditCard className="h-4 w-4" />}
+            {loading ? "Processing..." : needsPayment ? `Bayar & Create User (${formatRupiah(pricePerUser)})` : "Create User"}
           </Button>
         </form>
       </DialogContent>

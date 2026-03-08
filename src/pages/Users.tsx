@@ -228,7 +228,6 @@ export default function Users() {
             {isSuperAdmin && (
               <Button 
                 onClick={() => setCreateDialogOpen(true)}
-                disabled={activeWorkspace && (users?.length || 0) >= (activeWorkspace.max_users || 3)}
               >
                 <Plus className="mr-2 h-4 w-4" />
                 Create User
@@ -252,7 +251,7 @@ export default function Users() {
                   <div className="flex items-center gap-2">
                     <UsersIcon className="h-4 w-4 text-muted-foreground" />
                     <span className="text-sm font-medium">
-                      {totalUsers} / {maxUsers} users
+                      Kuota User: {totalUsers} / {maxUsers}
                     </span>
                     <Badge variant="outline" className="text-xs capitalize">
                       {activeWorkspace.subscription_tier} Plan
@@ -261,27 +260,15 @@ export default function Users() {
                    {isAtLimit && (
                     <div className="flex items-center gap-2 text-destructive text-sm">
                       <AlertTriangle className="h-4 w-4" />
-                      <span>Batas user tercapai</span>
+                      <span>Kuota user penuh — tambah user akan dikenakan biaya</span>
                     </div>
-                  )}
+                   )}
                 </div>
                 <Progress value={usagePercent} className="h-2" />
-                {isNearLimit && (
-                  <div className="mt-3 flex flex-col sm:flex-row sm:items-center gap-2">
-                    <p className="text-xs text-muted-foreground flex-1">
-                      {isAtLimit 
-                        ? "Anda telah mencapai batas maksimal user. Upgrade plan untuk menambah kapasitas team."
-                        : "Hampir mencapai batas user. Pertimbangkan upgrade plan untuk menambah kapasitas."}
-                    </p>
-                    <Button 
-                      size="sm" 
-                      className="gap-2 shrink-0"
-                      onClick={() => navigate("/billing")}
-                    >
-                      <AlertTriangle className="h-3.5 w-3.5" />
-                      Upgrade Plan
-                    </Button>
-                  </div>
+                {isNearLimit && !isAtLimit && (
+                  <p className="text-xs text-muted-foreground mt-2">
+                    Hampir mencapai kuota user. Tambah user berikutnya akan dikenakan biaya.
+                  </p>
                 )}
               </CardContent>
             </Card>
