@@ -33,12 +33,14 @@ serve(async (req) => {
     if (slug.length < 3) throw new Error("Slug minimal 3 karakter");
 
     const TIER_PRICES: Record<string, number> = {
+      trial: 0,
       starter: 7000,
       professional: 21000,
       enterprise: 25000,
     };
     const pricePerUser = TIER_PRICES[tier];
-    if (!pricePerUser) throw new Error("Tier tidak valid");
+    if (pricePerUser === undefined) throw new Error("Tier tidak valid");
+    const isTrial = tier === "trial";
 
     // Check slug uniqueness
     const { data: existingCompany } = await supabaseAdmin
@@ -83,10 +85,10 @@ serve(async (req) => {
       .insert({
         name: companyName,
         slug: cleanSlug,
-        subscription_tier: tier,
-        max_users: userCount,
+        subscription_tier: isTrial ? "trial" : tier,
+        max_users: isTrial ? 3 : userCount,
         owner_id: adminUserId,
-        is_active: false, // Only activate after payment confirmed
+        is_active: isTrial ? true : false, // Trial is active immediately, paid requires payment
       })
       .select()
       .single();
