@@ -120,12 +120,13 @@ function ProductsSection() {
       price_per_user: 0, original_price_per_user: null,
       max_users: 10, is_active: true, sort_order: products.length,
       features: [], is_popular: false, not_included: [],
+      annual_multiplier: 10, default_users: 1,
     });
     setEditOpen(true);
   };
 
   const openEdit = (p: any) => {
-    setEditItem({ ...p, features: p.features || [], not_included: p.not_included || [], is_popular: p.is_popular ?? false });
+    setEditItem({ ...p, features: p.features || [], not_included: p.not_included || [], is_popular: p.is_popular ?? false, annual_multiplier: p.annual_multiplier ?? 10, default_users: p.default_users ?? 1 });
     setEditOpen(true);
   };
 
