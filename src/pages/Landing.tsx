@@ -196,7 +196,15 @@ export default function Landing() {
     },
   });
 
-  const getImg = (key: string) => {
+  const { data: pricingProducts = [] } = useQuery({
+    queryKey: ["landing-pricing-products"],
+    queryFn: async () => {
+      const { data } = await supabase.from("subscription_products").select("*").eq("is_active", true).order("sort_order");
+      return data || [];
+    },
+  });
+
+
     const found = landingImages.find((img: any) => img.image_key === key);
     return (found?.image_url && !found.image_url.startsWith("/assets")) ? found.image_url : STATIC_FALLBACKS[key] || "";
   };
