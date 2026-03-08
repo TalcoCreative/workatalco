@@ -3,7 +3,7 @@ import CEODashboard from "./pages/CEODashboard";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import CompanyRoot from "./pages/CompanyRoot";
 import Auth from "./pages/Auth";
@@ -97,8 +97,8 @@ const App = () => (
           <Route path="/blog" element={<Blog />} />
           <Route path="/blog/:slug" element={<BlogPost />} />
 
-          {/* Auto-redirect to /:slug/ */}
-          <Route path="/" element={<ProtectedRoute><WorkspaceRedirect /></ProtectedRoute>} />
+          {/* Default landing page */}
+          <Route path="/" element={<Navigate to="/landing" replace />} />
 
           {/* Platform Admin (global, not per-company) */}
           <Route path="/platform-admin" element={<ProtectedRoute><SuperAdmin /></ProtectedRoute>} />
