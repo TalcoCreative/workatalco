@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Check, ArrowLeft, Users as UsersIcon, Loader2 } from "lucide-react";
+import { Check, ArrowLeft, Users as UsersIcon, Loader2, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -11,8 +11,15 @@ import { supabase } from "@/integrations/supabase/client";
 const formatRupiah = (n: number) =>
   "Rp " + n.toLocaleString("id-ID");
 
+const formatShort = (n: number) => {
+  if (n >= 1_000_000) return `Rp${(n / 1_000_000).toFixed(n % 1_000_000 === 0 ? 0 : 1)}M`;
+  if (n >= 1_000) return `Rp${(n / 1_000).toFixed(n % 1_000 === 0 ? 0 : 1)}K`;
+  return `Rp${n}`;
+};
+
 export default function Pricing() {
   const [userCounts, setUserCounts] = useState<Record<number, number>>({});
+  const [billingCycle, setBillingCycle] = useState<"monthly" | "annual">("monthly");
 
   const { data: products = [], isLoading } = useQuery({
     queryKey: ["pricing-products"],
@@ -27,8 +34,8 @@ export default function Pricing() {
     },
   });
 
-  const getUsers = (idx: number, maxUsers: number) => {
-    return userCounts[idx] ?? Math.min(3, maxUsers);
+  const getUsers = (idx: number, product: any) => {
+    return userCounts[idx] ?? (product.default_users || Math.min(3, product.max_users));
   };
 
   const handleSliderChange = (idx: number, value: number[]) => {
@@ -56,7 +63,7 @@ export default function Pricing() {
 
       <div className="max-w-6xl mx-auto px-6 py-16">
         {/* Title */}
-        <div className="text-center mb-16">
+        <div className="text-center mb-10">
           <Badge variant="outline" className="mb-4 text-primary border-primary/30 bg-primary/5">Pricing</Badge>
           <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-4">
             Simple, Transparent Pricing
@@ -64,6 +71,31 @@ export default function Pricing() {
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
             Pilih plan yang sesuai dengan kebutuhan agency Anda. Semua plan termasuk 14 hari free trial.
           </p>
+        </div>
+
+        {/* Billing Toggle */}
+        <div className="flex items-center justify-center gap-3 mb-12">
+          <button
+            onClick={() => setBillingCycle("monthly")}
+            className={`px-5 py-2 rounded-full text-sm font-medium transition-all ${
+              billingCycle === "monthly"
+                ? "bg-primary text-primary-foreground shadow-md"
+                : "bg-muted text-muted-foreground hover:text-foreground"
+            }`}
+          >
+            Monthly
+          </button>
+          <button
+            onClick={() => setBillingCycle("annual")}
+            className={`px-5 py-2 rounded-full text-sm font-medium transition-all flex items-center gap-2 ${
+              billingCycle === "annual"
+                ? "bg-primary text-primary-foreground shadow-md"
+                : "bg-muted text-muted-foreground hover:text-foreground"
+            }`}
+          >
+            Annual
+            <Badge className="bg-emerald-500 text-white text-[10px] px-1.5 py-0">Hemat</Badge>
+          </button>
         </div>
 
         {/* Loading */}
@@ -77,8 +109,20 @@ export default function Pricing() {
         {!isLoading && (
           <div className={`grid gap-8 ${products.length === 1 ? 'max-w-md mx-auto' : products.length === 2 ? 'md:grid-cols-2 max-w-3xl mx-auto' : 'md:grid-cols-3'}`}>
             {products.map((product: any, idx: number) => {
-              const users = getUsers(idx, product.max_users);
-              const totalPrice = product.price_per_user * users;
+              const users = getUsers(idx, product);
+              const annualMultiplier = product.annual_multiplier || 10;
+              const isAnnual = billingCycle === "annual";
+
+              // Monthly price
+              const monthlyPerUser = product.price_per_user;
+              // Annual: pay X months for 12
+              const annualPerUser = Math.round((monthlyPerUser * annualMultiplier) / 12);
+              const displayPerUser = isAnnual ? annualPerUser : monthlyPerUser;
+              const monthlyTotal = monthlyPerUser * users;
+              const annualTotalPerMonth = annualPerUser * users;
+              const annualTotalFull = monthlyPerUser * users * 12; // full price (12 months)
+              const annualTotalDiscounted = monthlyPerUser * users * annualMultiplier; // discounted
+
               const features: string[] = Array.isArray(product.features) ? product.features : [];
               const notIncluded: string[] = Array.isArray(product.not_included) ? product.not_included : [];
               const isPopular = product.is_popular === true;
@@ -101,14 +145,26 @@ export default function Pricing() {
                     )}
                     <CardTitle className="text-2xl">{product.name}</CardTitle>
                     <div className="mt-3">
-                      {product.original_price_per_user && product.original_price_per_user > product.price_per_user && (
+                      {/* Show strikethrough for annual */}
+                      {isAnnual && annualMultiplier < 12 && (
                         <span className="text-lg text-muted-foreground line-through mr-2">
-                          {formatRupiah(product.original_price_per_user)}
+                          {formatShort(monthlyPerUser)}
                         </span>
                       )}
-                      <span className="text-4xl font-bold text-foreground">{formatRupiah(product.price_per_user)}</span>
+                      {/* Show original price strikethrough if set (for monthly) */}
+                      {!isAnnual && product.original_price_per_user && product.original_price_per_user > monthlyPerUser && (
+                        <span className="text-lg text-muted-foreground line-through mr-2">
+                          {formatShort(product.original_price_per_user)}
+                        </span>
+                      )}
+                      <span className="text-4xl font-bold text-foreground">{formatShort(displayPerUser)}</span>
                       <span className="text-sm text-muted-foreground ml-1">/ user / bulan</span>
                     </div>
+                    {isAnnual && annualMultiplier < 12 && (
+                      <p className="text-xs text-emerald-600 font-medium mt-1">
+                        Bayar {annualMultiplier} bulan untuk 12 bulan — hemat {Math.round(((12 - annualMultiplier) / 12) * 100)}%
+                      </p>
+                    )}
 
                     {/* User count slider */}
                     <div className="mt-4 space-y-2">
@@ -117,9 +173,23 @@ export default function Pricing() {
                           <UsersIcon className="h-3.5 w-3.5" />
                           {users} users
                         </span>
-                        <span className="font-semibold text-foreground">
-                          {formatRupiah(totalPrice)}<span className="text-xs font-normal text-muted-foreground">/bln</span>
-                        </span>
+                        <div className="text-right">
+                          {isAnnual ? (
+                            <div>
+                              <span className="text-xs text-muted-foreground line-through mr-1.5">
+                                {formatRupiah(annualTotalFull)}
+                              </span>
+                              <span className="font-semibold text-foreground">
+                                {formatRupiah(annualTotalDiscounted)}
+                                <span className="text-xs font-normal text-muted-foreground">/thn</span>
+                              </span>
+                            </div>
+                          ) : (
+                            <span className="font-semibold text-foreground">
+                              {formatRupiah(monthlyTotal)}<span className="text-xs font-normal text-muted-foreground">/bln</span>
+                            </span>
+                          )}
+                        </div>
                       </div>
                       <Slider
                         value={[users]}
@@ -131,21 +201,20 @@ export default function Pricing() {
                       />
                       <div className="flex justify-between text-[10px] text-muted-foreground">
                         <span>1 user</span>
-                        <span>{product.max_users} users</span>
+                        <span>Max {product.max_users}</span>
                       </div>
                     </div>
                   </CardHeader>
                   <CardContent className="flex-1 flex flex-col">
                     <Link to="/signup" className="w-full mb-6">
                       <Button className="w-full" variant={isPopular ? "default" : "outline"}>
-                        Start Free Trial
+                        Pilih {product.name}
                       </Button>
                     </Link>
 
                     <div className="space-y-3 flex-1">
                       {features.length > 0 && (
                         <>
-                          <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Included</p>
                           {features.map((f: string) => (
                             <div key={f} className="flex items-start gap-2.5 text-sm">
                               <Check className="h-4 w-4 text-primary shrink-0 mt-0.5" />
@@ -156,12 +225,10 @@ export default function Pricing() {
                       )}
                       {notIncluded.length > 0 && (
                         <>
-                          <div className="pt-2">
-                            <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Not Included</p>
-                          </div>
+                          <div className="pt-2 border-t border-border/30" />
                           {notIncluded.map((f: string) => (
                             <div key={f} className="flex items-start gap-2.5 text-sm">
-                              <span className="h-4 w-4 shrink-0 mt-0.5 text-center text-muted-foreground/50">—</span>
+                              <X className="h-4 w-4 shrink-0 mt-0.5 text-muted-foreground/40" />
                               <span className="text-muted-foreground">{f}</span>
                             </div>
                           ))}
@@ -181,7 +248,7 @@ export default function Pricing() {
           <div className="space-y-6">
             {[
               { q: "Apakah ada trial gratis?", a: "Ya! Semua plan termasuk 14 hari free trial dengan maksimal 3 user. Tidak perlu kartu kredit." },
-              { q: "Bagaimana sistem billing-nya?", a: "Billing bulanan per user aktif. Anda bisa upgrade atau downgrade kapan saja." },
+              { q: "Bagaimana sistem billing-nya?", a: "Billing bulanan atau tahunan per user aktif. Bayar tahunan lebih hemat!" },
               { q: "Apakah data saya aman?", a: "Semua data dienkripsi dan disimpan dengan standar keamanan enterprise. Setiap workspace terisolasi sepenuhnya." },
               { q: "Bisa tambah user di tengah bulan?", a: "Bisa! User baru akan dihitung pro-rata untuk bulan berjalan. Harga total = jumlah user × harga per user." },
               { q: "Bagaimana cara upgrade plan?", a: "Hubungi tim sales kami atau upgrade langsung dari dashboard Super Admin." },

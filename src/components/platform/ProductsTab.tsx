@@ -79,6 +79,8 @@ function ProductsSection() {
         features: item.features || [],
         is_popular: item.is_popular ?? false,
         not_included: item.not_included || [],
+        annual_multiplier: item.annual_multiplier ?? 10,
+        default_users: item.default_users ?? 1,
       };
       if (item.id) {
         const { error } = await supabase
