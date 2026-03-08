@@ -154,7 +154,8 @@ function CountUp({ target, suffix = "" }: { target: number; suffix?: string }) {
 /* ─── Main ─── */
 export default function Landing() {
   const [openFaq, setOpenFaq] = useState<number | null>(null);
-  const [userCounts, setUserCounts] = useState<Record<number, number>>({ 0: 3, 1: 5, 2: 10 });
+  const [userCounts, setUserCounts] = useState<Record<number, number>>({});
+  const [billingCycle, setBillingCycle] = useState<"monthly" | "annual">("monthly");
   const [session, setSession] = useState<Session | null>(null);
   const [demoOpen, setDemoOpen] = useState(false);
   const [demoLoading, setDemoLoading] = useState(false);
