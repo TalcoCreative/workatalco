@@ -86,6 +86,7 @@ serve(async (req) => {
         subscription_tier: tier,
         max_users: userCount,
         owner_id: adminUserId,
+        is_active: false, // Only activate after payment confirmed
       })
       .select()
       .single();

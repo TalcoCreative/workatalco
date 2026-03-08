@@ -264,7 +264,7 @@ export function IntegrationsTab() {
 
             <p className="text-xs text-muted-foreground flex items-center gap-1">
               <Shield className="h-3 w-3" />
-              API keys dikelola melalui Lovable Cloud secrets. Untuk mengubah, update melalui settings project.
+              API keys dikelola melalui WORKA Cloud secrets. Untuk mengubah, hubungi administrator platform.
             </p>
           </div>
 
