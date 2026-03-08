@@ -1,0 +1,677 @@
+import { useState } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { useCompanyMembers } from "@/hooks/useCompanyMembers";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { SearchableSelect } from "@/components/shared/SearchableSelect";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
+import { Checkbox } from "@/components/ui/checkbox";
+import { format, startOfMonth, endOfMonth } from "date-fns";
+import { Plus, ArrowDownCircle, Trash2, Search, Calendar, Pencil } from "lucide-react";
+import { toast } from "sonner";
+import { 
+  FINANCE_CATEGORIES, 
+  getMainCategoryLabel, 
+  getSubCategoryLabel,
+  getSubCategories 
+} from "@/lib/finance-categories";
+import { EditExpenseDialog } from "./EditExpenseDialog";
+
+export function FinanceExpenses() {
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
+  const [expenseToEdit, setExpenseToEdit] = useState<any>(null);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [bulkDeleteDialogOpen, setBulkDeleteDialogOpen] = useState(false);
+  const [expenseToDelete, setExpenseToDelete] = useState<any>(null);
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [startDate, setStartDate] = useState(format(startOfMonth(new Date()), "yyyy-MM-dd"));
+  const [endDate, setEndDate] = useState(format(endOfMonth(new Date()), "yyyy-MM-dd"));
+  const [formData, setFormData] = useState({
+    category: "operasional",
+    sub_category: "transport",
+    project_id: "",
+    client_id: "",
+    amount: "",
+    description: "",
+    expense_date: format(new Date(), "yyyy-MM-dd"),
+  });
+  const queryClient = useQueryClient();
+
+  const { memberIds } = useCompanyMembers();
+
+  const { data: expenses, isLoading } = useQuery({
+    queryKey: ["finance-expenses", memberIds],
+    queryFn: async () => {
+      if (memberIds.length === 0) return [];
+      const { data, error } = await supabase
+        .from("expenses")
+        .select("*, projects(title), clients(name)")
+        .in("created_by", memberIds)
+        .order("created_at", { ascending: false });
+      
+      if (error) throw error;
+      return data || [];
+    },
+    enabled: memberIds.length > 0,
+  });
+
+  const { data: projects } = useQuery({
+    queryKey: ["company-projects-list"],
+    queryFn: async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) return [];
+      const { data: memberships } = await supabase.from("company_members").select("company_id").eq("user_id", session.user.id).limit(1);
+      const cid = memberships?.[0]?.company_id;
+      if (!cid) return [];
+      const { data, error } = await supabase.from("projects").select("id, title").eq("company_id", cid).order("title");
+      if (error) throw error;
+      return data || [];
+    },
+  });
+
+  const { data: clients } = useQuery({
+    queryKey: ["company-clients-list"],
+    queryFn: async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) return [];
+      const { data: memberships } = await supabase.from("company_members").select("company_id").eq("user_id", session.user.id).limit(1);
+      const cid = memberships?.[0]?.company_id;
+      if (!cid) return [];
+      const { data, error } = await supabase.from("clients").select("id, name").eq("company_id", cid).order("name");
+      if (error) throw error;
+      return data || [];
+    },
+  });
+
+  // Filter expenses by search and date
+  const filteredExpenses = expenses?.filter(expense => {
+    const matchesSearch = 
+      expense.description?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      expense.category?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      expense.sub_category?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      expense.projects?.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      expense.clients?.name?.toLowerCase().includes(searchTerm.toLowerCase());
+
+    const expenseDate = format(new Date(expense.created_at), "yyyy-MM-dd");
+    const matchesDateRange = expenseDate >= startDate && expenseDate <= endDate;
+
+    return matchesSearch && matchesDateRange;
+  });
+
+  const handleCategoryChange = (category: string) => {
+    const subCategories = getSubCategories(category);
+    setFormData({ 
+      ...formData, 
+      category, 
+      sub_category: subCategories[0]?.value || "" 
+    });
+  };
+
+  // Map expense category to valid ledger sub_type
+  const mapCategoryToSubType = (category: string): string => {
+    const mapping: Record<string, string> = {
+      'payroll': 'payroll',
+      'reimburse': 'reimburse',
+      'operasional': 'operational',
+      'operational': 'operational',
+      'project': 'project',
+    };
+    return mapping[category] || 'other';
+  };
+
+  const handleSubmit = async () => {
+    if (!formData.amount || !formData.description) {
+      toast.error("Please fill in all required fields");
+      return;
+    }
+
+    try {
+      const { data: session } = await supabase.auth.getSession();
+      if (!session.session) throw new Error("Not authenticated");
+
+      const expenseDate = formData.expense_date;
+      const subType = mapCategoryToSubType(formData.category);
+
+      // Create ledger entry first with expense date
+      const { data: ledgerEntry, error: ledgerError } = await supabase
+        .from("ledger_entries")
+        .insert({
+          date: expenseDate,
+          type: "expense",
+          sub_type: subType,
+          sub_category: formData.sub_category || null,
+          project_id: formData.project_id || null,
+          client_id: formData.client_id || null,
+          amount: parseFloat(formData.amount),
+          source: "manual",
+          notes: formData.description,
+          created_by: session.session.user.id,
+        })
+        .select()
+        .single();
+
+      if (ledgerError) throw ledgerError;
+
+      // Create expense with ledger_entry_id and status paid
+      const { error } = await supabase.from("expenses").insert({
+        category: formData.category,
+        sub_category: formData.sub_category,
+        project_id: formData.project_id || null,
+        client_id: formData.client_id || null,
+        amount: parseFloat(formData.amount),
+        description: formData.description,
+        created_by: session.session.user.id,
+        created_at: new Date(expenseDate).toISOString(),
+        status: "paid",
+        paid_at: new Date(expenseDate).toISOString(),
+        ledger_entry_id: ledgerEntry.id,
+      });
+
+      if (error) throw error;
+
+      toast.success("Expense created and added to ledger");
+      setDialogOpen(false);
+      setFormData({ 
+        category: "operasional", 
+        sub_category: "transport",
+        project_id: "", 
+        client_id: "", 
+        amount: "", 
+        description: "",
+        expense_date: format(new Date(), "yyyy-MM-dd"),
+      });
+      queryClient.invalidateQueries({ queryKey: ["finance-expenses"] });
+      queryClient.invalidateQueries({ queryKey: ["finance-ledger"] });
+      queryClient.invalidateQueries({ queryKey: ["income-statement-expenses"] });
+      queryClient.invalidateQueries({ queryKey: ["balance-sheet-expenses"] });
+      queryClient.invalidateQueries({ queryKey: ["insights-expenses"] });
+    } catch (error: any) {
+      toast.error(error.message || "Failed to create expense");
+    }
+  };
+
+  const handleDeleteExpense = async () => {
+    if (!expenseToDelete) return;
+    
+    try {
+      // Also delete associated ledger entry if exists
+      if (expenseToDelete.ledger_entry_id) {
+        await supabase
+          .from("ledger_entries")
+          .delete()
+          .eq("id", expenseToDelete.ledger_entry_id);
+      }
+
+      const { error } = await supabase
+        .from("expenses")
+        .delete()
+        .eq("id", expenseToDelete.id);
+
+      if (error) throw error;
+
+      toast.success("Expense deleted successfully");
+      setDeleteDialogOpen(false);
+      setExpenseToDelete(null);
+      queryClient.invalidateQueries({ queryKey: ["finance-expenses"] });
+      queryClient.invalidateQueries({ queryKey: ["finance-ledger"] });
+      queryClient.invalidateQueries({ queryKey: ["income-statement-expenses"] });
+      queryClient.invalidateQueries({ queryKey: ["balance-sheet-expenses"] });
+      queryClient.invalidateQueries({ queryKey: ["insights-expenses"] });
+    } catch (error: any) {
+      toast.error(error.message || "Failed to delete expense");
+    }
+  };
+
+  const handleBulkDelete = async () => {
+    if (selectedIds.length === 0) return;
+    
+    try {
+      // Get ledger_entry_ids for selected expenses
+      const selectedExpenses = filteredExpenses?.filter(e => selectedIds.includes(e.id)) || [];
+      const ledgerIds = selectedExpenses
+        .map(e => e.ledger_entry_id)
+        .filter(Boolean);
+
+      // Delete associated ledger entries
+      if (ledgerIds.length > 0) {
+        await supabase
+          .from("ledger_entries")
+          .delete()
+          .in("id", ledgerIds);
+      }
+
+      const { error } = await supabase
+        .from("expenses")
+        .delete()
+        .in("id", selectedIds);
+
+      if (error) throw error;
+
+      toast.success(`${selectedIds.length} expense berhasil dihapus`);
+      setBulkDeleteDialogOpen(false);
+      setSelectedIds([]);
+      queryClient.invalidateQueries({ queryKey: ["finance-expenses"] });
+      queryClient.invalidateQueries({ queryKey: ["finance-ledger"] });
+      queryClient.invalidateQueries({ queryKey: ["income-statement-expenses"] });
+      queryClient.invalidateQueries({ queryKey: ["balance-sheet-expenses"] });
+      queryClient.invalidateQueries({ queryKey: ["insights-expenses"] });
+    } catch (error: any) {
+      toast.error(error.message || "Gagal menghapus expense");
+    }
+  };
+
+  const toggleSelectAll = () => {
+    if (selectedIds.length === filteredExpenses?.length) {
+      setSelectedIds([]);
+    } else {
+      setSelectedIds(filteredExpenses?.map(e => e.id) || []);
+    }
+  };
+
+  const toggleSelect = (id: string) => {
+    setSelectedIds(prev => 
+      prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]
+    );
+  };
+
+  const formatCurrency = (value: number) => {
+    return new Intl.NumberFormat("id-ID", {
+      style: "currency",
+      currency: "IDR",
+      minimumFractionDigits: 0,
+    }).format(value);
+  };
+
+  const subCategories = getSubCategories(formData.category);
+
+  // Export data for Excel
+  const exportData = filteredExpenses?.map(e => ({
+    date: format(new Date(e.created_at), "yyyy-MM-dd"),
+    category: e.category,
+    sub_category: e.sub_category || '',
+    description: e.description,
+    amount: e.amount,
+    project_name: e.projects?.title || '',
+    client_name: e.clients?.name || '',
+  })) || [];
+
+  const handleImportExpenses = async (data: any[]) => {
+    const { data: session } = await supabase.auth.getSession();
+    if (!session.session) {
+      toast.error("Tidak terautentikasi");
+      return;
+    }
+
+    for (const row of data) {
+      if (!row.description || !row.amount) continue;
+
+      const expenseDate = row.date || format(new Date(), "yyyy-MM-dd");
+      const category = row.category || 'operational';
+      const subType = mapCategoryToSubType(category);
+
+      // Create ledger entry first
+      const { data: ledgerEntry, error: ledgerError } = await supabase
+        .from("ledger_entries")
+        .insert({
+          date: expenseDate,
+          type: "expense",
+          sub_type: subType,
+          sub_category: row.sub_category || null,
+          amount: Number(row.amount),
+          source: "import",
+          notes: row.description,
+          created_by: session.session.user.id,
+        })
+        .select()
+        .single();
+
+      if (ledgerError) continue;
+
+      // Create expense with ledger_entry_id
+      await supabase.from("expenses").insert({
+        category: category,
+        sub_category: row.sub_category || null,
+        amount: Number(row.amount),
+        description: row.description,
+        status: 'paid',
+        paid_at: new Date(expenseDate).toISOString(),
+        ledger_entry_id: ledgerEntry.id,
+        created_by: session.session.user.id,
+        created_at: new Date(expenseDate).toISOString(),
+      });
+    }
+    
+    queryClient.invalidateQueries({ queryKey: ["finance-expenses"] });
+    queryClient.invalidateQueries({ queryKey: ["finance-ledger"] });
+    queryClient.invalidateQueries({ queryKey: ["income-statement-expenses"] });
+    queryClient.invalidateQueries({ queryKey: ["balance-sheet-expenses"] });
+    queryClient.invalidateQueries({ queryKey: ["insights-expenses"] });
+  };
+
+  const totalExpenses = filteredExpenses?.reduce((sum, e) => sum + Number(e.amount), 0) || 0;
+
+  return (
+    <Card>
+      <CardHeader className="flex flex-row items-center justify-between flex-wrap gap-2">
+        <CardTitle className="flex items-center gap-2">
+          <ArrowDownCircle className="h-5 w-5" />
+          Expenses
+        </CardTitle>
+        <div className="flex gap-2">
+          <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+            <DialogTrigger asChild>
+              <Button>
+                <Plus className="h-4 w-4 mr-2" />
+                Add Expense
+              </Button>
+            </DialogTrigger>
+          <DialogContent className="max-h-[90vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle>Add New Expense</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label>Main Category *</Label>
+                  <Select value={formData.category} onValueChange={handleCategoryChange}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {FINANCE_CATEGORIES.map((cat) => (
+                        <SelectItem key={cat.value} value={cat.value}>
+                          {cat.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <Label>Sub-Category *</Label>
+                  <Select 
+                    value={formData.sub_category} 
+                    onValueChange={(v) => setFormData({ ...formData, sub_category: v })}
+                  >
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {subCategories.map((sub) => (
+                        <SelectItem key={sub.value} value={sub.value}>
+                          {sub.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+              <div className="space-y-2">
+                <Label>Tanggal Expense *</Label>
+                <div className="relative">
+                  <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    type="date"
+                    value={formData.expense_date}
+                    onChange={(e) => setFormData({ ...formData, expense_date: e.target.value })}
+                    className="pl-10"
+                  />
+                </div>
+              </div>
+              <div className="space-y-2">
+                <Label>Amount (IDR) *</Label>
+                <Input
+                  type="number"
+                  value={formData.amount}
+                  onChange={(e) => setFormData({ ...formData, amount: e.target.value })}
+                  placeholder="Enter amount"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>Description *</Label>
+                <Textarea
+                  value={formData.description}
+                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                  placeholder="Describe the expense"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>Project (Optional)</Label>
+                <SearchableSelect
+                  options={[{ value: "none", label: "None" }, ...(projects || []).map((p: any) => ({ value: p.id, label: p.title }))]}
+                  value={formData.project_id || "none"}
+                  onValueChange={(v) => setFormData({ ...formData, project_id: v === "none" ? "" : v })}
+                  placeholder="Select project"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>Client (Optional)</Label>
+                <SearchableSelect
+                  options={[{ value: "none", label: "None" }, ...(clients || []).map((c: any) => ({ value: c.id, label: c.name }))]}
+                  value={formData.client_id || "none"}
+                  onValueChange={(v) => setFormData({ ...formData, client_id: v === "none" ? "" : v })}
+                  placeholder="Select client"
+                />
+              </div>
+              <Button onClick={handleSubmit} className="w-full">Create Expense</Button>
+            </div>
+          </DialogContent>
+        </Dialog>
+        </div>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        {/* Summary */}
+        <Card>
+          <CardContent className="pt-4">
+            <div className="text-sm text-muted-foreground">Total Expenses</div>
+            <div className="text-2xl font-bold text-destructive">{formatCurrency(totalExpenses)}</div>
+          </CardContent>
+        </Card>
+
+        {/* Filters */}
+        <div className="flex flex-wrap gap-4 items-end">
+          <div className="flex-1 min-w-[200px]">
+            <Label className="text-sm mb-2 block">Cari</Label>
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder="Cari deskripsi, kategori..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-10"
+              />
+            </div>
+          </div>
+          <div className="min-w-[150px]">
+            <Label className="text-sm mb-2 block">Dari Tanggal</Label>
+            <div className="relative">
+              <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                type="date"
+                value={startDate}
+                onChange={(e) => setStartDate(e.target.value)}
+                className="pl-10"
+              />
+            </div>
+          </div>
+          <div className="min-w-[150px]">
+            <Label className="text-sm mb-2 block">Sampai Tanggal</Label>
+            <div className="relative">
+              <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                type="date"
+                value={endDate}
+                onChange={(e) => setEndDate(e.target.value)}
+                className="pl-10"
+              />
+            </div>
+          </div>
+          {selectedIds.length > 0 && (
+            <Button 
+              variant="destructive" 
+              onClick={() => setBulkDeleteDialogOpen(true)}
+            >
+              <Trash2 className="h-4 w-4 mr-2" />
+              Hapus {selectedIds.length} item
+            </Button>
+          )}
+        </div>
+
+        {isLoading ? (
+          <div className="text-center py-8 text-muted-foreground">Loading...</div>
+        ) : filteredExpenses && filteredExpenses.length > 0 ? (
+          <div className="rounded-md border overflow-x-auto">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="w-10">
+                    <Checkbox 
+                      checked={selectedIds.length === filteredExpenses.length && filteredExpenses.length > 0}
+                      onCheckedChange={toggleSelectAll}
+                    />
+                  </TableHead>
+                  <TableHead>Date</TableHead>
+                  <TableHead>Category</TableHead>
+                  <TableHead>Description</TableHead>
+                  <TableHead>Project/Client</TableHead>
+                  <TableHead className="text-right">Amount</TableHead>
+                  <TableHead>Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {filteredExpenses.map((expense) => (
+                  <TableRow key={expense.id}>
+                    <TableCell>
+                      <Checkbox 
+                        checked={selectedIds.includes(expense.id)}
+                        onCheckedChange={() => toggleSelect(expense.id)}
+                      />
+                    </TableCell>
+                    <TableCell>{format(new Date(expense.created_at), "dd MMM yyyy")}</TableCell>
+                    <TableCell>
+                      <div className="space-y-1">
+                        <Badge variant="outline">{getMainCategoryLabel(expense.category)}</Badge>
+                        {expense.sub_category && (
+                          <div className="text-xs text-muted-foreground">
+                            {getSubCategoryLabel(expense.category, expense.sub_category)}
+                          </div>
+                        )}
+                      </div>
+                    </TableCell>
+                    <TableCell className="max-w-[200px] truncate">
+                      {expense.description}
+                      {expense.is_recurring && (
+                        <Badge variant="secondary" className="ml-2 text-xs">Recurring</Badge>
+                      )}
+                    </TableCell>
+                    <TableCell>
+                      <div className="text-sm">
+                        {expense.projects?.title && <div>{expense.projects.title}</div>}
+                        {expense.clients?.name && (
+                          <div className="text-muted-foreground">{expense.clients.name}</div>
+                        )}
+                        {!expense.projects?.title && !expense.clients?.name && "-"}
+                      </div>
+                    </TableCell>
+                    <TableCell className="text-right font-medium text-destructive">
+                      {formatCurrency(expense.amount)}
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-1">
+                        <Button 
+                          size="sm" 
+                          variant="ghost"
+                          onClick={() => {
+                            setExpenseToEdit(expense);
+                            setEditDialogOpen(true);
+                          }}
+                        >
+                          <Pencil className="h-4 w-4" />
+                        </Button>
+                        <Button 
+                          size="sm" 
+                          variant="ghost" 
+                          className="text-destructive hover:text-destructive"
+                          onClick={() => {
+                            setExpenseToDelete(expense);
+                            setDeleteDialogOpen(true);
+                          }}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+        ) : (
+          <div className="text-center py-12 text-muted-foreground">
+            <ArrowDownCircle className="h-12 w-12 mx-auto mb-4 opacity-50" />
+            <p>No expenses recorded</p>
+          </div>
+        )}
+      </CardContent>
+
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Hapus Expense</AlertDialogTitle>
+            <AlertDialogDescription>
+              Apakah Anda yakin ingin menghapus expense "{expenseToDelete?.description}"? 
+              Tindakan ini tidak dapat dibatalkan.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Batal</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDeleteExpense}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              Hapus
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      <AlertDialog open={bulkDeleteDialogOpen} onOpenChange={setBulkDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Hapus {selectedIds.length} Expense</AlertDialogTitle>
+            <AlertDialogDescription>
+              Apakah Anda yakin ingin menghapus {selectedIds.length} expense yang dipilih? 
+              Tindakan ini tidak dapat dibatalkan.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Batal</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleBulkDelete}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              Hapus {selectedIds.length} Item
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      <EditExpenseDialog
+        open={editDialogOpen}
+        onOpenChange={setEditDialogOpen}
+        expense={expenseToEdit}
+        projects={projects || []}
+        clients={clients || []}
+      />
+    </Card>
+  );
+}

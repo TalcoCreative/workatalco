@@ -1,0 +1,410 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ═══════════════════════════════════════════════
+   WORKA — 2026 Design System
+   Atmospheric floating surfaces, calm motion,
+   Apple-grade polish. All colors HSL.
+   ═══════════════════════════════════════════════ */
+
+@layer base {
+  :root {
+    /* Canvas */
+    --background: 225 18% 96%;
+    --foreground: 222 22% 12%;
+
+    /* Floating surfaces */
+    --card: 0 0% 100%;
+    --card-foreground: 222 22% 12%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 22% 12%;
+
+    /* Brand */
+    --primary: 222 72% 52%;
+    --primary-foreground: 0 0% 100%;
+    --primary-glow: 222 60% 62%;
+
+    /* Neutral surfaces */
+    --secondary: 225 16% 95%;
+    --secondary-foreground: 222 18% 28%;
+
+    --muted: 225 14% 94%;
+    --muted-foreground: 222 10% 48%;
+
+    --accent: 225 14% 92%;
+    --accent-foreground: 222 18% 18%;
+
+    /* Destructive */
+    --destructive: 0 62% 54%;
+    --destructive-foreground: 0 0% 100%;
+
+    /* Borders & inputs */
+    --border: 225 12% 90%;
+    --input: 225 12% 89%;
+    --ring: 222 72% 52%;
+
+    --radius: 0.875rem;
+
+    /* Sidebar */
+    --sidebar-background: 222 28% 11%;
+    --sidebar-foreground: 222 12% 94%;
+    --sidebar-primary: 222 72% 56%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 222 22% 17%;
+    --sidebar-accent-foreground: 222 12% 94%;
+    --sidebar-border: 222 22% 19%;
+    --sidebar-ring: 222 72% 56%;
+
+    /* Status */
+    --status-todo: 222 58% 56%;
+    --status-progress: 38 82% 52%;
+    --status-done: 152 48% 46%;
+    --status-pending: 222 58% 56%;
+    --status-completed: 152 48% 46%;
+    --status-on-hold: 28 78% 52%;
+
+    /* Priority */
+    --priority-low: 222 8% 62%;
+    --priority-medium: 38 82% 52%;
+    --priority-high: 0 62% 54%;
+
+    /* Semantic */
+    --success: 152 48% 46%;
+    --success-foreground: 0 0% 100%;
+    --warning: 38 82% 52%;
+    --warning-foreground: 0 0% 100%;
+    --info: 205 72% 52%;
+    --info-foreground: 0 0% 100%;
+
+    /* Glass */
+    --glass-bg: 0 0% 100%;
+    --glass-border: 225 12% 92%;
+
+    /* Floating card — layered ambient + directional */
+    --float-shadow:
+      0 1px 2px hsl(222 20% 20% / 0.03),
+      0 4px 12px hsl(222 20% 20% / 0.05),
+      0 12px 32px hsl(222 20% 20% / 0.06);
+    --float-shadow-hover:
+      0 2px 4px hsl(222 20% 20% / 0.04),
+      0 8px 20px hsl(222 20% 20% / 0.07),
+      0 20px 48px hsl(222 20% 20% / 0.09);
+    --float-shadow-active:
+      0 1px 3px hsl(222 20% 20% / 0.06),
+      0 6px 16px hsl(222 20% 20% / 0.08);
+
+    /* Bottom nav */
+    --bottom-nav-bg: 0 0% 100%;
+    --bottom-nav-border: 225 12% 93%;
+
+    /* Atmospheric glow */
+    --glow-primary: 222 72% 52%;
+  }
+
+  .dark {
+    --background: 222 28% 8%;
+    --foreground: 222 12% 95%;
+
+    --card: 222 24% 12%;
+    --card-foreground: 222 12% 95%;
+
+    --popover: 222 24% 12%;
+    --popover-foreground: 222 12% 95%;
+
+    --primary: 222 72% 58%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 222 22% 16%;
+    --secondary-foreground: 222 12% 94%;
+
+    --muted: 222 22% 16%;
+    --muted-foreground: 222 12% 60%;
+
+    --accent: 222 22% 18%;
+    --accent-foreground: 222 12% 94%;
+
+    --destructive: 0 58% 50%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 222 22% 20%;
+    --input: 222 22% 20%;
+    --ring: 222 72% 58%;
+
+    --sidebar-background: 222 30% 7%;
+    --sidebar-foreground: 222 12% 94%;
+    --sidebar-primary: 222 72% 58%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 222 24% 14%;
+    --sidebar-accent-foreground: 222 12% 94%;
+    --sidebar-border: 222 22% 16%;
+    --sidebar-ring: 222 72% 58%;
+
+    --glass-bg: 222 24% 12%;
+    --glass-border: 222 22% 20%;
+
+    --float-shadow:
+      0 1px 3px hsl(222 30% 4% / 0.25),
+      0 6px 18px hsl(222 30% 4% / 0.35),
+      0 16px 40px hsl(222 30% 4% / 0.3);
+    --float-shadow-hover:
+      0 2px 6px hsl(222 30% 4% / 0.3),
+      0 12px 28px hsl(222 30% 4% / 0.4),
+      0 24px 56px hsl(222 30% 4% / 0.35);
+    --float-shadow-active:
+      0 1px 4px hsl(222 30% 4% / 0.35),
+      0 8px 20px hsl(222 30% 4% / 0.3);
+
+    --bottom-nav-bg: 222 24% 10%;
+    --bottom-nav-border: 222 22% 18%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    overflow-x: hidden;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-feature-settings: "rlig" 1, "calt" 1;
+    overflow-x: hidden;
+    min-height: 100vh;
+    min-height: 100dvh;
+    font-size: 15px;
+    line-height: 1.6;
+    letter-spacing: -0.01em;
+  }
+
+  @media (max-width: 767px) {
+    body {
+      font-size: 13px;
+      line-height: 1.55;
+    }
+  }
+
+  #root {
+    overflow-x: hidden;
+    min-height: 100vh;
+    min-height: 100dvh;
+  }
+
+  /* Typography — clear hierarchy, calm weights */
+  h1 {
+    @apply text-xl sm:text-2xl md:text-3xl font-semibold tracking-tight;
+    line-height: 1.2;
+  }
+  h2 {
+    @apply text-lg sm:text-xl md:text-2xl font-medium tracking-tight;
+    line-height: 1.25;
+  }
+  h3 {
+    @apply text-base sm:text-lg font-medium;
+    line-height: 1.3;
+  }
+
+  /* Smooth scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: hsl(var(--muted-foreground) / 0.2);
+    border-radius: 999px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--muted-foreground) / 0.35);
+  }
+}
+
+@layer components {
+  /* Glass morphism */
+  .glass {
+    @apply bg-card/85 backdrop-blur-xl border border-border/40;
+  }
+  .glass-strong {
+    @apply bg-card/92 backdrop-blur-2xl border border-border/30;
+  }
+
+  /* Gradients */
+  .gradient-primary {
+    background: linear-gradient(135deg, hsl(222 72% 52%), hsl(222 60% 62%));
+  }
+  .gradient-subtle {
+    background: linear-gradient(180deg, hsl(225 18% 97%), hsl(225 14% 94%));
+  }
+  .gradient-card {
+    background: linear-gradient(180deg, hsl(0 0% 100%), hsl(225 16% 98%));
+  }
+  .gradient-atmospheric {
+    background: radial-gradient(ellipse 120% 80% at 50% 0%, hsl(222 72% 52% / 0.04) 0%, transparent 60%);
+  }
+
+  /* Shadow system */
+  .shadow-soft {
+    box-shadow: var(--float-shadow);
+  }
+  .shadow-soft-lg {
+    box-shadow: var(--float-shadow-hover);
+  }
+  .shadow-soft-pressed {
+    box-shadow: var(--float-shadow-active);
+  }
+
+  /* ── Floating card system ── */
+  .floating-card {
+    @apply rounded-2xl border-0 bg-card text-card-foreground;
+    box-shadow: var(--float-shadow);
+    transition: box-shadow 220ms ease-out, transform 220ms ease-out;
+  }
+  .floating-card:hover {
+    box-shadow: var(--float-shadow-hover);
+    transform: translateY(-1px);
+  }
+  .floating-card:active {
+    box-shadow: var(--float-shadow-active);
+    transform: translateY(0);
+    transition-duration: 100ms;
+  }
+
+  /* Hover lift */
+  .hover-lift {
+    transition: box-shadow 220ms ease-out, transform 220ms ease-out;
+  }
+  .hover-lift:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--float-shadow-hover);
+  }
+
+  /* Status pill */
+  .status-pill {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+  }
+
+  /* Link underline */
+  .link-underline {
+    @apply relative;
+  }
+  .link-underline::after {
+    content: '';
+    @apply absolute bottom-0 left-0 w-full h-0.5 bg-primary scale-x-0 origin-right;
+    transition: transform 250ms cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .link-underline:hover::after {
+    @apply scale-x-100 origin-left;
+  }
+
+  /* Mobile card list — stacked floating cards */
+  .mobile-card-list {
+    @apply flex flex-col gap-3;
+  }
+  .mobile-card-list > * {
+    @apply floating-card p-4;
+  }
+
+  /* Bottom nav safe area */
+  .pb-bottom-nav {
+    padding-bottom: calc(4.5rem + env(safe-area-inset-bottom, 0px));
+  }
+
+  /* FAB positioning */
+  .fab-position {
+    position: fixed;
+    right: 1.25rem;
+    bottom: calc(5.5rem + env(safe-area-inset-bottom, 0px));
+    z-index: 45;
+  }
+
+  @media (min-width: 768px) {
+    .fab-position {
+      bottom: 2rem;
+      right: 2rem;
+    }
+    .pb-bottom-nav {
+      padding-bottom: 0;
+    }
+  }
+
+  /* ── Premium input glow ── */
+  .input-glow:focus-within {
+    box-shadow: 0 0 0 3px hsl(var(--primary) / 0.1), var(--float-shadow);
+  }
+
+  /* ── Atmospheric section ── */
+  .section-atmospheric {
+    @apply relative;
+  }
+  .section-atmospheric::before {
+    content: '';
+    @apply absolute inset-0 pointer-events-none;
+    background: radial-gradient(ellipse 100% 60% at 50% -10%, hsl(var(--glow-primary) / 0.03) 0%, transparent 70%);
+  }
+}
+
+@layer utilities {
+  .text-gradient {
+    @apply bg-clip-text text-transparent;
+    background-image: linear-gradient(135deg, hsl(222 72% 52%), hsl(222 60% 62%));
+  }
+  .rounded-2xl { border-radius: 1rem; }
+  .rounded-3xl { border-radius: 1.5rem; }
+  .backdrop-blur-xs { backdrop-filter: blur(2px); }
+
+  /* Mobile compact text */
+  .text-compact {
+    @apply text-xs sm:text-sm;
+  }
+  .text-compact-sm {
+    font-size: 0.6875rem;
+    line-height: 1rem;
+  }
+  @media (min-width: 640px) {
+    .text-compact-sm {
+      font-size: 0.75rem;
+      line-height: 1rem;
+    }
+  }
+
+  /* Tap target enforcement */
+  .tap-target {
+    min-height: 44px;
+    min-width: 44px;
+  }
+}
+
+/* TipTap Editor Styles */
+.tiptap {
+  outline: none;
+}
+.tiptap p { margin: 0.25em 0; }
+.tiptap h2 { font-size: 1.25em; font-weight: 600; margin: 0.5em 0 0.25em; }
+.tiptap h3 { font-size: 1.1em; font-weight: 600; margin: 0.4em 0 0.2em; }
+.tiptap ul, .tiptap ol { padding-left: 1.5em; margin: 0.25em 0; }
+.tiptap ul { list-style-type: disc; }
+.tiptap ol { list-style-type: decimal; }
+.tiptap table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 0.5em 0;
+}
+.tiptap th, .tiptap td {
+  border: 1px solid hsl(var(--border));
+  padding: 0.35em 0.5em;
+  font-size: 0.85em;
+  min-width: 60px;
+}
+.tiptap th {
+  background: hsl(var(--muted));
+  font-weight: 600;
+}

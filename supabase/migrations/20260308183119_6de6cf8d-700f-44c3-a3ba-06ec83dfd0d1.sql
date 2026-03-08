@@ -1,0 +1,1 @@
+ALTER TABLE public.email_settings ADD COLUMN IF NOT EXISTS brevo_sender_email text;
