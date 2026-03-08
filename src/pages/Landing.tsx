@@ -71,6 +71,8 @@ const TESTIMONIALS = [
   { name: "Andi Pratama", role: "CEO, Studio Kreatif", text: "Akhirnya satu tool yang bisa handle semua dari project tracking sampai payroll. Produktivitas tim naik 40%.", avatar: "A" },
   { name: "Sarah Chen", role: "COO, MediaHaus", text: "Fitur editorial planning dan client hub-nya game changer banget untuk content agency kami.", avatar: "S" },
   { name: "Budi Santoso", role: "Founder, PixelCraft", text: "Pindah dari 5 tools berbeda ke WORKA menghemat jam kerja kami setiap minggu.", avatar: "B" },
+];
+
 const formatRupiah = (n: number) => "Rp " + n.toLocaleString("id-ID");
 const formatShort = (n: number) => {
   if (n >= 1_000_000) return `Rp${(n / 1_000_000).toFixed(n % 1_000_000 === 0 ? 0 : 1)}M`;
