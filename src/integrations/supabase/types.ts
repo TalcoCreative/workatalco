@@ -5692,7 +5692,9 @@ export type Database = {
       }
       subscription_products: {
         Row: {
+          annual_multiplier: number
           created_at: string
+          default_users: number
           description: string | null
           features: Json | null
           id: string
@@ -5709,7 +5711,9 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          annual_multiplier?: number
           created_at?: string
+          default_users?: number
           description?: string | null
           features?: Json | null
           id?: string
@@ -5726,7 +5730,9 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          annual_multiplier?: number
           created_at?: string
+          default_users?: number
           description?: string | null
           features?: Json | null
           id?: string

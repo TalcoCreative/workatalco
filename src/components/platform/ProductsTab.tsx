@@ -79,6 +79,8 @@ function ProductsSection() {
         features: item.features || [],
         is_popular: item.is_popular ?? false,
         not_included: item.not_included || [],
+        annual_multiplier: item.annual_multiplier ?? 10,
+        default_users: item.default_users ?? 1,
       };
       if (item.id) {
         const { error } = await supabase
@@ -118,12 +120,13 @@ function ProductsSection() {
       price_per_user: 0, original_price_per_user: null,
       max_users: 10, is_active: true, sort_order: products.length,
       features: [], is_popular: false, not_included: [],
+      annual_multiplier: 10, default_users: 1,
     });
     setEditOpen(true);
   };
 
   const openEdit = (p: any) => {
-    setEditItem({ ...p, features: p.features || [], not_included: p.not_included || [], is_popular: p.is_popular ?? false });
+    setEditItem({ ...p, features: p.features || [], not_included: p.not_included || [], is_popular: p.is_popular ?? false, annual_multiplier: p.annual_multiplier ?? 10, default_users: p.default_users ?? 1 });
     setEditOpen(true);
   };
 
@@ -263,6 +266,30 @@ function ProductsSection() {
                     onChange={(e) => setEditItem({ ...editItem, original_price_per_user: e.target.value ? parseInt(e.target.value) : null })}
                     placeholder="Harga sebelum diskon"
                   />
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div className="space-y-1.5">
+                  <Label className="text-xs">Annual Multiplier (bulan)</Label>
+                  <Input
+                    type="number"
+                    value={editItem.annual_multiplier ?? 10}
+                    onChange={(e) => setEditItem({ ...editItem, annual_multiplier: parseInt(e.target.value) || 10 })}
+                    placeholder="10 = bayar 10 bulan untuk 12 bulan"
+                    min={1}
+                    max={12}
+                  />
+                  <p className="text-[10px] text-muted-foreground">Bayar X bulan untuk 12 bulan (10 = hemat 17%)</p>
+                </div>
+                <div className="space-y-1.5">
+                  <Label className="text-xs">Default Users (slider)</Label>
+                  <Input
+                    type="number"
+                    value={editItem.default_users ?? 1}
+                    onChange={(e) => setEditItem({ ...editItem, default_users: parseInt(e.target.value) || 1 })}
+                    min={1}
+                  />
+                  <p className="text-[10px] text-muted-foreground">Posisi awal slider user di pricing page</p>
                 </div>
               </div>
               <div className="space-y-1.5">
