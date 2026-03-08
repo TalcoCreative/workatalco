@@ -538,6 +538,22 @@ export default function Landing() {
             <p className="text-muted-foreground text-lg">Bayar per user. Scale sesuai pertumbuhan. Semua dalam IDR.</p>
           </AnimateIn>
 
+          {/* Free Trial Banner */}
+          <AnimateIn className="mb-10">
+            <div className="rounded-2xl border border-primary/20 bg-gradient-to-r from-primary/5 via-primary/10 to-primary/5 p-6 md:p-8 flex flex-col md:flex-row items-center justify-between gap-4">
+              <div>
+                <Badge className="mb-2 bg-primary/10 text-primary border-primary/20 font-bold text-[10px] uppercase tracking-wider">Free Trial</Badge>
+                <h3 className="text-xl font-bold text-foreground">Coba Gratis 14 Hari — Akses Enterprise</h3>
+                <p className="text-sm text-muted-foreground mt-1">Akses semua fitur premium tanpa kartu kredit. Maksimal 3 user.</p>
+              </div>
+              <Link to="/signup">
+                <Button size="lg" className="gap-2 px-8 shadow-glow-primary rounded-2xl font-bold whitespace-nowrap">
+                  <Sparkles className="h-4 w-4" /> Mulai Free Trial
+                </Button>
+              </Link>
+            </div>
+          </AnimateIn>
+
           <div className="grid gap-6 lg:grid-cols-3 items-start">
             {TIERS.map((t, i) => {
               const users = userCounts[i] || 3;
