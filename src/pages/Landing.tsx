@@ -267,7 +267,7 @@ export default function Landing() {
             ) : (
               <>
                 <Link to="/auth"><Button variant="ghost" size="sm" className="font-medium hidden sm:inline-flex">Login</Button></Link>
-                <Link to="/subscribe"><Button size="sm" className="shadow-glow-primary rounded-xl font-semibold">Daftar Gratis</Button></Link>
+                <Link to="/signup"><Button size="sm" className="shadow-glow-primary rounded-xl font-semibold">Free Trial</Button></Link>
               </>
             )}
           </div>
@@ -316,9 +316,9 @@ export default function Landing() {
 
           <AnimateIn delay={360}>
             <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
-              <Link to="/subscribe">
+              <Link to="/signup">
                 <Button size="lg" className="gap-2 px-10 shadow-glow-primary text-base h-14 rounded-2xl font-bold group">
-                  Mulai Gratis <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                  Mulai Free Trial <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
                 </Button>
               </Link>
               <Button size="lg" variant="outline" className="gap-2 px-8 text-base h-14 rounded-2xl font-semibold border-border/50 hover:bg-card hover:shadow-soft-lg transition-all" onClick={() => setDemoOpen(true)}>
