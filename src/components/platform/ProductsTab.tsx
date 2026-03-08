@@ -291,9 +291,9 @@ function ProductsSection() {
                   />
                   <p className="text-[10px] text-muted-foreground">Posisi awal slider user di pricing page</p>
                 </div>
-                </div>
               </div>
               <div className="space-y-1.5">
+                <Label className="text-xs">Fitur / Included (satu per baris)</Label>
                 <Textarea
                   value={Array.isArray(editItem.features) ? editItem.features.join("\n") : ""}
                   onChange={(e) => setEditItem({ ...editItem, features: e.target.value.split("\n").filter((f: string) => f.trim()) })}
