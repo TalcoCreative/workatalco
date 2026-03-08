@@ -111,6 +111,38 @@ serve(async (req) => {
       console.error("Role insert error:", roleError);
     }
 
+    // 4b. Seed default roles if not already seeded
+    const { data: existingDynRoles } = await supabaseAdmin
+      .from("dynamic_roles")
+      .select("id")
+      .limit(1);
+
+    if (!existingDynRoles || existingDynRoles.length === 0) {
+      console.log("Seeding default roles...");
+      const seedRes = await fetch(`${supabaseUrl}/functions/v1/seed-default-roles`, {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")}`,
+          "Content-Type": "application/json",
+        },
+      });
+      console.log("Seed roles result:", seedRes.status);
+    }
+
+    // 4c. Auto-assign Super Admin dynamic role to owner
+    const { data: superAdminDynRole } = await supabaseAdmin
+      .from("dynamic_roles")
+      .select("id")
+      .eq("name", "Super Admin")
+      .maybeSingle();
+
+    if (superAdminDynRole) {
+      await supabaseAdmin.from("user_dynamic_roles").upsert(
+        { user_id: adminUserId, role_id: superAdminDynRole.id },
+        { onConflict: "user_id" }
+      );
+      console.log("Assigned Super Admin dynamic role to owner");
+    }
     // 5. Create subscription record
     const periodEnd = new Date();
     periodEnd.setMonth(periodEnd.getMonth() + 1);
