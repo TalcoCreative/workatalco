@@ -268,6 +268,29 @@ function ProductsSection() {
                   />
                 </div>
               </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div className="space-y-1.5">
+                  <Label className="text-xs">Annual Multiplier (bulan)</Label>
+                  <Input
+                    type="number"
+                    value={editItem.annual_multiplier ?? 10}
+                    onChange={(e) => setEditItem({ ...editItem, annual_multiplier: parseInt(e.target.value) || 10 })}
+                    placeholder="10 = bayar 10 bulan untuk 12 bulan"
+                    min={1}
+                    max={12}
+                  />
+                  <p className="text-[10px] text-muted-foreground">Bayar X bulan untuk 12 bulan (10 = hemat 17%)</p>
+                </div>
+                <div className="space-y-1.5">
+                  <Label className="text-xs">Default Users (slider)</Label>
+                  <Input
+                    type="number"
+                    value={editItem.default_users ?? 1}
+                    onChange={(e) => setEditItem({ ...editItem, default_users: parseInt(e.target.value) || 1 })}
+                    min={1}
+                  />
+                  <p className="text-[10px] text-muted-foreground">Posisi awal slider user di pricing page</p>
+                </div>
               <div className="space-y-1.5">
                 <Label className="text-xs">Fitur / Included (satu per baris)</Label>
                 <Textarea
