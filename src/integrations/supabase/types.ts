@@ -5697,8 +5697,10 @@ export type Database = {
           features: Json | null
           id: string
           is_active: boolean
+          is_popular: boolean
           max_users: number
           name: string
+          not_included: Json | null
           original_price_per_user: number | null
           price_per_user: number
           slug: string
@@ -5712,8 +5714,10 @@ export type Database = {
           features?: Json | null
           id?: string
           is_active?: boolean
+          is_popular?: boolean
           max_users?: number
           name: string
+          not_included?: Json | null
           original_price_per_user?: number | null
           price_per_user?: number
           slug: string
@@ -5727,8 +5731,10 @@ export type Database = {
           features?: Json | null
           id?: string
           is_active?: boolean
+          is_popular?: boolean
           max_users?: number
           name?: string
+          not_included?: Json | null
           original_price_per_user?: number | null
           price_per_user?: number
           slug?: string

@@ -1,90 +1,38 @@
 import { useState } from "react";
-import { Check, ArrowLeft, Users as UsersIcon } from "lucide-react";
+import { Check, ArrowLeft, Users as UsersIcon, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Slider } from "@/components/ui/slider";
 import { Link } from "react-router-dom";
-
-const tiers = [
-  {
-    name: "Starter",
-    subtitle: "Project Management",
-    pricePerUser: 7000,
-    popular: false,
-    maxUsers: 10,
-    features: [
-      "Project & Task Management",
-      "Client Management",
-      "Schedule & Calendar",
-      "Team Collaboration",
-      "File Sharing (5GB)",
-      "Up to 10 Users",
-    ],
-    notIncluded: [
-      "HR & Attendance",
-      "Finance & Payroll",
-      "Social Media Management",
-      "KOL Campaign",
-      "Advanced Analytics",
-    ],
-  },
-  {
-    name: "Professional",
-    subtitle: "Operational Agency",
-    pricePerUser: 21000,
-    popular: true,
-    maxUsers: 30,
-    features: [
-      "Everything in Starter",
-      "HR Dashboard & Attendance",
-      "Leave Management",
-      "Shooting Schedule",
-      "Meeting Management",
-      "Asset Tracking",
-      "Editorial Plan",
-      "Client Hub & Reports",
-      "Up to 30 Users",
-      "File Storage (25GB)",
-    ],
-    notIncluded: [
-      "Finance & Payroll",
-      "KOL Campaign",
-      "CEO Dashboard",
-    ],
-  },
-  {
-    name: "Enterprise",
-    subtitle: "Full ERP Agency",
-    pricePerUser: 25000,
-    popular: false,
-    maxUsers: 100,
-    features: [
-      "Everything in Professional",
-      "Finance & Bookkeeping",
-      "Payroll Management",
-      "Social Media Analytics",
-      "KOL Database & Campaign",
-      "CEO Executive Dashboard",
-      "Performance Analytics",
-      "Recruitment Module",
-      "Custom Forms & Letters",
-      "Up to 100 Users",
-      "Unlimited Storage",
-      "Priority Support",
-    ],
-    notIncluded: [],
-  },
-];
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 
 const formatRupiah = (n: number) =>
   "Rp " + n.toLocaleString("id-ID");
 
 export default function Pricing() {
-  const [userCounts, setUserCounts] = useState<Record<number, number>>({ 0: 3, 1: 5, 2: 10 });
+  const [userCounts, setUserCounts] = useState<Record<number, number>>({});
 
-  const handleSliderChange = (tierIdx: number, value: number[]) => {
-    setUserCounts(prev => ({ ...prev, [tierIdx]: value[0] }));
+  const { data: products = [], isLoading } = useQuery({
+    queryKey: ["pricing-products"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("subscription_products")
+        .select("*")
+        .eq("is_active", true)
+        .order("sort_order");
+      if (error) throw error;
+      return data;
+    },
+  });
+
+  const getUsers = (idx: number, maxUsers: number) => {
+    return userCounts[idx] ?? Math.min(3, maxUsers);
+  };
+
+  const handleSliderChange = (idx: number, value: number[]) => {
+    setUserCounts(prev => ({ ...prev, [idx]: value[0] }));
   };
 
   return (
@@ -118,91 +66,114 @@ export default function Pricing() {
           </p>
         </div>
 
+        {/* Loading */}
+        {isLoading && (
+          <div className="flex justify-center py-20">
+            <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+          </div>
+        )}
+
         {/* Tier Cards */}
-        <div className="grid gap-8 md:grid-cols-3">
-          {tiers.map((tier, idx) => {
-            const users = userCounts[idx] || 3;
-            const totalPrice = tier.pricePerUser * users;
+        {!isLoading && (
+          <div className={`grid gap-8 ${products.length === 1 ? 'max-w-md mx-auto' : products.length === 2 ? 'md:grid-cols-2 max-w-3xl mx-auto' : 'md:grid-cols-3'}`}>
+            {products.map((product: any, idx: number) => {
+              const users = getUsers(idx, product.max_users);
+              const totalPrice = product.price_per_user * users;
+              const features: string[] = Array.isArray(product.features) ? product.features : [];
+              const notIncluded: string[] = Array.isArray(product.not_included) ? product.not_included : [];
+              const isPopular = product.is_popular === true;
 
-            return (
-              <Card
-                key={tier.name}
-                className={`relative flex flex-col border-border/50 transition-all hover:shadow-lg ${
-                  tier.popular ? "border-primary/50 shadow-md scale-[1.02]" : ""
-                }`}
-              >
-                {tier.popular && (
-                  <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                    <Badge className="bg-primary text-primary-foreground shadow-sm">Most Popular</Badge>
-                  </div>
-                )}
-                <CardHeader className="pb-2">
-                  <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">{tier.subtitle}</p>
-                  <CardTitle className="text-2xl">{tier.name}</CardTitle>
-                  <div className="mt-3">
-                    <span className="text-4xl font-bold text-foreground">{formatRupiah(tier.pricePerUser)}</span>
-                    <span className="text-sm text-muted-foreground ml-1">/ user / bulan</span>
-                  </div>
-
-                  {/* User count slider */}
-                  <div className="mt-4 space-y-2">
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="flex items-center gap-1.5 text-muted-foreground">
-                        <UsersIcon className="h-3.5 w-3.5" />
-                        {users} users
-                      </span>
-                      <span className="font-semibold text-foreground">
-                        {formatRupiah(totalPrice)}<span className="text-xs font-normal text-muted-foreground">/bln</span>
-                      </span>
+              return (
+                <Card
+                  key={product.id}
+                  className={`relative flex flex-col border-border/50 transition-all hover:shadow-lg ${
+                    isPopular ? "border-primary/50 shadow-md scale-[1.02]" : ""
+                  }`}
+                >
+                  {isPopular && (
+                    <div className="absolute -top-3 left-1/2 -translate-x-1/2">
+                      <Badge className="bg-primary text-primary-foreground shadow-sm">Most Popular</Badge>
                     </div>
-                    <Slider
-                      value={[users]}
-                      onValueChange={(v) => handleSliderChange(idx, v)}
-                      min={1}
-                      max={tier.maxUsers}
-                      step={1}
-                      className="w-full"
-                    />
-                    <div className="flex justify-between text-[10px] text-muted-foreground">
-                      <span>1 user</span>
-                      <span>{tier.maxUsers} users</span>
-                    </div>
-                  </div>
-                </CardHeader>
-                <CardContent className="flex-1 flex flex-col">
-                  <Link to="/signup" className="w-full mb-6">
-                    <Button className="w-full" variant={tier.popular ? "default" : "outline"}>
-                      Start Free Trial
-                    </Button>
-                  </Link>
-
-                  <div className="space-y-3 flex-1">
-                    <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Included</p>
-                    {tier.features.map((f) => (
-                      <div key={f} className="flex items-start gap-2.5 text-sm">
-                        <Check className="h-4 w-4 text-primary shrink-0 mt-0.5" />
-                        <span className="text-foreground">{f}</span>
-                      </div>
-                    ))}
-                    {tier.notIncluded.length > 0 && (
-                      <>
-                        <div className="pt-2">
-                          <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Not Included</p>
-                        </div>
-                        {tier.notIncluded.map((f) => (
-                          <div key={f} className="flex items-start gap-2.5 text-sm">
-                            <span className="h-4 w-4 shrink-0 mt-0.5 text-center text-muted-foreground/50">—</span>
-                            <span className="text-muted-foreground">{f}</span>
-                          </div>
-                        ))}
-                      </>
+                  )}
+                  <CardHeader className="pb-2">
+                    {product.description && (
+                      <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">{product.description}</p>
                     )}
-                  </div>
-                </CardContent>
-              </Card>
-            );
-          })}
-        </div>
+                    <CardTitle className="text-2xl">{product.name}</CardTitle>
+                    <div className="mt-3">
+                      {product.original_price_per_user && product.original_price_per_user > product.price_per_user && (
+                        <span className="text-lg text-muted-foreground line-through mr-2">
+                          {formatRupiah(product.original_price_per_user)}
+                        </span>
+                      )}
+                      <span className="text-4xl font-bold text-foreground">{formatRupiah(product.price_per_user)}</span>
+                      <span className="text-sm text-muted-foreground ml-1">/ user / bulan</span>
+                    </div>
+
+                    {/* User count slider */}
+                    <div className="mt-4 space-y-2">
+                      <div className="flex items-center justify-between text-sm">
+                        <span className="flex items-center gap-1.5 text-muted-foreground">
+                          <UsersIcon className="h-3.5 w-3.5" />
+                          {users} users
+                        </span>
+                        <span className="font-semibold text-foreground">
+                          {formatRupiah(totalPrice)}<span className="text-xs font-normal text-muted-foreground">/bln</span>
+                        </span>
+                      </div>
+                      <Slider
+                        value={[users]}
+                        onValueChange={(v) => handleSliderChange(idx, v)}
+                        min={1}
+                        max={product.max_users}
+                        step={1}
+                        className="w-full"
+                      />
+                      <div className="flex justify-between text-[10px] text-muted-foreground">
+                        <span>1 user</span>
+                        <span>{product.max_users} users</span>
+                      </div>
+                    </div>
+                  </CardHeader>
+                  <CardContent className="flex-1 flex flex-col">
+                    <Link to="/signup" className="w-full mb-6">
+                      <Button className="w-full" variant={isPopular ? "default" : "outline"}>
+                        Start Free Trial
+                      </Button>
+                    </Link>
+
+                    <div className="space-y-3 flex-1">
+                      {features.length > 0 && (
+                        <>
+                          <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Included</p>
+                          {features.map((f: string) => (
+                            <div key={f} className="flex items-start gap-2.5 text-sm">
+                              <Check className="h-4 w-4 text-primary shrink-0 mt-0.5" />
+                              <span className="text-foreground">{f}</span>
+                            </div>
+                          ))}
+                        </>
+                      )}
+                      {notIncluded.length > 0 && (
+                        <>
+                          <div className="pt-2">
+                            <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Not Included</p>
+                          </div>
+                          {notIncluded.map((f: string) => (
+                            <div key={f} className="flex items-start gap-2.5 text-sm">
+                              <span className="h-4 w-4 shrink-0 mt-0.5 text-center text-muted-foreground/50">—</span>
+                              <span className="text-muted-foreground">{f}</span>
+                            </div>
+                          ))}
+                        </>
+                      )}
+                    </div>
+                  </CardContent>
+                </Card>
+              );
+            })}
+          </div>
+        )}
 
         {/* FAQ */}
         <div className="mt-24 max-w-3xl mx-auto">

@@ -66,38 +66,30 @@ function ProductsSection() {
 
   const saveMutation = useMutation({
     mutationFn: async (item: any) => {
+      const payload = {
+        name: item.name,
+        slug: item.slug,
+        description: item.description,
+        tier: item.tier,
+        price_per_user: item.price_per_user,
+        original_price_per_user: item.original_price_per_user || null,
+        max_users: item.max_users,
+        is_active: item.is_active ?? true,
+        sort_order: item.sort_order || products.length,
+        features: item.features || [],
+        is_popular: item.is_popular ?? false,
+        not_included: item.not_included || [],
+      };
       if (item.id) {
         const { error } = await supabase
           .from("subscription_products")
-          .update({
-            name: item.name,
-            slug: item.slug,
-            description: item.description,
-            tier: item.tier,
-            price_per_user: item.price_per_user,
-            original_price_per_user: item.original_price_per_user || null,
-            max_users: item.max_users,
-            is_active: item.is_active,
-            sort_order: item.sort_order,
-            features: item.features,
-          })
+          .update(payload)
           .eq("id", item.id);
         if (error) throw error;
       } else {
         const { error } = await supabase
           .from("subscription_products")
-          .insert({
-            name: item.name,
-            slug: item.slug,
-            description: item.description,
-            tier: item.tier,
-            price_per_user: item.price_per_user,
-            original_price_per_user: item.original_price_per_user || null,
-            max_users: item.max_users,
-            is_active: item.is_active ?? true,
-            sort_order: item.sort_order || products.length,
-            features: item.features || [],
-          });
+          .insert(payload);
         if (error) throw error;
       }
     },
@@ -125,13 +117,13 @@ function ProductsSection() {
       name: "", slug: "", description: "", tier: "starter",
       price_per_user: 0, original_price_per_user: null,
       max_users: 10, is_active: true, sort_order: products.length,
-      features: [],
+      features: [], is_popular: false, not_included: [],
     });
     setEditOpen(true);
   };
 
   const openEdit = (p: any) => {
-    setEditItem({ ...p, features: p.features || [] });
+    setEditItem({ ...p, features: p.features || [], not_included: p.not_included || [], is_popular: p.is_popular ?? false });
     setEditOpen(true);
   };
 
@@ -274,7 +266,7 @@ function ProductsSection() {
                 </div>
               </div>
               <div className="space-y-1.5">
-                <Label className="text-xs">Fitur (satu per baris)</Label>
+                <Label className="text-xs">Fitur / Included (satu per baris)</Label>
                 <Textarea
                   value={Array.isArray(editItem.features) ? editItem.features.join("\n") : ""}
                   onChange={(e) => setEditItem({ ...editItem, features: e.target.value.split("\n").filter((f: string) => f.trim()) })}
@@ -282,9 +274,24 @@ function ProductsSection() {
                   placeholder="Projects & Tasks&#10;Client Management&#10;..."
                 />
               </div>
-              <div className="flex items-center gap-2">
-                <Switch checked={editItem.is_active} onCheckedChange={(v) => setEditItem({ ...editItem, is_active: v })} />
-                <Label className="text-sm">Aktif</Label>
+              <div className="space-y-1.5">
+                <Label className="text-xs">Not Included (satu per baris)</Label>
+                <Textarea
+                  value={Array.isArray(editItem.not_included) ? editItem.not_included.join("\n") : ""}
+                  onChange={(e) => setEditItem({ ...editItem, not_included: e.target.value.split("\n").filter((f: string) => f.trim()) })}
+                  rows={3}
+                  placeholder="Finance & Payroll&#10;KOL Campaign&#10;..."
+                />
+              </div>
+              <div className="flex items-center gap-4">
+                <div className="flex items-center gap-2">
+                  <Switch checked={editItem.is_active} onCheckedChange={(v) => setEditItem({ ...editItem, is_active: v })} />
+                  <Label className="text-sm">Aktif</Label>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Switch checked={editItem.is_popular} onCheckedChange={(v) => setEditItem({ ...editItem, is_popular: v })} />
+                  <Label className="text-sm">Popular Badge</Label>
+                </div>
               </div>
             </div>
           )}
