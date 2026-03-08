@@ -97,8 +97,8 @@ const App = () => (
           <Route path="/blog" element={<Blog />} />
           <Route path="/blog/:slug" element={<BlogPost />} />
 
-          {/* Auto-redirect to /:slug/ */}
-          <Route path="/" element={<ProtectedRoute><WorkspaceRedirect /></ProtectedRoute>} />
+          {/* Default landing page */}
+          <Route path="/" element={<Navigate to="/landing" replace />} />
 
           {/* Platform Admin (global, not per-company) */}
           <Route path="/platform-admin" element={<ProtectedRoute><SuperAdmin /></ProtectedRoute>} />
