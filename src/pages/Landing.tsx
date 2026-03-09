@@ -36,29 +36,33 @@ const STATIC_FALLBACKS: Record<string, string> = {
   "screenshot-finance": screenshotFinanceFallback,
 };
 
-/* ─── Data ─── */
-const FEATURES = [
-  { icon: Briefcase, title: "Project & Task Management", desc: "Kanban board, timeline, deadline tracking, dan resource allocation untuk seluruh project tim kreatif Anda.", color: "from-blue-500/20 to-blue-600/5" },
-  { icon: Users, title: "HR & Team Analytics", desc: "Attendance, cuti, performa karyawan, dan workforce analytics. Dirancang khusus untuk tim agensi.", color: "from-violet-500/20 to-violet-600/5" },
-  { icon: Calendar, title: "Social Media & Editorial", desc: "Editorial planning, content calendar, dan social media management untuk creative agency.", color: "from-pink-500/20 to-pink-600/5" },
-  { icon: Receipt, title: "Finance & Recording", desc: "Pencatatan income, expense, payroll, reimbursement, dan laporan keuangan terintegrasi.", color: "from-emerald-500/20 to-emerald-600/5" },
-  { icon: Monitor, title: "Executive Dashboard", desc: "Overview level CEO dengan KPI, revenue tracking, dan performa tim real-time.", color: "from-amber-500/20 to-amber-600/5" },
-  { icon: FileText, title: "Client Hub & CRM", desc: "Kelola klien, kontrak, kuota, pembayaran, dan shared dashboard terorganisir.", color: "from-cyan-500/20 to-cyan-600/5" },
-  { icon: Video, title: "Shooting & Event", desc: "Jadwalkan shooting dan event. Track crew, vendor, checklist, dan dokumen.", color: "from-orange-500/20 to-orange-600/5" },
-  { icon: UserSearch, title: "Recruitment System", desc: "Pipeline rekrutmen dari lamaran hingga onboarding, form builder, dan assessment.", color: "from-rose-500/20 to-rose-600/5" },
-  { icon: Sparkles, title: "AI Content Builder", desc: "Generate caption, artikel, dan copy kreatif secara instan dengan AI.", color: "from-indigo-500/20 to-indigo-600/5" },
+/* ─── Fallback Data ─── */
+const FEATURES_FALLBACK = [
+  { icon: "Briefcase", title: "Project & Task Management", desc: "Kanban board, timeline, deadline tracking, dan resource allocation untuk seluruh project tim kreatif Anda." },
+  { icon: "Users", title: "HR & Team Analytics", desc: "Attendance, cuti, performa karyawan, dan workforce analytics. Dirancang khusus untuk tim agensi." },
+  { icon: "Calendar", title: "Social Media & Editorial", desc: "Editorial planning, content calendar, dan social media management untuk creative agency." },
+  { icon: "Receipt", title: "Finance & Recording", desc: "Pencatatan income, expense, payroll, reimbursement, dan laporan keuangan terintegrasi." },
+  { icon: "Monitor", title: "Executive Dashboard", desc: "Overview level CEO dengan KPI, revenue tracking, dan performa tim real-time." },
+  { icon: "FileText", title: "Client Hub & CRM", desc: "Kelola klien, kontrak, kuota, pembayaran, dan shared dashboard terorganisir." },
+  { icon: "Video", title: "Shooting & Event", desc: "Jadwalkan shooting dan event. Track crew, vendor, checklist, dan dokumen." },
+  { icon: "UserSearch", title: "Recruitment System", desc: "Pipeline rekrutmen dari lamaran hingga onboarding, form builder, dan assessment." },
+  { icon: "Sparkles", title: "AI Content Builder", desc: "Generate caption, artikel, dan copy kreatif secara instan dengan AI." },
 ];
 
-const PRODUCT_SCREENSHOTS = [
+const SCREENSHOTS_FALLBACK = [
   { title: "Dashboard & Projects", imgKey: "screenshot-dashboard", desc: "Real-time KPIs, project tracking, dan kanban board untuk mengelola seluruh workflow tim.", tag: "Core" },
   { title: "Schedule & Calendar", imgKey: "screenshot-schedule", desc: "Unified calendar dengan tasks, meetings, shootings, dan events dalam satu tampilan.", tag: "Planning" },
   { title: "HR & People Analytics", imgKey: "screenshot-hr", desc: "Dashboard attendance, leave management, performa tim, dan workforce statistics.", tag: "HR" },
   { title: "Finance Center", imgKey: "screenshot-finance", desc: "Pencatatan income, expense, payroll, dan laporan keuangan untuk bisnis Anda.", tag: "Finance" },
 ];
 
-// TIERS now loaded from database (subscription_products)
+const TESTIMONIALS_FALLBACK = [
+  { name: "Andi Pratama", role: "CEO, Studio Kreatif", text: "Akhirnya satu tool yang bisa handle semua dari project tracking sampai payroll. Produktivitas tim naik 40%.", avatar: "A" },
+  { name: "Sarah Chen", role: "COO, MediaHaus", text: "Fitur editorial planning dan client hub-nya game changer banget untuk content agency kami.", avatar: "S" },
+  { name: "Budi Santoso", role: "Founder, PixelCraft", text: "Pindah dari 5 tools berbeda ke WORKA menghemat jam kerja kami setiap minggu.", avatar: "B" },
+];
 
-const FAQS = [
+const FAQS_FALLBACK = [
   { q: "Berapa lama free trial-nya?", a: "Setiap workspace baru mendapat 14 hari free trial dengan maksimal 3 user. Tanpa kartu kredit." },
   { q: "Bisa upgrade atau downgrade kapan saja?", a: "Ya, Anda bisa mengubah tier subscription kapan saja. Perubahan langsung berlaku." },
   { q: "Apakah data saya aman?", a: "Tentu. Kami menggunakan enkripsi enterprise-grade, row-level security, dan isolasi data antar workspace." },
@@ -67,11 +71,10 @@ const FAQS = [
   { q: "Apakah support pembayaran lokal?", a: "Ya, kami mendukung payment gateway Indonesia untuk transaksi Rupiah yang seamless." },
 ];
 
-const TESTIMONIALS = [
-  { name: "Andi Pratama", role: "CEO, Studio Kreatif", text: "Akhirnya satu tool yang bisa handle semua dari project tracking sampai payroll. Produktivitas tim naik 40%.", avatar: "A" },
-  { name: "Sarah Chen", role: "COO, MediaHaus", text: "Fitur editorial planning dan client hub-nya game changer banget untuk content agency kami.", avatar: "S" },
-  { name: "Budi Santoso", role: "Founder, PixelCraft", text: "Pindah dari 5 tools berbeda ke WORKA menghemat jam kerja kami setiap minggu.", avatar: "B" },
-];
+const ICON_MAP: Record<string, any> = {
+  Briefcase, Users, Calendar, Receipt, Monitor, FileText, Video, UserSearch, Sparkles,
+  Globe, Shield, Layers, Star, Zap, Play, ArrowRight,
+};
 
 const formatRupiah = (n: number) => "Rp " + n.toLocaleString("id-ID");
 const formatShort = (n: number) => {
@@ -204,6 +207,40 @@ export default function Landing() {
     },
   });
 
+  const { data: landingContent = [] } = useQuery({
+    queryKey: ["landing-content-public"],
+    queryFn: async () => {
+      const { data } = await supabase.from("landing_content").select("section, content");
+      return data || [];
+    },
+  });
+
+  const getContent = (section: string): any => {
+    const found = landingContent.find((c: any) => c.section === section);
+    return found?.content || {};
+  };
+
+  // Derived dynamic content with fallbacks
+  const heroContent = getContent("hero");
+  const trustContent = getContent("trust_bar");
+  const featuresContent = getContent("features");
+  const showcaseContent = getContent("product_showcase");
+  const howContent = getContent("how_it_works");
+  const pricingContent = getContent("pricing");
+  const testimonialsContent = getContent("testimonials");
+  const whyContent = getContent("why_worka");
+  const faqContent = getContent("faq");
+  const ctaContent = getContent("final_cta");
+  const footerContent = getContent("footer");
+
+  const FEATURES = (featuresContent.items || FEATURES_FALLBACK).map((f: any) => ({
+    ...f,
+    icon: ICON_MAP[f.icon] || Star,
+  }));
+  const PRODUCT_SCREENSHOTS = showcaseContent.screenshots || SCREENSHOTS_FALLBACK;
+  const TESTIMONIALS = testimonialsContent.items || TESTIMONIALS_FALLBACK;
+  const FAQS = faqContent.items || FAQS_FALLBACK;
+
   const getImg = (key: string) => {
     const found = landingImages.find((img: any) => img.image_key === key);
     return (found?.image_url && !found.image_url.startsWith("/assets")) ? found.image_url : STATIC_FALLBACKS[key] || "";
@@ -282,17 +319,17 @@ export default function Landing() {
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75" />
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-primary" />
               </span>
-              14 Hari Free Trial — Tanpa Kartu Kredit
+              {heroContent.badge_text || "14 Hari Free Trial — Tanpa Kartu Kredit"}
             </div>
           </AnimateIn>
 
           <AnimateIn delay={120}>
             <h1 className="mb-6 text-[2.75rem] font-extrabold leading-[1.08] tracking-tight text-foreground sm:text-6xl md:text-[5rem]">
-              Satu Platform untuk
+              {heroContent.title_line1 || "Satu Platform untuk"}
               <br />
               <span className="relative inline-block">
                 <span className="bg-gradient-to-r from-primary via-primary/90 to-primary/60 bg-clip-text text-transparent">
-                  Tim Kreatif Modern
+                  {heroContent.title_line2 || "Tim Kreatif Modern"}
                 </span>
                 <svg className="absolute -bottom-2 left-0 w-full" viewBox="0 0 300 12" fill="none"><path d="M2 8C50 2 100 2 150 6C200 10 250 4 298 7" stroke="hsl(var(--primary))" strokeWidth="3" strokeLinecap="round" opacity="0.3" /></svg>
               </span>
@@ -300,21 +337,20 @@ export default function Landing() {
           </AnimateIn>
 
           <AnimateIn delay={240}>
-            <p className="mx-auto mb-10 max-w-2xl text-lg text-muted-foreground md:text-xl leading-relaxed">
-              Kelola Projects, HR, Content, Clients, dan Finance dalam satu workspace.
-              Dirancang khusus untuk <strong className="text-foreground font-semibold">creative agency</strong> dan perusahaan jasa.
-            </p>
+            <p className="mx-auto mb-10 max-w-2xl text-lg text-muted-foreground md:text-xl leading-relaxed"
+               dangerouslySetInnerHTML={{ __html: heroContent.subtitle || "Kelola Projects, HR, Content, Clients, dan Finance dalam satu workspace. Dirancang khusus untuk <strong class='text-foreground font-semibold'>creative agency</strong> dan perusahaan jasa." }}
+            />
           </AnimateIn>
 
           <AnimateIn delay={360}>
             <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
               <Link to="/signup">
                 <Button size="lg" className="gap-2 px-10 shadow-glow-primary text-base h-14 rounded-2xl font-bold group">
-                  Mulai Free Trial <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                  {heroContent.cta_primary || "Mulai Free Trial"} <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
                 </Button>
               </Link>
               <Button size="lg" variant="outline" className="gap-2 px-8 text-base h-14 rounded-2xl font-semibold border-border/50 hover:bg-card hover:shadow-soft-lg transition-all" onClick={() => setDemoOpen(true)}>
-                <Play className="h-4 w-4" /> Request Demo
+                <Play className="h-4 w-4" /> {heroContent.cta_secondary || "Request Demo"}
               </Button>
             </div>
           </AnimateIn>
@@ -322,11 +358,11 @@ export default function Landing() {
           {/* Stats bar */}
           <AnimateIn delay={480}>
             <div className="mt-12 flex flex-wrap items-center justify-center gap-8 md:gap-14 text-center">
-              {[
+              {(heroContent.stats || [
                 { value: 200, suffix: "+", label: "Tim Aktif" },
                 { value: 50, suffix: "K+", label: "Tasks Dikelola" },
                 { value: 99, suffix: "%", label: "Uptime" },
-              ].map((s, i) => (
+              ]).map((s: any, i: number) => (
                 <div key={i}>
                   <div className="text-2xl md:text-3xl font-extrabold text-foreground"><CountUp target={s.value} suffix={s.suffix} /></div>
                   <div className="text-xs text-muted-foreground mt-1 font-medium">{s.label}</div>
@@ -368,9 +404,9 @@ export default function Landing() {
       {/* ══ TRUST BAR ══ */}
       <section className="px-6 py-14 border-y border-border/15">
         <div className="mx-auto max-w-5xl">
-          <p className="text-center text-[11px] font-bold uppercase tracking-[0.25em] text-muted-foreground/50 mb-8">Dipercaya oleh Agensi Kreatif di Indonesia</p>
+          <p className="text-center text-[11px] font-bold uppercase tracking-[0.25em] text-muted-foreground/50 mb-8">{trustContent.title || "Dipercaya oleh Agensi Kreatif di Indonesia"}</p>
           <div className="flex flex-wrap items-center justify-center gap-12 opacity-20">
-            {["StudioKreatif", "MediaHaus", "PixelCraft", "NusaDigital", "KreasiLab"].map(n => (
+            {(trustContent.companies || ["StudioKreatif", "MediaHaus", "PixelCraft", "NusaDigital", "KreasiLab"]).map((n: string) => (
               <div key={n} className="text-xl font-bold text-foreground tracking-tight">{n}</div>
             ))}
           </div>
@@ -381,18 +417,18 @@ export default function Landing() {
       <section id="features" className="px-6 py-28 md:py-36">
         <div className="mx-auto max-w-6xl">
           <AnimateIn className="mb-20 text-center">
-            <Badge variant="outline" className="mb-5 text-primary border-primary/30 bg-primary/5 text-xs font-bold tracking-wider uppercase">Features</Badge>
+            <Badge variant="outline" className="mb-5 text-primary border-primary/30 bg-primary/5 text-xs font-bold tracking-wider uppercase">{featuresContent.badge || "Features"}</Badge>
             <h2 className="mb-5 text-3xl font-extrabold text-foreground md:text-[3.25rem] leading-tight tracking-tight">
-              Semua yang Tim Anda <span className="bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">Butuhkan</span>
+              {(featuresContent.title || "Semua yang Tim Anda Butuhkan").replace(featuresContent.title_highlight || "Butuhkan", "|||").split("|||").map((part: string, idx: number) => idx === 0 ? part : <><span key={idx} className="bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">{featuresContent.title_highlight || "Butuhkan"}</span>{part}</>)}
             </h2>
-            <p className="mx-auto max-w-xl text-muted-foreground text-lg">Satu platform untuk menjalankan seluruh operasional — dari project hingga payroll.</p>
+            <p className="mx-auto max-w-xl text-muted-foreground text-lg">{featuresContent.subtitle || "Satu platform untuk menjalankan seluruh operasional — dari project hingga payroll."}</p>
           </AnimateIn>
 
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {FEATURES.map((f, i) => (
               <AnimateIn key={i} delay={i * 70}>
                 <Card className="group relative overflow-hidden border-border/20 bg-card/70 backdrop-blur-sm transition-all duration-500 hover:shadow-soft-xl hover:-translate-y-2 hover:border-primary/15 h-full">
-                  <div className={`absolute inset-0 bg-gradient-to-br ${f.color} opacity-0 group-hover:opacity-100 transition-opacity duration-500`} />
+                  <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                   <CardContent className="relative p-7">
                     <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/8 text-primary transition-all duration-500 group-hover:bg-primary group-hover:text-primary-foreground group-hover:shadow-glow-primary group-hover:scale-110 group-hover:rotate-3">
                       <f.icon className="h-5 w-5" />
@@ -414,11 +450,11 @@ export default function Landing() {
 
         <div className="relative mx-auto max-w-7xl">
           <AnimateIn className="mb-16 text-center">
-            <Badge variant="outline" className="mb-5 text-primary border-primary/30 bg-primary/5 text-xs font-bold tracking-wider uppercase">Product</Badge>
+            <Badge variant="outline" className="mb-5 text-primary border-primary/30 bg-primary/5 text-xs font-bold tracking-wider uppercase">{showcaseContent.badge || "Product"}</Badge>
             <h2 className="mb-5 text-3xl font-extrabold text-foreground md:text-[3.25rem] leading-tight tracking-tight">
-              Interface yang <span className="bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">Powerful</span>
+              {(showcaseContent.title || "Interface yang Powerful").replace(showcaseContent.title_highlight || "Powerful", "|||").split("|||").map((part: string, idx: number) => idx === 0 ? part : <><span key={idx} className="bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">{showcaseContent.title_highlight || "Powerful"}</span>{part}</>)}
             </h2>
-            <p className="mx-auto max-w-xl text-muted-foreground text-lg">Desain modern yang dirancang untuk produktivitas maksimal.</p>
+            <p className="mx-auto max-w-xl text-muted-foreground text-lg">{showcaseContent.subtitle || "Desain modern yang dirancang untuk produktivitas maksimal."}</p>
           </AnimateIn>
 
           {/* Tabs */}
@@ -493,17 +529,17 @@ export default function Landing() {
         <div className="mx-auto max-w-5xl">
           <AnimateIn className="mb-20 text-center">
             <h2 className="mb-5 text-3xl font-extrabold text-foreground md:text-[3.25rem] leading-tight tracking-tight">
-              Mulai dalam <span className="bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">Hitungan Menit</span>
+              {(howContent.title || "Mulai dalam Hitungan Menit").replace(howContent.title_highlight || "Hitungan Menit", "|||").split("|||").map((part: string, idx: number) => idx === 0 ? part : <><span key={idx} className="bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">{howContent.title_highlight || "Hitungan Menit"}</span>{part}</>)}
             </h2>
-            <p className="text-muted-foreground text-lg">Empat langkah untuk mentransformasi operasi bisnis Anda.</p>
+            <p className="text-muted-foreground text-lg">{howContent.subtitle || "Empat langkah untuk mentransformasi operasi bisnis Anda."}</p>
           </AnimateIn>
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            {[
+            {(howContent.steps || [
               { step: "01", title: "Daftar Akun", desc: "Buat workspace perusahaan dalam hitungan detik." },
               { step: "02", title: "Setup Workspace", desc: "Konfigurasi branding, roles, dan permission." },
               { step: "03", title: "Undang Tim", desc: "Tambahkan anggota dan atur akses granular." },
               { step: "04", title: "Mulai Bekerja", desc: "Semuanya siap — langsung produktif." },
-            ].map((s, i) => (
+            ]).map((s: any, i: number) => (
               <AnimateIn key={i} delay={i * 120}>
                 <div className="relative text-center group p-6 rounded-2xl border border-border/15 bg-card/40 hover:bg-card/80 hover:shadow-soft-lg transition-all duration-500 h-full">
                   <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-primary/15 to-primary/5 text-2xl font-extrabold text-primary transition-all duration-500 group-hover:from-primary group-hover:to-primary/80 group-hover:text-primary-foreground group-hover:shadow-glow-primary group-hover:scale-110">
@@ -523,11 +559,11 @@ export default function Landing() {
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-muted/30 to-background" />
         <div className="relative mx-auto max-w-6xl">
           <AnimateIn className="mb-20 text-center">
-            <Badge variant="outline" className="mb-5 text-primary border-primary/30 bg-primary/5 text-xs font-bold tracking-wider uppercase">Pricing</Badge>
+            <Badge variant="outline" className="mb-5 text-primary border-primary/30 bg-primary/5 text-xs font-bold tracking-wider uppercase">{pricingContent.badge || "Pricing"}</Badge>
             <h2 className="mb-5 text-3xl font-extrabold text-foreground md:text-[3.25rem] leading-tight tracking-tight">
-              Transparan, <span className="bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">Tanpa Biaya Tersembunyi</span>
+              {(pricingContent.title || "Transparan, Tanpa Biaya Tersembunyi").replace(pricingContent.title_highlight || "Tanpa Biaya Tersembunyi", "|||").split("|||").map((part: string, idx: number) => idx === 0 ? part : <><span key={idx} className="bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">{pricingContent.title_highlight || "Tanpa Biaya Tersembunyi"}</span>{part}</>)}
             </h2>
-            <p className="text-muted-foreground text-lg">Bayar per user. Scale sesuai pertumbuhan. Semua dalam IDR.</p>
+            <p className="text-muted-foreground text-lg">{pricingContent.subtitle || "Bayar per user. Scale sesuai pertumbuhan. Semua dalam IDR."}</p>
           </AnimateIn>
 
           {/* Free Trial Banner */}
@@ -535,12 +571,12 @@ export default function Landing() {
             <div className="rounded-2xl border border-primary/20 bg-gradient-to-r from-primary/5 via-primary/10 to-primary/5 p-6 md:p-8 flex flex-col md:flex-row items-center justify-between gap-4">
               <div>
                 <Badge className="mb-2 bg-primary/10 text-primary border-primary/20 font-bold text-[10px] uppercase tracking-wider">Free Trial</Badge>
-                <h3 className="text-xl font-bold text-foreground">Coba Gratis 14 Hari — Akses Enterprise</h3>
-                <p className="text-sm text-muted-foreground mt-1">Akses semua fitur premium tanpa kartu kredit. Maksimal 3 user.</p>
+                <h3 className="text-xl font-bold text-foreground">{pricingContent.free_trial_title || "Coba Gratis 14 Hari — Akses Enterprise"}</h3>
+                <p className="text-sm text-muted-foreground mt-1">{pricingContent.free_trial_subtitle || "Akses semua fitur premium tanpa kartu kredit. Maksimal 3 user."}</p>
               </div>
               <Link to="/signup">
                 <Button size="lg" className="gap-2 px-8 shadow-glow-primary rounded-2xl font-bold whitespace-nowrap">
-                  <Sparkles className="h-4 w-4" /> Mulai Free Trial
+                  <Sparkles className="h-4 w-4" /> {pricingContent.free_trial_cta || "Mulai Free Trial"}
                 </Button>
               </Link>
             </div>
@@ -678,7 +714,7 @@ export default function Landing() {
         <div className="mx-auto max-w-5xl">
           <AnimateIn className="mb-16 text-center">
             <h2 className="mb-5 text-3xl font-extrabold text-foreground md:text-[3.25rem] leading-tight tracking-tight">
-              Kata Mereka tentang <span className="bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">WORKA</span>
+              {(testimonialsContent.title || "Kata Mereka tentang WORKA").replace(testimonialsContent.title_highlight || "WORKA", "|||").split("|||").map((part: string, idx: number) => idx === 0 ? part : <><span key={idx} className="bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">{testimonialsContent.title_highlight || "WORKA"}</span>{part}</>)}
             </h2>
           </AnimateIn>
           <div className="grid gap-6 md:grid-cols-3">
@@ -748,27 +784,30 @@ export default function Landing() {
         <div className="mx-auto max-w-5xl">
           <AnimateIn className="mb-16 text-center">
             <h2 className="mb-5 text-3xl font-extrabold text-foreground md:text-[3.25rem] leading-tight tracking-tight">
-              Kenapa Tim Anda Butuh <span className="bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">WORKA?</span>
+              {(whyContent.title || "Kenapa Tim Anda Butuh WORKA?").replace(whyContent.title_highlight || "WORKA?", "|||").split("|||").map((part: string, idx: number) => idx === 0 ? part : <><span key={idx} className="bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">{whyContent.title_highlight || "WORKA?"}</span>{part}</>)}
             </h2>
           </AnimateIn>
           <div className="grid gap-6 md:grid-cols-3">
-            {[
-              { icon: Layers, title: "Tools Berantakan?", desc: "Berhenti pindah antara Trello, Sheets, WhatsApp group, dan spreadsheet. Sentralisasi semuanya." },
-              { icon: Globe, title: "Komunikasi Hilang?", desc: "Tidak ada lagi brief hilang, deadline terlewat, atau feedback client terlupakan." },
-              { icon: Shield, title: "HR Manual?", desc: "Otomatisasi absensi, cuti, performance review, dan rekap payroll secara real-time." },
-            ].map((p, i) => (
+            {(whyContent.items || [
+              { title: "Tools Berantakan?", desc: "Berhenti pindah antara Trello, Sheets, WhatsApp group, dan spreadsheet. Sentralisasi semuanya." },
+              { title: "Komunikasi Hilang?", desc: "Tidak ada lagi brief hilang, deadline terlewat, atau feedback client terlupakan." },
+              { title: "HR Manual?", desc: "Otomatisasi absensi, cuti, performance review, dan rekap payroll secara real-time." },
+            ]).map((p: any, i: number) => {
+              const WhyIcon = [Layers, Globe, Shield][i] || Layers;
+              return (
               <AnimateIn key={i} delay={i * 100}>
                 <Card className="border-border/15 bg-card/70 h-full group hover:shadow-soft-lg hover:-translate-y-1 transition-all duration-500">
                   <CardContent className="p-8 text-center">
                     <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-destructive/8 text-destructive transition-transform duration-500 group-hover:scale-110 group-hover:rotate-6">
-                      <p.icon className="h-6 w-6" />
+                      <WhyIcon className="h-6 w-6" />
                     </div>
                     <h3 className="mb-3 font-bold text-foreground text-lg">{p.title}</h3>
                     <p className="text-sm text-muted-foreground leading-relaxed">{p.desc}</p>
                   </CardContent>
                 </Card>
               </AnimateIn>
-            ))}
+              );
+            })}
           </div>
         </div>
       </section>
@@ -777,7 +816,7 @@ export default function Landing() {
       <section id="faq" className="px-6 py-28 md:py-36 bg-gradient-to-b from-muted/20 to-background">
         <div className="mx-auto max-w-3xl">
           <AnimateIn className="mb-16 text-center">
-            <h2 className="mb-5 text-3xl font-extrabold text-foreground md:text-[3.25rem] leading-tight tracking-tight">Pertanyaan Umum</h2>
+            <h2 className="mb-5 text-3xl font-extrabold text-foreground md:text-[3.25rem] leading-tight tracking-tight">{faqContent.title || "Pertanyaan Umum"}</h2>
           </AnimateIn>
           <div className="space-y-3">
             {FAQS.map((f, i) => (
@@ -807,20 +846,20 @@ export default function Landing() {
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_70%_50%_at_50%_50%,hsl(var(--primary)/0.08),transparent)]" />
         <AnimateIn className="relative mx-auto max-w-3xl text-center">
           <div className="mb-8 inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-5 py-2 text-sm text-primary font-semibold">
-            <Sparkles className="h-3.5 w-3.5" /> Ready to transform your agency?
+            <Sparkles className="h-3.5 w-3.5" /> {ctaContent.badge || "Ready to transform your agency?"}
           </div>
           <h2 className="mb-6 text-3xl font-extrabold text-foreground md:text-[3.25rem] leading-tight tracking-tight">
-            Mulai Kelola Bisnis Anda <span className="bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">Sekarang</span>
+            {(ctaContent.title || "Mulai Kelola Bisnis Anda Sekarang").replace(ctaContent.title_highlight || "Sekarang", "|||").split("|||").map((part: string, idx: number) => idx === 0 ? part : <><span key={idx} className="bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">{ctaContent.title_highlight || "Sekarang"}</span>{part}</>)}
           </h2>
-          <p className="mb-10 text-lg text-muted-foreground">Setup dalam 2 menit. 14 hari free trial. Tanpa kartu kredit.</p>
+          <p className="mb-10 text-lg text-muted-foreground">{ctaContent.subtitle || "Setup dalam 2 menit. 14 hari free trial. Tanpa kartu kredit."}</p>
           <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
             <Link to="/subscribe">
               <Button size="lg" className="gap-2 px-10 shadow-glow-primary text-base h-14 rounded-2xl font-bold group">
-                Daftar Sekarang <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                {ctaContent.cta_primary || "Daftar Sekarang"} <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
               </Button>
             </Link>
             <Button size="lg" variant="outline" className="gap-2 px-8 text-base h-14 rounded-2xl font-semibold border-border/40" onClick={() => setDemoOpen(true)}>
-              <Play className="h-4 w-4" /> Request Demo
+              <Play className="h-4 w-4" /> {ctaContent.cta_secondary || "Request Demo"}
             </Button>
           </div>
         </AnimateIn>
@@ -836,22 +875,34 @@ export default function Landing() {
                 <span className="font-extrabold text-foreground text-lg">WORKA</span>
               </div>
               <p className="text-sm text-muted-foreground leading-relaxed max-w-sm">
-                Platform all-in-one untuk mengelola operasional creative agency dan perusahaan jasa modern.
+                {footerContent.description || "Platform all-in-one untuk mengelola operasional creative agency dan perusahaan jasa modern."}
               </p>
             </div>
             <div>
               <h4 className="font-bold text-foreground mb-4 text-xs uppercase tracking-[0.15em]">Product</h4>
               <div className="space-y-3">
-                <a href="#features" className="block text-sm text-muted-foreground hover:text-foreground transition-colors">Features</a>
-                <a href="#pricing" className="block text-sm text-muted-foreground hover:text-foreground transition-colors">Pricing</a>
-                <Link to="/blog" className="block text-sm text-muted-foreground hover:text-foreground transition-colors">Blog</Link>
+                {(footerContent.product_links || [
+                  { label: "Features", href: "#features" },
+                  { label: "Pricing", href: "#pricing" },
+                  { label: "Blog", href: "/blog" },
+                ]).map((link: any, i: number) =>
+                  link.href.startsWith("/")
+                    ? <Link key={i} to={link.href} className="block text-sm text-muted-foreground hover:text-foreground transition-colors">{link.label}</Link>
+                    : <a key={i} href={link.href} className="block text-sm text-muted-foreground hover:text-foreground transition-colors">{link.label}</a>
+                )}
               </div>
             </div>
             <div>
               <h4 className="font-bold text-foreground mb-4 text-xs uppercase tracking-[0.15em]">Legal</h4>
               <div className="space-y-3">
-                <Link to="/privacy-policy" className="block text-sm text-muted-foreground hover:text-foreground transition-colors">Privacy Policy</Link>
-                <a href="#faq" className="block text-sm text-muted-foreground hover:text-foreground transition-colors">FAQ</a>
+                {(footerContent.legal_links || [
+                  { label: "Privacy Policy", href: "/privacy-policy" },
+                  { label: "FAQ", href: "#faq" },
+                ]).map((link: any, i: number) =>
+                  link.href.startsWith("/")
+                    ? <Link key={i} to={link.href} className="block text-sm text-muted-foreground hover:text-foreground transition-colors">{link.label}</Link>
+                    : <a key={i} href={link.href} className="block text-sm text-muted-foreground hover:text-foreground transition-colors">{link.label}</a>
+                )}
               </div>
             </div>
           </div>

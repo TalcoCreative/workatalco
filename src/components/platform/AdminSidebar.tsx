@@ -3,7 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import {
   BarChart3, Building2, DollarSign, Zap, Globe, AlertTriangle,
-  Mail, Crown, LogOut, Image, FileText, Radio, CreditCard, Package,
+  Mail, Crown, LogOut, Image, FileText, Radio, CreditCard, Package, PanelTop,
 } from "lucide-react";
 
 const navItems = [
@@ -18,6 +18,7 @@ const navItems = [
   { label: "Email", icon: Mail, tab: "email" },
   { label: "Email Templates", icon: FileText, tab: "email-templates" },
   { label: "Broadcast", icon: Radio, tab: "broadcast" },
+  { label: "Landing Page", icon: PanelTop, tab: "landing-page" },
   { label: "Landing Images", icon: Image, tab: "landing" },
 ];
 
