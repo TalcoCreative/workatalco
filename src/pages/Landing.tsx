@@ -3,6 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Session } from "@supabase/supabase-js";
 import { toast } from "sonner";
 import { Link } from "react-router-dom";
+import { Helmet } from "react-helmet";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -220,6 +221,11 @@ export default function Landing() {
     return found?.content || {};
   };
 
+  const googleVerification = (() => {
+    const found = landingContent.find((c: any) => c.section === "google_site_verification");
+    return typeof found?.content === "string" ? found.content : "";
+  })();
+
   // Derived dynamic content with fallbacks
   const heroContent = getContent("hero");
   const trustContent = getContent("trust_bar");
@@ -262,6 +268,11 @@ export default function Landing() {
 
   return (
     <div className="min-h-screen bg-background text-foreground overflow-x-hidden" onMouseMove={handleMouseMove}>
+      {googleVerification && (
+        <Helmet>
+          <meta name="google-site-verification" content={googleVerification} />
+        </Helmet>
+      )}
 
       {/* ══ SCROLL PROGRESS BAR ══ */}
       <div className="fixed top-0 left-0 right-0 z-[60] h-[2px]">
