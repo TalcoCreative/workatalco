@@ -71,7 +71,9 @@ export function SeoSettingsTab() {
   });
 
   const projectId = import.meta.env.VITE_SUPABASE_PROJECT_ID;
-  const sitemapEdgeFnUrl = `https://${projectId}.supabase.co/functions/v1/sitemap?origin=${encodeURIComponent(window.location.origin)}`;
+  const primaryDomain = "https://worka.talco.id";
+  const sitemapEdgeFnUrl = `https://${projectId}.supabase.co/functions/v1/sitemap?origin=${encodeURIComponent(primaryDomain)}`;
+  const sitemapPageUrl = `${primaryDomain}/sitemap.xml`;
 
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);
@@ -138,7 +140,19 @@ export function SeoSettingsTab() {
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
-            <Label className="text-xs font-medium">Sitemap URL</Label>
+            <Label className="text-xs font-medium">Sitemap Page URL</Label>
+            <div className="flex gap-2 mb-3">
+              <Input value={sitemapPageUrl} readOnly className="font-mono text-xs bg-muted/50" />
+              <Button variant="outline" size="sm" onClick={() => copyToClipboard(sitemapPageUrl)}>
+                <Copy className="h-3.5 w-3.5" />
+              </Button>
+              <Button variant="outline" size="sm" asChild>
+                <a href={sitemapPageUrl} target="_blank" rel="noopener">
+                  <ExternalLink className="h-3.5 w-3.5" />
+                </a>
+              </Button>
+            </div>
+            <Label className="text-xs font-medium">Edge Function URL (alternative)</Label>
             <div className="flex gap-2">
               <Input value={sitemapEdgeFnUrl} readOnly className="font-mono text-xs bg-muted/50" />
               <Button variant="outline" size="sm" onClick={() => copyToClipboard(sitemapEdgeFnUrl)}>
