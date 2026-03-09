@@ -4645,6 +4645,94 @@ export type Database = {
           },
         ]
       }
+      push_notification_logs: {
+        Row: {
+          action_url: string | null
+          company_id: string
+          event_type: string
+          id: string
+          message: string
+          sent_at: string
+          status: string
+          title: string
+          user_id: string | null
+        }
+        Insert: {
+          action_url?: string | null
+          company_id: string
+          event_type: string
+          id?: string
+          message: string
+          sent_at?: string
+          status?: string
+          title: string
+          user_id?: string | null
+        }
+        Update: {
+          action_url?: string | null
+          company_id?: string
+          event_type?: string
+          id?: string
+          message?: string
+          sent_at?: string
+          status?: string
+          title?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "push_notification_logs_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      push_subscriptions: {
+        Row: {
+          auth_key: string
+          company_id: string
+          created_at: string
+          device_type: string
+          endpoint: string
+          id: string
+          p256dh: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          auth_key: string
+          company_id: string
+          created_at?: string
+          device_type?: string
+          endpoint: string
+          id?: string
+          p256dh: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          auth_key?: string
+          company_id?: string
+          created_at?: string
+          device_type?: string
+          endpoint?: string
+          id?: string
+          p256dh?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "push_subscriptions_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       recruitment_form_fields: {
         Row: {
           created_at: string
