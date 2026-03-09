@@ -35,6 +35,7 @@ import { AdminSidebar } from "@/components/platform/AdminSidebar";
 import { AdminMobileNav } from "@/components/platform/AdminMobileNav";
 import { EmailTemplatesTab } from "@/components/platform/EmailTemplatesTab";
 import { LandingImagesTab } from "@/components/platform/LandingImagesTab";
+import { LandingContentTab } from "@/components/platform/LandingContentTab";
 import { BroadcastEmailTab } from "@/components/platform/BroadcastEmailTab";
 import { IntegrationsTab } from "@/components/platform/IntegrationsTab";
 import { ProductsTab } from "@/components/platform/ProductsTab";
@@ -614,6 +615,9 @@ export default function SuperAdmin() {
 
             {/* ═══ BROADCAST ═══ */}
             {activeTab === "broadcast" && <div className="animate-fade-in"><BroadcastEmailTab /></div>}
+
+            {/* ═══ LANDING PAGE CMS ═══ */}
+            {activeTab === "landing-page" && <div className="animate-fade-in"><LandingContentTab /></div>}
 
             {/* ═══ LANDING IMAGES ═══ */}
             {activeTab === "landing" && <div className="animate-fade-in"><LandingImagesTab /></div>}
