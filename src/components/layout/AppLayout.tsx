@@ -121,6 +121,7 @@ export function AppLayout({ children }: AppLayoutProps) {
       </Button>
 
       <NotesPanel open={notesOpen} onClose={() => setNotesOpen(false)} />
+      <OnboardingProvider />
     </SidebarProvider>
   );
 }
