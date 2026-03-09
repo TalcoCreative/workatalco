@@ -450,11 +450,11 @@ export default function Landing() {
 
         <div className="relative mx-auto max-w-7xl">
           <AnimateIn className="mb-16 text-center">
-            <Badge variant="outline" className="mb-5 text-primary border-primary/30 bg-primary/5 text-xs font-bold tracking-wider uppercase">Product</Badge>
+            <Badge variant="outline" className="mb-5 text-primary border-primary/30 bg-primary/5 text-xs font-bold tracking-wider uppercase">{showcaseContent.badge || "Product"}</Badge>
             <h2 className="mb-5 text-3xl font-extrabold text-foreground md:text-[3.25rem] leading-tight tracking-tight">
-              Interface yang <span className="bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">Powerful</span>
+              {(showcaseContent.title || "Interface yang Powerful").replace(showcaseContent.title_highlight || "Powerful", "|||").split("|||").map((part: string, idx: number) => idx === 0 ? part : <><span key={idx} className="bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">{showcaseContent.title_highlight || "Powerful"}</span>{part}</>)}
             </h2>
-            <p className="mx-auto max-w-xl text-muted-foreground text-lg">Desain modern yang dirancang untuk produktivitas maksimal.</p>
+            <p className="mx-auto max-w-xl text-muted-foreground text-lg">{showcaseContent.subtitle || "Desain modern yang dirancang untuk produktivitas maksimal."}</p>
           </AnimateIn>
 
           {/* Tabs */}
