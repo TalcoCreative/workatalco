@@ -306,7 +306,17 @@ serve(async (req) => {
       console.log("Admin user created:", adminUserId);
     }
 
-    // 3. Add user as owner of the company
+    // 3. Ensure profile exists with correct name
+    await supabaseAdmin
+      .from("profiles")
+      .upsert({
+        id: adminUserId,
+        full_name: adminFullName,
+        user_id: adminEmail.toLowerCase(),
+      }, { onConflict: "id" });
+    console.log("Profile ensured for:", adminFullName);
+
+    // 4. Add user as owner of the company
     const { error: memberError } = await supabaseAdmin
       .from("company_members")
       .insert({
