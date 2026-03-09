@@ -242,9 +242,9 @@ export default function SuperAdmin() {
   }
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
+    <div className="h-screen bg-background flex flex-col overflow-hidden">
       {/* Top bar */}
-      <header className="sticky top-0 z-40 border-b border-border/30 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <header className="shrink-0 z-40 border-b border-border/30 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="flex h-14 items-center justify-between px-4 lg:px-6">
           <div className="flex items-center gap-3">
             <div className="h-8 w-8 rounded-xl bg-primary/10 flex items-center justify-center">
@@ -264,12 +264,12 @@ export default function SuperAdmin() {
         </div>
       </header>
 
-      <div className="flex flex-1">
+      <div className="flex flex-1 min-h-0">
         {/* Desktop Sidebar */}
         <AdminSidebar activeTab={activeTab} onTabChange={setActiveTab} />
 
         {/* Main Content */}
-        <main className="flex-1 overflow-x-hidden pb-20 lg:pb-0">
+        <main className="flex-1 overflow-y-auto overflow-x-hidden pb-20 lg:pb-0">
           <div className="max-w-6xl mx-auto px-4 py-6 lg:px-8 space-y-6">
 
             {/* ═══ OVERVIEW ═══ */}
