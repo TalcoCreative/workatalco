@@ -15,9 +15,8 @@ Deno.serve(async (req) => {
   const supabaseKey = Deno.env.get("SUPABASE_ANON_KEY")!;
   const supabase = createClient(supabaseUrl, supabaseKey);
 
-  // Get the base URL from request or fallback
   const url = new URL(req.url);
-  const origin = url.searchParams.get("origin") || "https://synergy-space-suite.lovable.app";
+  const origin = url.searchParams.get("origin") || "https://workatalco.lovable.app";
 
   // Fetch published blog posts
   const { data: posts } = await supabase
@@ -30,7 +29,9 @@ Deno.serve(async (req) => {
     { loc: "/landing", priority: "1.0", changefreq: "weekly" },
     { loc: "/blog", priority: "0.8", changefreq: "daily" },
     { loc: "/pricing", priority: "0.7", changefreq: "monthly" },
+    { loc: "/subscribe", priority: "0.6", changefreq: "monthly" },
     { loc: "/privacy-policy", priority: "0.3", changefreq: "yearly" },
+    { loc: "/auth", priority: "0.3", changefreq: "yearly" },
   ];
 
   const blogEntries = (posts || []).map((p: any) => ({
