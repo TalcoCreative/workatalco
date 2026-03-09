@@ -77,6 +77,7 @@ import BlogPost from "./pages/BlogPost";
 import PersonalNotes from "./pages/PersonalNotes";
 import ProfileSettings from "./pages/ProfileSettings";
 import WorkspaceRedirect from "./pages/WorkspaceRedirect";
+import SitemapRedirect from "./pages/SitemapRedirect";
 
 const queryClient = new QueryClient();
 
