@@ -3108,6 +3108,27 @@ export type Database = {
         }
         Relationships: []
       }
+      landing_content: {
+        Row: {
+          content: Json
+          id: string
+          section: string
+          updated_at: string | null
+        }
+        Insert: {
+          content?: Json
+          id?: string
+          section: string
+          updated_at?: string | null
+        }
+        Update: {
+          content?: Json
+          id?: string
+          section?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       landing_images: {
         Row: {
           alt_text: string | null
