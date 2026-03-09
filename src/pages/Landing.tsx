@@ -207,6 +207,40 @@ export default function Landing() {
     },
   });
 
+  const { data: landingContent = [] } = useQuery({
+    queryKey: ["landing-content-public"],
+    queryFn: async () => {
+      const { data } = await supabase.from("landing_content").select("section, content");
+      return data || [];
+    },
+  });
+
+  const getContent = (section: string): any => {
+    const found = landingContent.find((c: any) => c.section === section);
+    return found?.content || {};
+  };
+
+  // Derived dynamic content with fallbacks
+  const heroContent = getContent("hero");
+  const trustContent = getContent("trust_bar");
+  const featuresContent = getContent("features");
+  const showcaseContent = getContent("product_showcase");
+  const howContent = getContent("how_it_works");
+  const pricingContent = getContent("pricing");
+  const testimonialsContent = getContent("testimonials");
+  const whyContent = getContent("why_worka");
+  const faqContent = getContent("faq");
+  const ctaContent = getContent("final_cta");
+  const footerContent = getContent("footer");
+
+  const FEATURES = (featuresContent.items || FEATURES_FALLBACK).map((f: any) => ({
+    ...f,
+    icon: ICON_MAP[f.icon] || Star,
+  }));
+  const PRODUCT_SCREENSHOTS = showcaseContent.screenshots || SCREENSHOTS_FALLBACK;
+  const TESTIMONIALS = testimonialsContent.items || TESTIMONIALS_FALLBACK;
+  const FAQS = faqContent.items || FAQS_FALLBACK;
+
   const getImg = (key: string) => {
     const found = landingImages.find((img: any) => img.image_key === key);
     return (found?.image_url && !found.image_url.startsWith("/assets")) ? found.image_url : STATIC_FALLBACKS[key] || "";
