@@ -97,6 +97,9 @@ const App = () => (
           <Route path="/blog" element={<Blog />} />
           <Route path="/blog/:slug" element={<BlogPost />} />
 
+          {/* Sitemap */}
+          <Route path="/sitemap.xml" element={<SitemapRedirect />} />
+
           {/* Default landing page */}
           <Route path="/" element={<Navigate to="/landing" replace />} />
 
