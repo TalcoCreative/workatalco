@@ -345,9 +345,11 @@ export default function Landing() {
                   {heroContent.cta_primary || "Mulai Free Trial"} <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
                 </Button>
               </Link>
-              <Button size="lg" variant="outline" className="gap-2 px-8 text-base h-14 rounded-2xl font-semibold border-border/50 hover:bg-card hover:shadow-soft-lg transition-all" onClick={() => setDemoOpen(true)}>
-                <Play className="h-4 w-4" /> {heroContent.cta_secondary || "Request Demo"}
-              </Button>
+              <Link to="/request-demo">
+                <Button size="lg" variant="outline" className="gap-2 px-8 text-base h-14 rounded-2xl font-semibold border-border/50 hover:bg-card hover:shadow-soft-lg transition-all">
+                  <Play className="h-4 w-4" /> {heroContent.cta_secondary || "Request Demo"}
+                </Button>
+              </Link>
             </div>
           </AnimateIn>
 
@@ -854,9 +856,11 @@ export default function Landing() {
                 {ctaContent.cta_primary || "Daftar Sekarang"} <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
               </Button>
             </Link>
-            <Button size="lg" variant="outline" className="gap-2 px-8 text-base h-14 rounded-2xl font-semibold border-border/40" onClick={() => setDemoOpen(true)}>
-              <Play className="h-4 w-4" /> {ctaContent.cta_secondary || "Request Demo"}
-            </Button>
+            <Link to="/request-demo">
+              <Button size="lg" variant="outline" className="gap-2 px-8 text-base h-14 rounded-2xl font-semibold border-border/40">
+                <Play className="h-4 w-4" /> {ctaContent.cta_secondary || "Request Demo"}
+              </Button>
+            </Link>
           </div>
         </AnimateIn>
       </section>
