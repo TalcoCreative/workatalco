@@ -123,6 +123,13 @@ export default function BlogPost() {
         </header>
 
         <article className="max-w-4xl mx-auto px-6 py-12 md:py-16">
+          {/* Cover Image - Full width above title */}
+          {post.cover_image && (
+            <div className="rounded-2xl overflow-hidden mb-10 aspect-video shadow-lg">
+              <img src={post.cover_image} alt={post.title} className="w-full h-full object-cover" loading="eager" />
+            </div>
+          )}
+
           {post.tags && post.tags.length > 0 && (
             <div className="flex flex-wrap gap-2 mb-6">
               {post.tags.map((tag: string) => (
@@ -140,12 +147,6 @@ export default function BlogPost() {
             )}
             <span className="flex items-center gap-1.5"><Clock className="h-4 w-4" /> {readingTime} min read</span>
           </div>
-
-          {post.cover_image && (
-            <div className="rounded-2xl overflow-hidden mb-12 aspect-video">
-              <img src={post.cover_image} alt={post.title} className="w-full h-full object-cover" loading="eager" />
-            </div>
-          )}
 
           <div
             className="prose prose-neutral dark:prose-invert max-w-none prose-headings:font-extrabold prose-headings:tracking-tight prose-p:leading-relaxed prose-a:text-primary prose-img:rounded-xl"
