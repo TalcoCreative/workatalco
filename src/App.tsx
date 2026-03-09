@@ -68,6 +68,7 @@ import PublicMeetingList from "./pages/PublicMeetingList";
 import PublicShootingList from "./pages/PublicShootingList";
 import RoleManagement from "./pages/RoleManagement";
 import SuperAdmin from "./pages/SuperAdmin";
+import RequestDemo from "./pages/RequestDemo";
 import AdminLogin from "./pages/AdminLogin";
 import Pricing from "./pages/Pricing";
 import Billing from "./pages/Billing";
@@ -95,6 +96,7 @@ const App = () => (
           <Route path="/auth" element={<Auth />} />
           <Route path="/admin-login" element={<AdminLogin />} />
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+          <Route path="/request-demo" element={<RequestDemo />} />
           <Route path="/blog" element={<Blog />} />
           <Route path="/blog/:slug" element={<BlogPost />} />
 
