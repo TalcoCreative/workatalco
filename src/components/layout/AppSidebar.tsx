@@ -102,6 +102,10 @@ const systemItems: NavItem[] = [
   { title: "Role & Access", path: "system/roles", icon: Shield, featureKey: "role_management" },
 ];
 
+// ── Settings placeholder for tour ──
+const settingsTourItems: NavItem[] = [
+];
+
 export function AppSidebar() {
   const { state } = useSidebar();
   const navigate = useNavigate();
@@ -166,6 +170,7 @@ export function AppSidebar() {
                     to={item.path === "" ? prefix : `${prefix}/${item.path}`}
                     end={item.path === ""}
                     className={navLinkClass}
+                    data-tour={item.featureKey}
                   >
                     <item.icon className="h-4 w-4 opacity-70" />
                     {!isCollapsed && <span>{item.title}</span>}
