@@ -166,6 +166,7 @@ export function AppSidebar() {
                     to={item.path === "" ? prefix : `${prefix}/${item.path}`}
                     end={item.path === ""}
                     className={navLinkClass}
+                    data-tour={item.featureKey}
                   >
                     <item.icon className="h-4 w-4 opacity-70" />
                     {!isCollapsed && <span>{item.title}</span>}

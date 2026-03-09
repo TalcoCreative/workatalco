@@ -4316,6 +4316,7 @@ export type Database = {
           id: string
           ktp_number: string | null
           language: string | null
+          onboarding_completed: boolean
           phone: string | null
           salary: number | null
           status: string | null
@@ -4340,6 +4341,7 @@ export type Database = {
           id: string
           ktp_number?: string | null
           language?: string | null
+          onboarding_completed?: boolean
           phone?: string | null
           salary?: number | null
           status?: string | null
@@ -4364,6 +4366,7 @@ export type Database = {
           id?: string
           ktp_number?: string | null
           language?: string | null
+          onboarding_completed?: boolean
           phone?: string | null
           salary?: number | null
           status?: string | null

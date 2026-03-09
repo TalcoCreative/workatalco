@@ -6,6 +6,7 @@ import { FloatingActionButton } from "./FloatingActionButton";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { TrialBanner } from "@/components/saas/TrialBanner";
 import { NotesPanel } from "@/components/notes/NotesPanel";
+import { OnboardingProvider } from "@/components/onboarding/OnboardingProvider";
 import { useState } from "react";
 import { StickyNote, ShieldAlert } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -120,6 +121,7 @@ export function AppLayout({ children }: AppLayoutProps) {
       </Button>
 
       <NotesPanel open={notesOpen} onClose={() => setNotesOpen(false)} />
+      <OnboardingProvider />
     </SidebarProvider>
   );
 }

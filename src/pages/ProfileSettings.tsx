@@ -9,8 +9,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
-import { Camera, Globe, Lock, User } from "lucide-react";
+import { Camera, Compass, Globe, Lock, User } from "lucide-react";
 import { EmailPreferencesCard } from "@/components/notifications/EmailPreferencesCard";
+import { useOnboarding } from "@/hooks/useOnboarding";
 
 export default function ProfileSettings() {
   const queryClient = useQueryClient();
@@ -262,6 +263,30 @@ export default function ProfileSettings() {
 
       {/* Email Preferences */}
       <EmailPreferencesCard />
+
+      {/* Replay Tour */}
+      <ReplayTourCard />
     </div>
+  );
+}
+
+function ReplayTourCard() {
+  const { replayTour } = useOnboarding();
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2">
+          <Compass className="h-5 w-5" />
+          Product Tour
+        </CardTitle>
+        <CardDescription>Putar ulang tur pengenalan fitur platform.</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <Button variant="outline" onClick={replayTour} className="gap-2">
+          <Compass className="h-4 w-4" />
+          Replay Product Tour
+        </Button>
+      </CardContent>
+    </Card>
   );
 }
