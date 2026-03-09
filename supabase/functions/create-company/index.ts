@@ -306,7 +306,17 @@ serve(async (req) => {
       console.log("Admin user created:", adminUserId);
     }
 
-    // 3. Add user as owner of the company
+    // 3. Ensure profile exists with correct name
+    await supabaseAdmin
+      .from("profiles")
+      .upsert({
+        id: adminUserId,
+        full_name: adminFullName,
+        user_id: adminEmail.toLowerCase(),
+      }, { onConflict: "id" });
+    console.log("Profile ensured for:", adminFullName);
+
+    // 4. Add user as owner of the company
     const { error: memberError } = await supabaseAdmin
       .from("company_members")
       .insert({
@@ -318,7 +328,7 @@ serve(async (req) => {
     if (memberError) throw memberError;
     console.log("Admin added as owner");
 
-    // 4. Ensure user has super_admin role for the company
+    // 5. Ensure user has super_admin role for the company
     const { data: existingRole } = await supabaseAdmin
       .from("user_roles")
       .select("id")
@@ -332,16 +342,16 @@ serve(async (req) => {
         .insert({ user_id: adminUserId, role: "super_admin" });
     }
 
-    // 5. Set company owner_id
+    // 6. Set company owner_id
     await supabaseAdmin
       .from("companies")
       .update({ owner_id: adminUserId })
       .eq("id", company.id);
 
-    // 6. Seed default roles & permissions (if not already seeded)
+    // 7. Seed default roles & permissions (if not already seeded)
     await seedDefaultRoles(supabaseAdmin);
 
-    // 7. Auto-assign Super Admin dynamic role to the owner
+    // 8. Auto-assign Super Admin dynamic role to the owner
     const { data: superAdminRole } = await supabaseAdmin
       .from("dynamic_roles")
       .select("id")
