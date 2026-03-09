@@ -875,22 +875,34 @@ export default function Landing() {
                 <span className="font-extrabold text-foreground text-lg">WORKA</span>
               </div>
               <p className="text-sm text-muted-foreground leading-relaxed max-w-sm">
-                Platform all-in-one untuk mengelola operasional creative agency dan perusahaan jasa modern.
+                {footerContent.description || "Platform all-in-one untuk mengelola operasional creative agency dan perusahaan jasa modern."}
               </p>
             </div>
             <div>
               <h4 className="font-bold text-foreground mb-4 text-xs uppercase tracking-[0.15em]">Product</h4>
               <div className="space-y-3">
-                <a href="#features" className="block text-sm text-muted-foreground hover:text-foreground transition-colors">Features</a>
-                <a href="#pricing" className="block text-sm text-muted-foreground hover:text-foreground transition-colors">Pricing</a>
-                <Link to="/blog" className="block text-sm text-muted-foreground hover:text-foreground transition-colors">Blog</Link>
+                {(footerContent.product_links || [
+                  { label: "Features", href: "#features" },
+                  { label: "Pricing", href: "#pricing" },
+                  { label: "Blog", href: "/blog" },
+                ]).map((link: any, i: number) =>
+                  link.href.startsWith("/")
+                    ? <Link key={i} to={link.href} className="block text-sm text-muted-foreground hover:text-foreground transition-colors">{link.label}</Link>
+                    : <a key={i} href={link.href} className="block text-sm text-muted-foreground hover:text-foreground transition-colors">{link.label}</a>
+                )}
               </div>
             </div>
             <div>
               <h4 className="font-bold text-foreground mb-4 text-xs uppercase tracking-[0.15em]">Legal</h4>
               <div className="space-y-3">
-                <Link to="/privacy-policy" className="block text-sm text-muted-foreground hover:text-foreground transition-colors">Privacy Policy</Link>
-                <a href="#faq" className="block text-sm text-muted-foreground hover:text-foreground transition-colors">FAQ</a>
+                {(footerContent.legal_links || [
+                  { label: "Privacy Policy", href: "/privacy-policy" },
+                  { label: "FAQ", href: "#faq" },
+                ]).map((link: any, i: number) =>
+                  link.href.startsWith("/")
+                    ? <Link key={i} to={link.href} className="block text-sm text-muted-foreground hover:text-foreground transition-colors">{link.label}</Link>
+                    : <a key={i} href={link.href} className="block text-sm text-muted-foreground hover:text-foreground transition-colors">{link.label}</a>
+                )}
               </div>
             </div>
           </div>
