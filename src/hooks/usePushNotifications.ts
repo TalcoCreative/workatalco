@@ -22,7 +22,6 @@ export function usePushNotifications() {
     setIsSupported(supported);
     if (supported) {
       setPermission(Notification.permission);
-      // Check existing subscription
       navigator.serviceWorker.ready.then((reg) => {
         reg.pushManager.getSubscription().then((sub) => {
           setIsSubscribed(!!sub);
@@ -39,7 +38,6 @@ export function usePushNotifications() {
       setPermission(perm);
       if (perm !== "granted") return false;
 
-      // Get VAPID public key from edge function
       const { data: vapidData, error: vapidErr } = await supabase.functions.invoke("push-vapid-key");
       if (vapidErr || !vapidData?.publicKey) {
         console.error("Failed to get VAPID key:", vapidErr);
@@ -58,8 +56,7 @@ export function usePushNotifications() {
       const subJson = subscription.toJSON();
       const isMobile = /Mobi|Android/i.test(navigator.userAgent);
 
-      // Store subscription in DB
-      const { error } = await supabase.from("push_subscriptions").upsert(
+      const { error } = await (supabase as any).from("push_subscriptions").upsert(
         {
           user_id: session.session.user.id,
           company_id: companyId,
@@ -91,7 +88,7 @@ export function usePushNotifications() {
       if (subscription) {
         const endpoint = subscription.endpoint;
         await subscription.unsubscribe();
-        await supabase.from("push_subscriptions").delete().eq("endpoint", endpoint);
+        await (supabase as any).from("push_subscriptions").delete().eq("endpoint", endpoint);
       }
       setIsSubscribed(false);
     } catch (err) {
