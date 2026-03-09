@@ -1360,7 +1360,10 @@ export type Database = {
         Row: {
           company_name: string
           created_at: string
+          demo_date: string | null
+          demo_time: string | null
           email: string
+          gmeet_link: string | null
           id: string
           message: string | null
           name: string
@@ -1370,7 +1373,10 @@ export type Database = {
         Insert: {
           company_name: string
           created_at?: string
+          demo_date?: string | null
+          demo_time?: string | null
           email: string
+          gmeet_link?: string | null
           id?: string
           message?: string | null
           name: string
@@ -1380,7 +1386,10 @@ export type Database = {
         Update: {
           company_name?: string
           created_at?: string
+          demo_date?: string | null
+          demo_time?: string | null
           email?: string
+          gmeet_link?: string | null
           id?: string
           message?: string | null
           name?: string
