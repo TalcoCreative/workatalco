@@ -163,7 +163,7 @@ export default function Landing() {
   const [session, setSession] = useState<Session | null>(null);
   const [demoOpen, setDemoOpen] = useState(false);
   const [demoLoading, setDemoLoading] = useState(false);
-  const [demoForm, setDemoForm] = useState({ name: "", email: "", company_name: "", phone: "", message: "" });
+  const [demoForm, setDemoForm] = useState({ name: "", email: "", company_name: "", phone: "", message: "", demo_date: "", demo_time: "" });
   const [activeScreenshot, setActiveScreenshot] = useState(0);
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
   const scrollProgress = useScrollProgress();
@@ -253,14 +253,31 @@ export default function Landing() {
   };
 
   const handleDemoSubmit = async () => {
-    if (!demoForm.name || !demoForm.email || !demoForm.company_name) { toast.error("Mohon isi nama, email, dan nama perusahaan"); return; }
+    if (!demoForm.name || !demoForm.email || !demoForm.company_name || !demoForm.demo_date || !demoForm.demo_time) { toast.error("Mohon isi semua field wajib termasuk tanggal & jam demo"); return; }
     setDemoLoading(true);
     try {
-      const { error } = await supabase.from("demo_requests").insert({ name: demoForm.name, email: demoForm.email, company_name: demoForm.company_name, phone: demoForm.phone, message: demoForm.message });
+      const { error } = await supabase.from("demo_requests").insert({
+        name: demoForm.name, email: demoForm.email, company_name: demoForm.company_name,
+        phone: demoForm.phone, message: demoForm.message,
+        demo_date: demoForm.demo_date, demo_time: demoForm.demo_time,
+      } as any);
       if (error) throw error;
-      toast.success("Demo request berhasil dikirim!");
+      // Build WhatsApp message
+      const waPhone = "6285117084889";
+      const waMsg = encodeURIComponent(
+        `Halo, saya ingin request demo WORKA.\n\n` +
+        `Nama: ${demoForm.name}\n` +
+        `Email: ${demoForm.email}\n` +
+        `Perusahaan: ${demoForm.company_name}\n` +
+        `HP: ${demoForm.phone || '-'}\n` +
+        `Tanggal Demo: ${demoForm.demo_date}\n` +
+        `Jam Demo: ${demoForm.demo_time}\n` +
+        `Pesan: ${demoForm.message || '-'}`
+      );
+      window.open(`https://wa.me/${waPhone}?text=${waMsg}`, "_blank");
+      toast.success("Demo request berhasil dikirim! Mengarahkan ke WhatsApp...");
       setDemoOpen(false);
-      setDemoForm({ name: "", email: "", company_name: "", phone: "", message: "" });
+      setDemoForm({ name: "", email: "", company_name: "", phone: "", message: "", demo_date: "", demo_time: "" });
     } catch (err: any) {
       toast.error(err.message || "Gagal mengirim");
     } finally { setDemoLoading(false); }
@@ -925,35 +942,50 @@ export default function Landing() {
 
       {/* ══ DEMO DIALOG ══ */}
       <Dialog open={demoOpen} onOpenChange={setDemoOpen}>
-        <DialogContent className="sm:max-w-md">
+        <DialogContent className="sm:max-w-lg">
           <DialogHeader>
-            <DialogTitle className="text-xl">Request a Demo</DialogTitle>
-            <DialogDescription>Isi form berikut dan tim kami akan menghubungi Anda.</DialogDescription>
+            <DialogTitle className="text-xl font-bold">🗓️ Request a Demo</DialogTitle>
+            <DialogDescription>Pilih jadwal demo yang Anda inginkan, lalu kirim via WhatsApp.</DialogDescription>
           </DialogHeader>
           <div className="space-y-4 mt-2">
-            <div className="space-y-2">
-              <Label className="text-xs font-semibold">Nama Lengkap *</Label>
-              <Input placeholder="John Doe" value={demoForm.name} onChange={(e) => setDemoForm(p => ({ ...p, name: e.target.value }))} className="h-11 rounded-xl" />
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-1.5">
+                <Label className="text-xs font-semibold">Nama Lengkap *</Label>
+                <Input placeholder="John Doe" value={demoForm.name} onChange={(e) => setDemoForm(p => ({ ...p, name: e.target.value }))} />
+              </div>
+              <div className="space-y-1.5">
+                <Label className="text-xs font-semibold">Nama Perusahaan *</Label>
+                <Input placeholder="PT Kreasi Digital" value={demoForm.company_name} onChange={(e) => setDemoForm(p => ({ ...p, company_name: e.target.value }))} />
+              </div>
             </div>
-            <div className="space-y-2">
-              <Label className="text-xs font-semibold">Email *</Label>
-              <Input type="email" placeholder="john@company.com" value={demoForm.email} onChange={(e) => setDemoForm(p => ({ ...p, email: e.target.value }))} className="h-11 rounded-xl" />
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-1.5">
+                <Label className="text-xs font-semibold">Email *</Label>
+                <Input type="email" placeholder="john@company.com" value={demoForm.email} onChange={(e) => setDemoForm(p => ({ ...p, email: e.target.value }))} />
+              </div>
+              <div className="space-y-1.5">
+                <Label className="text-xs font-semibold">Nomor HP</Label>
+                <Input type="tel" placeholder="08123456789" value={demoForm.phone} onChange={(e) => setDemoForm(p => ({ ...p, phone: e.target.value }))} />
+              </div>
             </div>
-            <div className="space-y-2">
-              <Label className="text-xs font-semibold">Nama Perusahaan *</Label>
-              <Input placeholder="PT Kreasi Digital" value={demoForm.company_name} onChange={(e) => setDemoForm(p => ({ ...p, company_name: e.target.value }))} className="h-11 rounded-xl" />
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-1.5">
+                <Label className="text-xs font-semibold">Tanggal Demo *</Label>
+                <Input type="date" value={demoForm.demo_date} onChange={(e) => setDemoForm(p => ({ ...p, demo_date: e.target.value }))} min={new Date().toISOString().split('T')[0]} />
+              </div>
+              <div className="space-y-1.5">
+                <Label className="text-xs font-semibold">Jam Demo *</Label>
+                <Input type="time" value={demoForm.demo_time} onChange={(e) => setDemoForm(p => ({ ...p, demo_time: e.target.value }))} />
+              </div>
             </div>
-            <div className="space-y-2">
-              <Label className="text-xs font-semibold">Nomor HP</Label>
-              <Input type="tel" placeholder="08123456789" value={demoForm.phone} onChange={(e) => setDemoForm(p => ({ ...p, phone: e.target.value }))} className="h-11 rounded-xl" />
-            </div>
-            <div className="space-y-2">
+            <div className="space-y-1.5">
               <Label className="text-xs font-semibold">Pesan (opsional)</Label>
-              <Textarea placeholder="Ceritakan kebutuhan Anda..." value={demoForm.message} onChange={(e) => setDemoForm(p => ({ ...p, message: e.target.value }))} className="rounded-xl" />
+              <Textarea placeholder="Ceritakan kebutuhan Anda..." rows={2} value={demoForm.message} onChange={(e) => setDemoForm(p => ({ ...p, message: e.target.value }))} />
             </div>
-            <Button className="w-full h-12 rounded-xl font-bold shadow-glow-primary" onClick={handleDemoSubmit} disabled={demoLoading}>
-              {demoLoading ? "Mengirim..." : "Kirim Demo Request"}
+            <Button className="w-full h-12 rounded-xl font-bold shadow-glow-primary gap-2" onClick={handleDemoSubmit} disabled={demoLoading}>
+              {demoLoading ? "Mengirim..." : "📩 Kirim via WhatsApp"}
             </Button>
+            <p className="text-[10px] text-muted-foreground text-center">Data Anda juga tersimpan di sistem kami untuk konfirmasi jadwal.</p>
           </div>
         </DialogContent>
       </Dialog>
