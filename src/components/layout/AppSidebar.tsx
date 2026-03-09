@@ -102,10 +102,6 @@ const systemItems: NavItem[] = [
   { title: "Role & Access", path: "system/roles", icon: Shield, featureKey: "role_management" },
 ];
 
-// ── Settings placeholder for tour ──
-const settingsTourItems: NavItem[] = [
-];
-
 export function AppSidebar() {
   const { state } = useSidebar();
   const navigate = useNavigate();
