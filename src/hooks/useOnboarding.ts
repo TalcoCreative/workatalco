@@ -96,11 +96,11 @@ const ALL_TOUR_STEPS: TourStep[] = [
   },
   {
     id: "settings",
-    featureKey: "dashboard",
-    targetSelector: '[data-tour="settings"]',
-    title: "Settings",
+    featureKey: "role_management",
+    targetSelector: '[data-tour="role_management"]',
+    title: "Settings & Access Control",
     description:
-      "Kelola pengaturan workspace, profil pribadi, role & access control, dan konfigurasi lainnya. Anda juga bisa memutar ulang tutorial ini kapan saja dari sini.",
+      "Kelola pengaturan workspace, profil pribadi, role & access control, dan konfigurasi lainnya. Anda juga bisa memutar ulang tutorial ini kapan saja dari menu profil.",
   },
 ];
 
