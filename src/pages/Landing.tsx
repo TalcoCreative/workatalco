@@ -529,17 +529,17 @@ export default function Landing() {
         <div className="mx-auto max-w-5xl">
           <AnimateIn className="mb-20 text-center">
             <h2 className="mb-5 text-3xl font-extrabold text-foreground md:text-[3.25rem] leading-tight tracking-tight">
-              Mulai dalam <span className="bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">Hitungan Menit</span>
+              {(howContent.title || "Mulai dalam Hitungan Menit").replace(howContent.title_highlight || "Hitungan Menit", "|||").split("|||").map((part: string, idx: number) => idx === 0 ? part : <><span key={idx} className="bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">{howContent.title_highlight || "Hitungan Menit"}</span>{part}</>)}
             </h2>
-            <p className="text-muted-foreground text-lg">Empat langkah untuk mentransformasi operasi bisnis Anda.</p>
+            <p className="text-muted-foreground text-lg">{howContent.subtitle || "Empat langkah untuk mentransformasi operasi bisnis Anda."}</p>
           </AnimateIn>
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            {[
+            {(howContent.steps || [
               { step: "01", title: "Daftar Akun", desc: "Buat workspace perusahaan dalam hitungan detik." },
               { step: "02", title: "Setup Workspace", desc: "Konfigurasi branding, roles, dan permission." },
               { step: "03", title: "Undang Tim", desc: "Tambahkan anggota dan atur akses granular." },
               { step: "04", title: "Mulai Bekerja", desc: "Semuanya siap — langsung produktif." },
-            ].map((s, i) => (
+            ]).map((s: any, i: number) => (
               <AnimateIn key={i} delay={i * 120}>
                 <div className="relative text-center group p-6 rounded-2xl border border-border/15 bg-card/40 hover:bg-card/80 hover:shadow-soft-lg transition-all duration-500 h-full">
                   <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-primary/15 to-primary/5 text-2xl font-extrabold text-primary transition-all duration-500 group-hover:from-primary group-hover:to-primary/80 group-hover:text-primary-foreground group-hover:shadow-glow-primary group-hover:scale-110">
@@ -559,11 +559,11 @@ export default function Landing() {
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-muted/30 to-background" />
         <div className="relative mx-auto max-w-6xl">
           <AnimateIn className="mb-20 text-center">
-            <Badge variant="outline" className="mb-5 text-primary border-primary/30 bg-primary/5 text-xs font-bold tracking-wider uppercase">Pricing</Badge>
+            <Badge variant="outline" className="mb-5 text-primary border-primary/30 bg-primary/5 text-xs font-bold tracking-wider uppercase">{pricingContent.badge || "Pricing"}</Badge>
             <h2 className="mb-5 text-3xl font-extrabold text-foreground md:text-[3.25rem] leading-tight tracking-tight">
-              Transparan, <span className="bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">Tanpa Biaya Tersembunyi</span>
+              {(pricingContent.title || "Transparan, Tanpa Biaya Tersembunyi").replace(pricingContent.title_highlight || "Tanpa Biaya Tersembunyi", "|||").split("|||").map((part: string, idx: number) => idx === 0 ? part : <><span key={idx} className="bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">{pricingContent.title_highlight || "Tanpa Biaya Tersembunyi"}</span>{part}</>)}
             </h2>
-            <p className="text-muted-foreground text-lg">Bayar per user. Scale sesuai pertumbuhan. Semua dalam IDR.</p>
+            <p className="text-muted-foreground text-lg">{pricingContent.subtitle || "Bayar per user. Scale sesuai pertumbuhan. Semua dalam IDR."}</p>
           </AnimateIn>
 
           {/* Free Trial Banner */}
@@ -571,12 +571,12 @@ export default function Landing() {
             <div className="rounded-2xl border border-primary/20 bg-gradient-to-r from-primary/5 via-primary/10 to-primary/5 p-6 md:p-8 flex flex-col md:flex-row items-center justify-between gap-4">
               <div>
                 <Badge className="mb-2 bg-primary/10 text-primary border-primary/20 font-bold text-[10px] uppercase tracking-wider">Free Trial</Badge>
-                <h3 className="text-xl font-bold text-foreground">Coba Gratis 14 Hari — Akses Enterprise</h3>
-                <p className="text-sm text-muted-foreground mt-1">Akses semua fitur premium tanpa kartu kredit. Maksimal 3 user.</p>
+                <h3 className="text-xl font-bold text-foreground">{pricingContent.free_trial_title || "Coba Gratis 14 Hari — Akses Enterprise"}</h3>
+                <p className="text-sm text-muted-foreground mt-1">{pricingContent.free_trial_subtitle || "Akses semua fitur premium tanpa kartu kredit. Maksimal 3 user."}</p>
               </div>
               <Link to="/signup">
                 <Button size="lg" className="gap-2 px-8 shadow-glow-primary rounded-2xl font-bold whitespace-nowrap">
-                  <Sparkles className="h-4 w-4" /> Mulai Free Trial
+                  <Sparkles className="h-4 w-4" /> {pricingContent.free_trial_cta || "Mulai Free Trial"}
                 </Button>
               </Link>
             </div>
@@ -714,7 +714,7 @@ export default function Landing() {
         <div className="mx-auto max-w-5xl">
           <AnimateIn className="mb-16 text-center">
             <h2 className="mb-5 text-3xl font-extrabold text-foreground md:text-[3.25rem] leading-tight tracking-tight">
-              Kata Mereka tentang <span className="bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">WORKA</span>
+              {(testimonialsContent.title || "Kata Mereka tentang WORKA").replace(testimonialsContent.title_highlight || "WORKA", "|||").split("|||").map((part: string, idx: number) => idx === 0 ? part : <><span key={idx} className="bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">{testimonialsContent.title_highlight || "WORKA"}</span>{part}</>)}
             </h2>
           </AnimateIn>
           <div className="grid gap-6 md:grid-cols-3">
@@ -784,27 +784,30 @@ export default function Landing() {
         <div className="mx-auto max-w-5xl">
           <AnimateIn className="mb-16 text-center">
             <h2 className="mb-5 text-3xl font-extrabold text-foreground md:text-[3.25rem] leading-tight tracking-tight">
-              Kenapa Tim Anda Butuh <span className="bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">WORKA?</span>
+              {(whyContent.title || "Kenapa Tim Anda Butuh WORKA?").replace(whyContent.title_highlight || "WORKA?", "|||").split("|||").map((part: string, idx: number) => idx === 0 ? part : <><span key={idx} className="bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">{whyContent.title_highlight || "WORKA?"}</span>{part}</>)}
             </h2>
           </AnimateIn>
           <div className="grid gap-6 md:grid-cols-3">
-            {[
-              { icon: Layers, title: "Tools Berantakan?", desc: "Berhenti pindah antara Trello, Sheets, WhatsApp group, dan spreadsheet. Sentralisasi semuanya." },
-              { icon: Globe, title: "Komunikasi Hilang?", desc: "Tidak ada lagi brief hilang, deadline terlewat, atau feedback client terlupakan." },
-              { icon: Shield, title: "HR Manual?", desc: "Otomatisasi absensi, cuti, performance review, dan rekap payroll secara real-time." },
-            ].map((p, i) => (
+            {(whyContent.items || [
+              { title: "Tools Berantakan?", desc: "Berhenti pindah antara Trello, Sheets, WhatsApp group, dan spreadsheet. Sentralisasi semuanya." },
+              { title: "Komunikasi Hilang?", desc: "Tidak ada lagi brief hilang, deadline terlewat, atau feedback client terlupakan." },
+              { title: "HR Manual?", desc: "Otomatisasi absensi, cuti, performance review, dan rekap payroll secara real-time." },
+            ]).map((p: any, i: number) => {
+              const WhyIcon = [Layers, Globe, Shield][i] || Layers;
+              return (
               <AnimateIn key={i} delay={i * 100}>
                 <Card className="border-border/15 bg-card/70 h-full group hover:shadow-soft-lg hover:-translate-y-1 transition-all duration-500">
                   <CardContent className="p-8 text-center">
                     <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-destructive/8 text-destructive transition-transform duration-500 group-hover:scale-110 group-hover:rotate-6">
-                      <p.icon className="h-6 w-6" />
+                      <WhyIcon className="h-6 w-6" />
                     </div>
                     <h3 className="mb-3 font-bold text-foreground text-lg">{p.title}</h3>
                     <p className="text-sm text-muted-foreground leading-relaxed">{p.desc}</p>
                   </CardContent>
                 </Card>
               </AnimateIn>
-            ))}
+              );
+            })}
           </div>
         </div>
       </section>
@@ -813,7 +816,7 @@ export default function Landing() {
       <section id="faq" className="px-6 py-28 md:py-36 bg-gradient-to-b from-muted/20 to-background">
         <div className="mx-auto max-w-3xl">
           <AnimateIn className="mb-16 text-center">
-            <h2 className="mb-5 text-3xl font-extrabold text-foreground md:text-[3.25rem] leading-tight tracking-tight">Pertanyaan Umum</h2>
+            <h2 className="mb-5 text-3xl font-extrabold text-foreground md:text-[3.25rem] leading-tight tracking-tight">{faqContent.title || "Pertanyaan Umum"}</h2>
           </AnimateIn>
           <div className="space-y-3">
             {FAQS.map((f, i) => (
@@ -843,20 +846,20 @@ export default function Landing() {
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_70%_50%_at_50%_50%,hsl(var(--primary)/0.08),transparent)]" />
         <AnimateIn className="relative mx-auto max-w-3xl text-center">
           <div className="mb-8 inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-5 py-2 text-sm text-primary font-semibold">
-            <Sparkles className="h-3.5 w-3.5" /> Ready to transform your agency?
+            <Sparkles className="h-3.5 w-3.5" /> {ctaContent.badge || "Ready to transform your agency?"}
           </div>
           <h2 className="mb-6 text-3xl font-extrabold text-foreground md:text-[3.25rem] leading-tight tracking-tight">
-            Mulai Kelola Bisnis Anda <span className="bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">Sekarang</span>
+            {(ctaContent.title || "Mulai Kelola Bisnis Anda Sekarang").replace(ctaContent.title_highlight || "Sekarang", "|||").split("|||").map((part: string, idx: number) => idx === 0 ? part : <><span key={idx} className="bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">{ctaContent.title_highlight || "Sekarang"}</span>{part}</>)}
           </h2>
-          <p className="mb-10 text-lg text-muted-foreground">Setup dalam 2 menit. 14 hari free trial. Tanpa kartu kredit.</p>
+          <p className="mb-10 text-lg text-muted-foreground">{ctaContent.subtitle || "Setup dalam 2 menit. 14 hari free trial. Tanpa kartu kredit."}</p>
           <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
             <Link to="/subscribe">
               <Button size="lg" className="gap-2 px-10 shadow-glow-primary text-base h-14 rounded-2xl font-bold group">
-                Daftar Sekarang <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                {ctaContent.cta_primary || "Daftar Sekarang"} <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
               </Button>
             </Link>
             <Button size="lg" variant="outline" className="gap-2 px-8 text-base h-14 rounded-2xl font-semibold border-border/40" onClick={() => setDemoOpen(true)}>
-              <Play className="h-4 w-4" /> Request Demo
+              <Play className="h-4 w-4" /> {ctaContent.cta_secondary || "Request Demo"}
             </Button>
           </div>
         </AnimateIn>
