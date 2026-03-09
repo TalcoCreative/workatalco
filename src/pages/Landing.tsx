@@ -6,14 +6,8 @@ import { Link } from "react-router-dom";
 import { Helmet } from "react-helmet";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
-import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
-import {
-  Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription,
-} from "@/components/ui/dialog";
 import {
   ArrowRight, CheckCircle2, ChevronDown, Users, Calendar, FileText,
   Briefcase, Monitor, Zap, Shield, Globe, Star, Play, Layers,
@@ -161,9 +155,6 @@ export default function Landing() {
   const [userCounts, setUserCounts] = useState<Record<number, number>>({});
   const [billingCycle, setBillingCycle] = useState<"monthly" | "annual">("monthly");
   const [session, setSession] = useState<Session | null>(null);
-  const [demoOpen, setDemoOpen] = useState(false);
-  const [demoLoading, setDemoLoading] = useState(false);
-  const [demoForm, setDemoForm] = useState({ name: "", email: "", company_name: "", phone: "", message: "", demo_date: "", demo_time: "" });
   const [activeScreenshot, setActiveScreenshot] = useState(0);
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
   const scrollProgress = useScrollProgress();
@@ -252,36 +243,7 @@ export default function Landing() {
     return (found?.image_url && !found.image_url.startsWith("/assets")) ? found.image_url : STATIC_FALLBACKS[key] || "";
   };
 
-  const handleDemoSubmit = async () => {
-    if (!demoForm.name || !demoForm.email || !demoForm.company_name || !demoForm.demo_date || !demoForm.demo_time) { toast.error("Mohon isi semua field wajib termasuk tanggal & jam demo"); return; }
-    setDemoLoading(true);
-    try {
-      const { error } = await supabase.from("demo_requests").insert({
-        name: demoForm.name, email: demoForm.email, company_name: demoForm.company_name,
-        phone: demoForm.phone, message: demoForm.message,
-        demo_date: demoForm.demo_date, demo_time: demoForm.demo_time,
-      } as any);
-      if (error) throw error;
-      // Build WhatsApp message
-      const waPhone = "6285117084889";
-      const waMsg = encodeURIComponent(
-        `Halo, saya ingin request demo WORKA.\n\n` +
-        `Nama: ${demoForm.name}\n` +
-        `Email: ${demoForm.email}\n` +
-        `Perusahaan: ${demoForm.company_name}\n` +
-        `HP: ${demoForm.phone || '-'}\n` +
-        `Tanggal Demo: ${demoForm.demo_date}\n` +
-        `Jam Demo: ${demoForm.demo_time}\n` +
-        `Pesan: ${demoForm.message || '-'}`
-      );
-      window.open(`https://wa.me/${waPhone}?text=${waMsg}`, "_blank");
-      toast.success("Demo request berhasil dikirim! Mengarahkan ke WhatsApp...");
-      setDemoOpen(false);
-      setDemoForm({ name: "", email: "", company_name: "", phone: "", message: "", demo_date: "", demo_time: "" });
-    } catch (err: any) {
-      toast.error(err.message || "Gagal mengirim");
-    } finally { setDemoLoading(false); }
-  };
+  // Demo submit removed — now on /request-demo page
 
   return (
     <div className="min-h-screen bg-background text-foreground overflow-x-hidden" onMouseMove={handleMouseMove}>
@@ -377,9 +339,11 @@ export default function Landing() {
                   {heroContent.cta_primary || "Mulai Free Trial"} <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
                 </Button>
               </Link>
-              <Button size="lg" variant="outline" className="gap-2 px-8 text-base h-14 rounded-2xl font-semibold border-border/50 hover:bg-card hover:shadow-soft-lg transition-all" onClick={() => setDemoOpen(true)}>
-                <Play className="h-4 w-4" /> {heroContent.cta_secondary || "Request Demo"}
-              </Button>
+              <Link to="/request-demo">
+                <Button size="lg" variant="outline" className="gap-2 px-8 text-base h-14 rounded-2xl font-semibold border-border/50 hover:bg-card hover:shadow-soft-lg transition-all">
+                  <Play className="h-4 w-4" /> {heroContent.cta_secondary || "Request Demo"}
+                </Button>
+              </Link>
             </div>
           </AnimateIn>
 
@@ -886,9 +850,11 @@ export default function Landing() {
                 {ctaContent.cta_primary || "Daftar Sekarang"} <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
               </Button>
             </Link>
-            <Button size="lg" variant="outline" className="gap-2 px-8 text-base h-14 rounded-2xl font-semibold border-border/40" onClick={() => setDemoOpen(true)}>
-              <Play className="h-4 w-4" /> {ctaContent.cta_secondary || "Request Demo"}
-            </Button>
+            <Link to="/request-demo">
+              <Button size="lg" variant="outline" className="gap-2 px-8 text-base h-14 rounded-2xl font-semibold border-border/40">
+                <Play className="h-4 w-4" /> {ctaContent.cta_secondary || "Request Demo"}
+              </Button>
+            </Link>
           </div>
         </AnimateIn>
       </section>
@@ -940,55 +906,6 @@ export default function Landing() {
         </div>
       </footer>
 
-      {/* ══ DEMO DIALOG ══ */}
-      <Dialog open={demoOpen} onOpenChange={setDemoOpen}>
-        <DialogContent className="sm:max-w-lg">
-          <DialogHeader>
-            <DialogTitle className="text-xl font-bold">🗓️ Request a Demo</DialogTitle>
-            <DialogDescription>Pilih jadwal demo yang Anda inginkan, lalu kirim via WhatsApp.</DialogDescription>
-          </DialogHeader>
-          <div className="space-y-4 mt-2">
-            <div className="grid grid-cols-2 gap-3">
-              <div className="space-y-1.5">
-                <Label className="text-xs font-semibold">Nama Lengkap *</Label>
-                <Input placeholder="John Doe" value={demoForm.name} onChange={(e) => setDemoForm(p => ({ ...p, name: e.target.value }))} />
-              </div>
-              <div className="space-y-1.5">
-                <Label className="text-xs font-semibold">Nama Perusahaan *</Label>
-                <Input placeholder="PT Kreasi Digital" value={demoForm.company_name} onChange={(e) => setDemoForm(p => ({ ...p, company_name: e.target.value }))} />
-              </div>
-            </div>
-            <div className="grid grid-cols-2 gap-3">
-              <div className="space-y-1.5">
-                <Label className="text-xs font-semibold">Email *</Label>
-                <Input type="email" placeholder="john@company.com" value={demoForm.email} onChange={(e) => setDemoForm(p => ({ ...p, email: e.target.value }))} />
-              </div>
-              <div className="space-y-1.5">
-                <Label className="text-xs font-semibold">Nomor HP</Label>
-                <Input type="tel" placeholder="08123456789" value={demoForm.phone} onChange={(e) => setDemoForm(p => ({ ...p, phone: e.target.value }))} />
-              </div>
-            </div>
-            <div className="grid grid-cols-2 gap-3">
-              <div className="space-y-1.5">
-                <Label className="text-xs font-semibold">Tanggal Demo *</Label>
-                <Input type="date" value={demoForm.demo_date} onChange={(e) => setDemoForm(p => ({ ...p, demo_date: e.target.value }))} min={new Date().toISOString().split('T')[0]} />
-              </div>
-              <div className="space-y-1.5">
-                <Label className="text-xs font-semibold">Jam Demo *</Label>
-                <Input type="time" value={demoForm.demo_time} onChange={(e) => setDemoForm(p => ({ ...p, demo_time: e.target.value }))} />
-              </div>
-            </div>
-            <div className="space-y-1.5">
-              <Label className="text-xs font-semibold">Pesan (opsional)</Label>
-              <Textarea placeholder="Ceritakan kebutuhan Anda..." rows={2} value={demoForm.message} onChange={(e) => setDemoForm(p => ({ ...p, message: e.target.value }))} />
-            </div>
-            <Button className="w-full h-12 rounded-xl font-bold shadow-glow-primary gap-2" onClick={handleDemoSubmit} disabled={demoLoading}>
-              {demoLoading ? "Mengirim..." : "📩 Kirim via WhatsApp"}
-            </Button>
-            <p className="text-[10px] text-muted-foreground text-center">Data Anda juga tersimpan di sistem kami untuk konfirmasi jadwal.</p>
-          </div>
-        </DialogContent>
-      </Dialog>
     </div>
   );
 }
