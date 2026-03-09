@@ -39,6 +39,7 @@ import { LandingContentTab } from "@/components/platform/LandingContentTab";
 import { BroadcastEmailTab } from "@/components/platform/BroadcastEmailTab";
 import { IntegrationsTab } from "@/components/platform/IntegrationsTab";
 import { ProductsTab } from "@/components/platform/ProductsTab";
+import { SeoSettingsTab } from "@/components/platform/SeoSettingsTab";
 
 const TIER_PRICES: Record<string, number> = {
   trial: 0, starter: 7000, professional: 21000, enterprise: 25000, fnf: 0,
@@ -627,6 +628,9 @@ export default function SuperAdmin() {
 
             {/* ═══ PRODUCTS ═══ */}
             {activeTab === "products" && <div className="animate-fade-in"><ProductsTab /></div>}
+
+            {/* ═══ SEO ═══ */}
+            {activeTab === "seo" && <div className="animate-fade-in"><SeoSettingsTab /></div>}
           </div>
         </main>
       </div>
