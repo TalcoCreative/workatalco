@@ -313,11 +313,6 @@
     @apply floating-card p-4;
   }
 
-  /* Bottom nav safe area */
-  .pb-bottom-nav {
-    padding-bottom: calc(6rem + env(safe-area-inset-bottom, 0px));
-  }
-
   /* FAB positioning */
   .fab-position {
     position: fixed;
@@ -330,9 +325,6 @@
     .fab-position {
       bottom: 2rem;
       right: 2rem;
-    }
-    .pb-bottom-nav {
-      padding-bottom: 0;
     }
   }
 
@@ -380,6 +372,17 @@
   .tap-target {
     min-height: 44px;
     min-width: 44px;
+  }
+
+  /* Bottom nav safe area (must override Tailwind p-* utilities) */
+  .pb-bottom-nav {
+    padding-bottom: calc(6rem + env(safe-area-inset-bottom, 0px));
+  }
+
+  @media (min-width: 768px) {
+    .pb-bottom-nav {
+      padding-bottom: 0;
+    }
   }
 }
 
