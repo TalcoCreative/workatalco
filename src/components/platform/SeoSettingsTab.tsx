@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -8,60 +8,58 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
-import { Globe, Search, FileText, Copy, ExternalLink, CheckCircle2, Save } from "lucide-react";
+import { Globe, Search, FileText, Copy, ExternalLink, Save } from "lucide-react";
 
 export function SeoSettingsTab() {
   const queryClient = useQueryClient();
+  const [googleVerification, setGoogleVerification] = useState("");
+  const [robotsTxt, setRobotsTxt] = useState("");
 
-  // Fetch existing SEO settings from landing_content
-  const { data: seoSettings, isLoading } = useQuery({
+  const { data: seoSettings } = useQuery({
     queryKey: ["seo-settings"],
     queryFn: async () => {
       const keys = ["google_site_verification", "meta_robots_txt"];
       const { data } = await supabase
         .from("landing_content")
-        .select("section_key, content")
-        .in("section_key", keys);
+        .select("section, content")
+        .in("section", keys);
       const map: Record<string, string> = {};
-      (data || []).forEach((r: any) => {
-        map[r.section_key] = typeof r.content === "string" ? r.content : (r.content?.value || "");
+      (data || []).forEach((r) => {
+        const val = r.content;
+        map[r.section] = typeof val === "string" ? val : "";
       });
       return map;
     },
   });
 
-  const [googleVerification, setGoogleVerification] = useState("");
-  const [robotsTxt, setRobotsTxt] = useState("");
-  const [loaded, setLoaded] = useState(false);
-
-  // Initialize form values from fetched data
-  if (seoSettings && !loaded) {
-    setGoogleVerification(seoSettings.google_site_verification || "");
-    setRobotsTxt(seoSettings.meta_robots_txt || "");
-    setLoaded(true);
-  }
+  useEffect(() => {
+    if (seoSettings) {
+      setGoogleVerification(seoSettings.google_site_verification || "");
+      setRobotsTxt(seoSettings.meta_robots_txt || "");
+    }
+  }, [seoSettings]);
 
   const saveMutation = useMutation({
     mutationFn: async () => {
       const entries = [
-        { section_key: "google_site_verification", content: googleVerification.trim() },
-        { section_key: "meta_robots_txt", content: robotsTxt.trim() },
+        { section: "google_site_verification", content: googleVerification.trim() },
+        { section: "meta_robots_txt", content: robotsTxt.trim() },
       ];
       for (const entry of entries) {
         const { data: existing } = await supabase
           .from("landing_content")
           .select("id")
-          .eq("section_key", entry.section_key)
+          .eq("section", entry.section)
           .maybeSingle();
         if (existing) {
           await supabase
             .from("landing_content")
-            .update({ content: entry.content })
+            .update({ content: entry.content as any })
             .eq("id", existing.id);
         } else {
           await supabase
             .from("landing_content")
-            .insert({ section_key: entry.section_key, content: entry.content });
+            .insert({ section: entry.section, content: entry.content as any });
         }
       }
     },
@@ -72,7 +70,6 @@ export function SeoSettingsTab() {
     onError: () => toast.error("Gagal menyimpan"),
   });
 
-  const sitemapUrl = `${window.location.origin}/sitemap.xml`;
   const projectId = import.meta.env.VITE_SUPABASE_PROJECT_ID;
   const sitemapEdgeFnUrl = `https://${projectId}.supabase.co/functions/v1/sitemap?origin=${encodeURIComponent(window.location.origin)}`;
 
@@ -105,7 +102,7 @@ export function SeoSettingsTab() {
             <Input
               value={googleVerification}
               onChange={(e) => setGoogleVerification(e.target.value)}
-              placeholder="contoh: google-site-verification=xxxxxxxxxxxxx"
+              placeholder="contoh: xxxxxxxxxxxxx"
               className="font-mono text-xs"
             />
             <p className="text-[10px] text-muted-foreground">
@@ -161,7 +158,7 @@ export function SeoSettingsTab() {
           <div className="rounded-xl bg-muted/50 border border-border/30 p-3">
             <p className="text-xs font-medium text-foreground mb-2">Halaman yang termasuk di sitemap:</p>
             <div className="flex flex-wrap gap-1.5">
-              {["/landing", "/blog", "/blog/*", "/pricing", "/privacy-policy", "/subscribe"].map((p) => (
+              {["/landing", "/blog", "/blog/*", "/pricing", "/subscribe", "/privacy-policy"].map((p) => (
                 <Badge key={p} variant="secondary" className="text-[10px] font-mono">{p}</Badge>
               ))}
             </div>
@@ -169,7 +166,7 @@ export function SeoSettingsTab() {
         </CardContent>
       </Card>
 
-      {/* Robots.txt override */}
+      {/* Robots.txt */}
       <Card className="border-border/30">
         <CardHeader className="pb-3">
           <CardTitle className="text-base flex items-center gap-2">
