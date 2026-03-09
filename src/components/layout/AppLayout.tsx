@@ -111,10 +111,10 @@ export function AppLayout({ children }: AppLayoutProps) {
       {isMobile && <MobileBottomNav />}
       <FloatingActionButton />
 
-      {/* Notes FAB */}
+      {/* Notes FAB — positioned above bottom nav on mobile */}
       <Button
         size="icon"
-        className={`fixed bottom-20 right-4 z-40 h-11 w-11 rounded-full shadow-lg ${notesOpen ? "bg-primary/80" : "bg-primary"}`}
+        className={`fixed z-40 h-11 w-11 rounded-full shadow-lg right-4 ${notesOpen ? "bg-primary/80" : "bg-primary"} md:bottom-8 bottom-[calc(5rem+env(safe-area-inset-bottom,0px))]`}
         onClick={() => setNotesOpen(!notesOpen)}
       >
         <StickyNote className="h-5 w-5" />
