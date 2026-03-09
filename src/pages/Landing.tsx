@@ -36,29 +36,33 @@ const STATIC_FALLBACKS: Record<string, string> = {
   "screenshot-finance": screenshotFinanceFallback,
 };
 
-/* ─── Data ─── */
-const FEATURES = [
-  { icon: Briefcase, title: "Project & Task Management", desc: "Kanban board, timeline, deadline tracking, dan resource allocation untuk seluruh project tim kreatif Anda.", color: "from-blue-500/20 to-blue-600/5" },
-  { icon: Users, title: "HR & Team Analytics", desc: "Attendance, cuti, performa karyawan, dan workforce analytics. Dirancang khusus untuk tim agensi.", color: "from-violet-500/20 to-violet-600/5" },
-  { icon: Calendar, title: "Social Media & Editorial", desc: "Editorial planning, content calendar, dan social media management untuk creative agency.", color: "from-pink-500/20 to-pink-600/5" },
-  { icon: Receipt, title: "Finance & Recording", desc: "Pencatatan income, expense, payroll, reimbursement, dan laporan keuangan terintegrasi.", color: "from-emerald-500/20 to-emerald-600/5" },
-  { icon: Monitor, title: "Executive Dashboard", desc: "Overview level CEO dengan KPI, revenue tracking, dan performa tim real-time.", color: "from-amber-500/20 to-amber-600/5" },
-  { icon: FileText, title: "Client Hub & CRM", desc: "Kelola klien, kontrak, kuota, pembayaran, dan shared dashboard terorganisir.", color: "from-cyan-500/20 to-cyan-600/5" },
-  { icon: Video, title: "Shooting & Event", desc: "Jadwalkan shooting dan event. Track crew, vendor, checklist, dan dokumen.", color: "from-orange-500/20 to-orange-600/5" },
-  { icon: UserSearch, title: "Recruitment System", desc: "Pipeline rekrutmen dari lamaran hingga onboarding, form builder, dan assessment.", color: "from-rose-500/20 to-rose-600/5" },
-  { icon: Sparkles, title: "AI Content Builder", desc: "Generate caption, artikel, dan copy kreatif secara instan dengan AI.", color: "from-indigo-500/20 to-indigo-600/5" },
+/* ─── Fallback Data ─── */
+const FEATURES_FALLBACK = [
+  { icon: "Briefcase", title: "Project & Task Management", desc: "Kanban board, timeline, deadline tracking, dan resource allocation untuk seluruh project tim kreatif Anda." },
+  { icon: "Users", title: "HR & Team Analytics", desc: "Attendance, cuti, performa karyawan, dan workforce analytics. Dirancang khusus untuk tim agensi." },
+  { icon: "Calendar", title: "Social Media & Editorial", desc: "Editorial planning, content calendar, dan social media management untuk creative agency." },
+  { icon: "Receipt", title: "Finance & Recording", desc: "Pencatatan income, expense, payroll, reimbursement, dan laporan keuangan terintegrasi." },
+  { icon: "Monitor", title: "Executive Dashboard", desc: "Overview level CEO dengan KPI, revenue tracking, dan performa tim real-time." },
+  { icon: "FileText", title: "Client Hub & CRM", desc: "Kelola klien, kontrak, kuota, pembayaran, dan shared dashboard terorganisir." },
+  { icon: "Video", title: "Shooting & Event", desc: "Jadwalkan shooting dan event. Track crew, vendor, checklist, dan dokumen." },
+  { icon: "UserSearch", title: "Recruitment System", desc: "Pipeline rekrutmen dari lamaran hingga onboarding, form builder, dan assessment." },
+  { icon: "Sparkles", title: "AI Content Builder", desc: "Generate caption, artikel, dan copy kreatif secara instan dengan AI." },
 ];
 
-const PRODUCT_SCREENSHOTS = [
+const SCREENSHOTS_FALLBACK = [
   { title: "Dashboard & Projects", imgKey: "screenshot-dashboard", desc: "Real-time KPIs, project tracking, dan kanban board untuk mengelola seluruh workflow tim.", tag: "Core" },
   { title: "Schedule & Calendar", imgKey: "screenshot-schedule", desc: "Unified calendar dengan tasks, meetings, shootings, dan events dalam satu tampilan.", tag: "Planning" },
   { title: "HR & People Analytics", imgKey: "screenshot-hr", desc: "Dashboard attendance, leave management, performa tim, dan workforce statistics.", tag: "HR" },
   { title: "Finance Center", imgKey: "screenshot-finance", desc: "Pencatatan income, expense, payroll, dan laporan keuangan untuk bisnis Anda.", tag: "Finance" },
 ];
 
-// TIERS now loaded from database (subscription_products)
+const TESTIMONIALS_FALLBACK = [
+  { name: "Andi Pratama", role: "CEO, Studio Kreatif", text: "Akhirnya satu tool yang bisa handle semua dari project tracking sampai payroll. Produktivitas tim naik 40%.", avatar: "A" },
+  { name: "Sarah Chen", role: "COO, MediaHaus", text: "Fitur editorial planning dan client hub-nya game changer banget untuk content agency kami.", avatar: "S" },
+  { name: "Budi Santoso", role: "Founder, PixelCraft", text: "Pindah dari 5 tools berbeda ke WORKA menghemat jam kerja kami setiap minggu.", avatar: "B" },
+];
 
-const FAQS = [
+const FAQS_FALLBACK = [
   { q: "Berapa lama free trial-nya?", a: "Setiap workspace baru mendapat 14 hari free trial dengan maksimal 3 user. Tanpa kartu kredit." },
   { q: "Bisa upgrade atau downgrade kapan saja?", a: "Ya, Anda bisa mengubah tier subscription kapan saja. Perubahan langsung berlaku." },
   { q: "Apakah data saya aman?", a: "Tentu. Kami menggunakan enkripsi enterprise-grade, row-level security, dan isolasi data antar workspace." },
@@ -67,11 +71,10 @@ const FAQS = [
   { q: "Apakah support pembayaran lokal?", a: "Ya, kami mendukung payment gateway Indonesia untuk transaksi Rupiah yang seamless." },
 ];
 
-const TESTIMONIALS = [
-  { name: "Andi Pratama", role: "CEO, Studio Kreatif", text: "Akhirnya satu tool yang bisa handle semua dari project tracking sampai payroll. Produktivitas tim naik 40%.", avatar: "A" },
-  { name: "Sarah Chen", role: "COO, MediaHaus", text: "Fitur editorial planning dan client hub-nya game changer banget untuk content agency kami.", avatar: "S" },
-  { name: "Budi Santoso", role: "Founder, PixelCraft", text: "Pindah dari 5 tools berbeda ke WORKA menghemat jam kerja kami setiap minggu.", avatar: "B" },
-];
+const ICON_MAP: Record<string, any> = {
+  Briefcase, Users, Calendar, Receipt, Monitor, FileText, Video, UserSearch, Sparkles,
+  Globe, Shield, Layers, Star, Zap, Play, ArrowRight,
+};
 
 const formatRupiah = (n: number) => "Rp " + n.toLocaleString("id-ID");
 const formatShort = (n: number) => {
