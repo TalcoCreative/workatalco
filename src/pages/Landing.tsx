@@ -162,7 +162,6 @@ export default function Landing() {
   const [billingCycle, setBillingCycle] = useState<"monthly" | "annual">("monthly");
   const [session, setSession] = useState<Session | null>(null);
   const [activeScreenshot, setActiveScreenshot] = useState(0);
-  const [activeScreenshot, setActiveScreenshot] = useState(0);
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
   const scrollProgress = useScrollProgress();
   const heroParallax = useParallax(0.15);
