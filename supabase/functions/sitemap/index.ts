@@ -16,7 +16,7 @@ Deno.serve(async (req) => {
   const supabase = createClient(supabaseUrl, supabaseKey);
 
   const url = new URL(req.url);
-  const origin = url.searchParams.get("origin") || "https://workatalco.lovable.app";
+  const origin = url.searchParams.get("origin") || "https://worka.talco.id";
 
   // Fetch published blog posts
   const { data: posts } = await supabase

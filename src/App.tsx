@@ -77,6 +77,7 @@ import BlogPost from "./pages/BlogPost";
 import PersonalNotes from "./pages/PersonalNotes";
 import ProfileSettings from "./pages/ProfileSettings";
 import WorkspaceRedirect from "./pages/WorkspaceRedirect";
+import SitemapRedirect from "./pages/SitemapRedirect";
 
 const queryClient = new QueryClient();
 
@@ -96,6 +97,9 @@ const App = () => (
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
           <Route path="/blog" element={<Blog />} />
           <Route path="/blog/:slug" element={<BlogPost />} />
+
+          {/* Sitemap */}
+          <Route path="/sitemap.xml" element={<SitemapRedirect />} />
 
           {/* Default landing page */}
           <Route path="/" element={<Navigate to="/landing" replace />} />
