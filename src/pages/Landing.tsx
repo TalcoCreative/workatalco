@@ -319,17 +319,17 @@ export default function Landing() {
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75" />
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-primary" />
               </span>
-              14 Hari Free Trial — Tanpa Kartu Kredit
+              {heroContent.badge_text || "14 Hari Free Trial — Tanpa Kartu Kredit"}
             </div>
           </AnimateIn>
 
           <AnimateIn delay={120}>
             <h1 className="mb-6 text-[2.75rem] font-extrabold leading-[1.08] tracking-tight text-foreground sm:text-6xl md:text-[5rem]">
-              Satu Platform untuk
+              {heroContent.title_line1 || "Satu Platform untuk"}
               <br />
               <span className="relative inline-block">
                 <span className="bg-gradient-to-r from-primary via-primary/90 to-primary/60 bg-clip-text text-transparent">
-                  Tim Kreatif Modern
+                  {heroContent.title_line2 || "Tim Kreatif Modern"}
                 </span>
                 <svg className="absolute -bottom-2 left-0 w-full" viewBox="0 0 300 12" fill="none"><path d="M2 8C50 2 100 2 150 6C200 10 250 4 298 7" stroke="hsl(var(--primary))" strokeWidth="3" strokeLinecap="round" opacity="0.3" /></svg>
               </span>
@@ -337,21 +337,20 @@ export default function Landing() {
           </AnimateIn>
 
           <AnimateIn delay={240}>
-            <p className="mx-auto mb-10 max-w-2xl text-lg text-muted-foreground md:text-xl leading-relaxed">
-              Kelola Projects, HR, Content, Clients, dan Finance dalam satu workspace.
-              Dirancang khusus untuk <strong className="text-foreground font-semibold">creative agency</strong> dan perusahaan jasa.
-            </p>
+            <p className="mx-auto mb-10 max-w-2xl text-lg text-muted-foreground md:text-xl leading-relaxed"
+               dangerouslySetInnerHTML={{ __html: heroContent.subtitle || "Kelola Projects, HR, Content, Clients, dan Finance dalam satu workspace. Dirancang khusus untuk <strong class='text-foreground font-semibold'>creative agency</strong> dan perusahaan jasa." }}
+            />
           </AnimateIn>
 
           <AnimateIn delay={360}>
             <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
               <Link to="/signup">
                 <Button size="lg" className="gap-2 px-10 shadow-glow-primary text-base h-14 rounded-2xl font-bold group">
-                  Mulai Free Trial <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                  {heroContent.cta_primary || "Mulai Free Trial"} <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
                 </Button>
               </Link>
               <Button size="lg" variant="outline" className="gap-2 px-8 text-base h-14 rounded-2xl font-semibold border-border/50 hover:bg-card hover:shadow-soft-lg transition-all" onClick={() => setDemoOpen(true)}>
-                <Play className="h-4 w-4" /> Request Demo
+                <Play className="h-4 w-4" /> {heroContent.cta_secondary || "Request Demo"}
               </Button>
             </div>
           </AnimateIn>
@@ -359,11 +358,11 @@ export default function Landing() {
           {/* Stats bar */}
           <AnimateIn delay={480}>
             <div className="mt-12 flex flex-wrap items-center justify-center gap-8 md:gap-14 text-center">
-              {[
+              {(heroContent.stats || [
                 { value: 200, suffix: "+", label: "Tim Aktif" },
                 { value: 50, suffix: "K+", label: "Tasks Dikelola" },
                 { value: 99, suffix: "%", label: "Uptime" },
-              ].map((s, i) => (
+              ]).map((s: any, i: number) => (
                 <div key={i}>
                   <div className="text-2xl md:text-3xl font-extrabold text-foreground"><CountUp target={s.value} suffix={s.suffix} /></div>
                   <div className="text-xs text-muted-foreground mt-1 font-medium">{s.label}</div>
@@ -405,9 +404,9 @@ export default function Landing() {
       {/* ══ TRUST BAR ══ */}
       <section className="px-6 py-14 border-y border-border/15">
         <div className="mx-auto max-w-5xl">
-          <p className="text-center text-[11px] font-bold uppercase tracking-[0.25em] text-muted-foreground/50 mb-8">Dipercaya oleh Agensi Kreatif di Indonesia</p>
+          <p className="text-center text-[11px] font-bold uppercase tracking-[0.25em] text-muted-foreground/50 mb-8">{trustContent.title || "Dipercaya oleh Agensi Kreatif di Indonesia"}</p>
           <div className="flex flex-wrap items-center justify-center gap-12 opacity-20">
-            {["StudioKreatif", "MediaHaus", "PixelCraft", "NusaDigital", "KreasiLab"].map(n => (
+            {(trustContent.companies || ["StudioKreatif", "MediaHaus", "PixelCraft", "NusaDigital", "KreasiLab"]).map((n: string) => (
               <div key={n} className="text-xl font-bold text-foreground tracking-tight">{n}</div>
             ))}
           </div>
@@ -418,18 +417,18 @@ export default function Landing() {
       <section id="features" className="px-6 py-28 md:py-36">
         <div className="mx-auto max-w-6xl">
           <AnimateIn className="mb-20 text-center">
-            <Badge variant="outline" className="mb-5 text-primary border-primary/30 bg-primary/5 text-xs font-bold tracking-wider uppercase">Features</Badge>
+            <Badge variant="outline" className="mb-5 text-primary border-primary/30 bg-primary/5 text-xs font-bold tracking-wider uppercase">{featuresContent.badge || "Features"}</Badge>
             <h2 className="mb-5 text-3xl font-extrabold text-foreground md:text-[3.25rem] leading-tight tracking-tight">
-              Semua yang Tim Anda <span className="bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">Butuhkan</span>
+              {(featuresContent.title || "Semua yang Tim Anda Butuhkan").replace(featuresContent.title_highlight || "Butuhkan", "|||").split("|||").map((part: string, idx: number) => idx === 0 ? part : <><span key={idx} className="bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">{featuresContent.title_highlight || "Butuhkan"}</span>{part}</>)}
             </h2>
-            <p className="mx-auto max-w-xl text-muted-foreground text-lg">Satu platform untuk menjalankan seluruh operasional — dari project hingga payroll.</p>
+            <p className="mx-auto max-w-xl text-muted-foreground text-lg">{featuresContent.subtitle || "Satu platform untuk menjalankan seluruh operasional — dari project hingga payroll."}</p>
           </AnimateIn>
 
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {FEATURES.map((f, i) => (
               <AnimateIn key={i} delay={i * 70}>
                 <Card className="group relative overflow-hidden border-border/20 bg-card/70 backdrop-blur-sm transition-all duration-500 hover:shadow-soft-xl hover:-translate-y-2 hover:border-primary/15 h-full">
-                  <div className={`absolute inset-0 bg-gradient-to-br ${f.color} opacity-0 group-hover:opacity-100 transition-opacity duration-500`} />
+                  <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                   <CardContent className="relative p-7">
                     <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/8 text-primary transition-all duration-500 group-hover:bg-primary group-hover:text-primary-foreground group-hover:shadow-glow-primary group-hover:scale-110 group-hover:rotate-3">
                       <f.icon className="h-5 w-5" />
