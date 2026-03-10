@@ -120,18 +120,21 @@ export default function HRAnalytics() {
     enabled: !!compareMonth && memberIds.length > 0,
   });
 
-  // Fetch tasks
+  // Fetch tasks (filtered by company members as assignees)
   const { data: tasks } = useQuery({
-    queryKey: ["hr-analytics-tasks", startDate, endDate],
+    queryKey: ["hr-analytics-tasks", startDate, endDate, memberIds],
     queryFn: async () => {
+      if (memberIds.length === 0) return [];
       const { data, error } = await supabase
         .from("tasks")
         .select("*, task_assignees(user_id)")
+        .in("assigned_to", memberIds)
         .or(`created_at.gte.${startDate}T00:00:00,deadline.gte.${startDate}`)
         .or(`created_at.lte.${endDate}T23:59:59,deadline.lte.${endDate}`);
       if (error) throw error;
       return data || [];
     },
+    enabled: memberIds.length > 0,
   });
 
   // Fetch meetings
