@@ -66,6 +66,7 @@ const PlatformIcon = ({ platform }: { platform: string }) => {
 };
 
 export function PlatformAccountsTab() {
+  const { companyId } = useCompanyMembers();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [selectedAccount, setSelectedAccount] = useState<string | null>(null);
