@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { useCompanyMembers } from "@/hooks/useCompanyMembers";
 import {
   useAdsReports,
   useCreateAdsReport,
@@ -116,17 +117,21 @@ export function AdsReportsTab() {
   });
 
   const { data: accounts = [] } = usePlatformAccounts();
+  const { companyId } = useCompanyMembers();
   const { data: clients = [] } = useQuery({
-    queryKey: ["clients-for-reports"],
+    queryKey: ["clients-for-reports", companyId],
     queryFn: async () => {
+      if (!companyId) return [];
       const { data, error } = await supabase
         .from("clients")
         .select("id, name")
+        .eq("company_id", companyId)
         .eq("status", "active")
         .order("name");
       if (error) throw error;
       return data;
     },
+    enabled: !!companyId,
   });
 
   const createMutation = useCreateAdsReport();

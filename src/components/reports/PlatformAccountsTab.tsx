@@ -52,6 +52,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { Plus, MoreHorizontal, Pencil, Trash2, Instagram, Facebook, Linkedin, Youtube, Music2, MapPin } from "lucide-react";
+import { useCompanyMembers } from "@/hooks/useCompanyMembers";
 
 const PlatformIcon = ({ platform }: { platform: string }) => {
   const icons: Record<string, React.ReactNode> = {
@@ -66,6 +67,7 @@ const PlatformIcon = ({ platform }: { platform: string }) => {
 };
 
 export function PlatformAccountsTab() {
+  const { companyId } = useCompanyMembers();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [selectedAccount, setSelectedAccount] = useState<string | null>(null);
@@ -82,16 +84,19 @@ export function PlatformAccountsTab() {
 
   const { data: accounts = [], isLoading } = usePlatformAccounts();
   const { data: clients = [] } = useQuery({
-    queryKey: ["clients-for-reports"],
+    queryKey: ["clients-for-reports", companyId],
     queryFn: async () => {
+      if (!companyId) return [];
       const { data, error } = await supabase
         .from("clients")
         .select("id, name")
+        .eq("company_id", companyId)
         .eq("status", "active")
         .order("name");
       if (error) throw error;
       return data;
     },
+    enabled: !!companyId,
   });
 
   const createMutation = useCreatePlatformAccount();

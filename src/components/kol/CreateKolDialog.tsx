@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { useWorkspace } from "@/hooks/useWorkspace";
 import {
   Dialog,
   DialogContent,
@@ -29,6 +30,7 @@ interface CreateKolDialogProps {
 
 export function CreateKolDialog({ open, onOpenChange, industries }: CreateKolDialogProps) {
   const queryClient = useQueryClient();
+  const { activeWorkspace } = useWorkspace();
   const [formData, setFormData] = useState({
     name: "",
     username: "",
@@ -86,6 +88,7 @@ export function CreateKolDialog({ open, onOpenChange, industries }: CreateKolDia
         notes: data.notes || null,
         created_by: userId,
         updated_by: userId,
+        company_id: activeWorkspace?.id || null,
       });
 
       if (error) throw error;

@@ -84,50 +84,57 @@ export default function HRAnalytics() {
     },
   });
 
-  // Fetch attendance for current period
+  // Fetch attendance for current period (filtered by company members)
   const { data: attendance } = useQuery({
-    queryKey: ["hr-analytics-attendance", startDate, endDate],
+    queryKey: ["hr-analytics-attendance", startDate, endDate, memberIds],
     queryFn: async () => {
+      if (memberIds.length === 0) return [];
       const { data, error } = await supabase
         .from("attendance")
         .select("*")
+        .in("user_id", memberIds)
         .gte("date", startDate)
         .lte("date", endDate);
       if (error) throw error;
       return data || [];
     },
+    enabled: memberIds.length > 0,
   });
 
   // Fetch attendance for comparison period (only when compareMonth is set)
   const { data: compareAttendance } = useQuery({
-    queryKey: ["hr-analytics-compare-attendance", compareMonth],
+    queryKey: ["hr-analytics-compare-attendance", compareMonth, memberIds],
     queryFn: async () => {
-      if (!compareMonth) return [];
+      if (!compareMonth || memberIds.length === 0) return [];
       const compareStart = format(startOfMonth(new Date(compareMonth + '-01')), 'yyyy-MM-dd');
       const compareEnd = format(endOfMonth(new Date(compareMonth + '-01')), 'yyyy-MM-dd');
       const { data, error } = await supabase
         .from("attendance")
         .select("*")
+        .in("user_id", memberIds)
         .gte("date", compareStart)
         .lte("date", compareEnd);
       if (error) throw error;
       return data || [];
     },
-    enabled: !!compareMonth,
+    enabled: !!compareMonth && memberIds.length > 0,
   });
 
-  // Fetch tasks
+  // Fetch tasks (filtered by company members as assignees)
   const { data: tasks } = useQuery({
-    queryKey: ["hr-analytics-tasks", startDate, endDate],
+    queryKey: ["hr-analytics-tasks", startDate, endDate, memberIds],
     queryFn: async () => {
+      if (memberIds.length === 0) return [];
       const { data, error } = await supabase
         .from("tasks")
         .select("*, task_assignees(user_id)")
+        .in("assigned_to", memberIds)
         .or(`created_at.gte.${startDate}T00:00:00,deadline.gte.${startDate}`)
         .or(`created_at.lte.${endDate}T23:59:59,deadline.lte.${endDate}`);
       if (error) throw error;
       return data || [];
     },
+    enabled: memberIds.length > 0,
   });
 
   // Fetch meetings
@@ -187,32 +194,38 @@ export default function HRAnalytics() {
     },
   });
 
-   // Fetch projects
+   // Fetch projects (filtered by company members)
   const { data: projects } = useQuery({
-    queryKey: ["hr-analytics-projects"],
+    queryKey: ["hr-analytics-projects", memberIds],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from("projects")
+      if (memberIds.length === 0) return [];
+      const { data, error } = await (supabase
+        .from("projects") as any)
         .select("id, title")
+        .in("created_by", memberIds)
         .order("title");
       if (error) throw error;
       return data || [];
     },
+    enabled: memberIds.length > 0,
   });
 
-  // Fetch task status logs for duration tracking
+  // Fetch task status logs for duration tracking (filtered by company member tasks)
   const { data: taskStatusLogs } = useQuery({
-    queryKey: ["hr-analytics-status-logs", startDate, endDate],
+    queryKey: ["hr-analytics-status-logs", startDate, endDate, memberIds],
     queryFn: async () => {
+      if (memberIds.length === 0) return [];
       const { data, error } = await supabase
         .from("task_status_logs")
         .select("*")
+        .in("changed_by", memberIds)
         .gte("changed_at", `${startDate}T00:00:00`)
         .lte("changed_at", `${endDate}T23:59:59`)
         .order("changed_at", { ascending: true });
       if (error) throw error;
       return data || [];
     },
+    enabled: memberIds.length > 0,
   });
 
   // Calculate work hours

@@ -60,16 +60,16 @@ export default function KolDatabase() {
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [selectedKol, setSelectedKol] = useState<any>(null);
 
-  const { memberIds } = useCompanyMembers();
+  const { memberIds, companyId } = useCompanyMembers();
 
   const { data: kols, isLoading } = useQuery({
-    queryKey: ["kol-database", searchQuery, categoryFilter, industryFilter, followersFilter, memberIds],
+    queryKey: ["kol-database", searchQuery, categoryFilter, industryFilter, followersFilter, companyId],
     queryFn: async () => {
-      if (memberIds.length === 0) return [];
+      if (!companyId) return [];
       let query = supabase
         .from("kol_database")
         .select("*")
-        .in("created_by", memberIds)
+        .eq("company_id", companyId)
         .order("updated_at", { ascending: false });
 
       if (searchQuery) {
@@ -117,6 +117,7 @@ export default function KolDatabase() {
 
       return filteredData;
     },
+    enabled: !!companyId,
   });
 
   const formatFollowers = (count: number | null) => {
@@ -206,6 +207,7 @@ export default function KolDatabase() {
         await supabase.from("kol_database").insert({
           ...kolData,
           created_by: session.session.user.id,
+          company_id: companyId || null,
         });
       }
     }

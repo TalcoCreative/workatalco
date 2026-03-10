@@ -130,6 +130,7 @@ export function CreateCampaignDialog({ open, onOpenChange }: CreateCampaignDialo
           pic_id: data.pic_id || null,
           created_by: userId,
           updated_by: userId,
+          company_id: activeWorkspace?.id || null,
         })
         .select()
         .single();

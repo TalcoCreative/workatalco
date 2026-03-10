@@ -74,9 +74,9 @@ export default function KolCampaign() {
   const { activeWorkspace } = useWorkspace();
 
   const { data: campaigns, isLoading } = useQuery({
-    queryKey: ["kol-campaigns", searchQuery, clientFilter, statusFilter, postedFilter, paidFilter, memberIds],
+    queryKey: ["kol-campaigns", searchQuery, clientFilter, statusFilter, postedFilter, paidFilter, companyId],
     queryFn: async () => {
-      if (memberIds.length === 0) return [] as any[];
+      if (!companyId) return [] as any[];
       let query = supabase
         .from("kol_campaigns")
         .select(`
@@ -87,7 +87,7 @@ export default function KolCampaign() {
           pic:profiles!kol_campaigns_pic_id_fkey(id, full_name)
         `) as any;
 
-      query = query.in("created_by", memberIds).order("updated_at", { ascending: false });
+      query = query.eq("company_id", companyId).order("updated_at", { ascending: false });
 
       if (statusFilter && statusFilter !== "all") {
         query = query.eq("status", statusFilter);
