@@ -84,18 +84,21 @@ export default function HRAnalytics() {
     },
   });
 
-  // Fetch attendance for current period
+  // Fetch attendance for current period (filtered by company members)
   const { data: attendance } = useQuery({
-    queryKey: ["hr-analytics-attendance", startDate, endDate],
+    queryKey: ["hr-analytics-attendance", startDate, endDate, memberIds],
     queryFn: async () => {
+      if (memberIds.length === 0) return [];
       const { data, error } = await supabase
         .from("attendance")
         .select("*")
+        .in("user_id", memberIds)
         .gte("date", startDate)
         .lte("date", endDate);
       if (error) throw error;
       return data || [];
     },
+    enabled: memberIds.length > 0,
   });
 
   // Fetch attendance for comparison period (only when compareMonth is set)
