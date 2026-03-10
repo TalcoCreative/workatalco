@@ -199,8 +199,8 @@ export default function HRAnalytics() {
     queryKey: ["hr-analytics-projects", memberIds],
     queryFn: async () => {
       if (memberIds.length === 0) return [];
-      const { data, error } = await supabase
-        .from("projects")
+      const { data, error } = await (supabase
+        .from("projects") as any)
         .select("id, title")
         .in("created_by", memberIds)
         .order("title");
