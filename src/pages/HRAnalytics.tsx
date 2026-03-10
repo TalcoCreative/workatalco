@@ -210,19 +210,22 @@ export default function HRAnalytics() {
     enabled: memberIds.length > 0,
   });
 
-  // Fetch task status logs for duration tracking
+  // Fetch task status logs for duration tracking (filtered by company member tasks)
   const { data: taskStatusLogs } = useQuery({
-    queryKey: ["hr-analytics-status-logs", startDate, endDate],
+    queryKey: ["hr-analytics-status-logs", startDate, endDate, memberIds],
     queryFn: async () => {
+      if (memberIds.length === 0) return [];
       const { data, error } = await supabase
         .from("task_status_logs")
         .select("*")
+        .in("changed_by", memberIds)
         .gte("changed_at", `${startDate}T00:00:00`)
         .lte("changed_at", `${endDate}T23:59:59`)
         .order("changed_at", { ascending: true });
       if (error) throw error;
       return data || [];
     },
+    enabled: memberIds.length > 0,
   });
 
   // Calculate work hours

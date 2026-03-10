@@ -52,6 +52,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { Plus, MoreHorizontal, Pencil, Trash2, Instagram, Facebook, Linkedin, Youtube, Music2, MapPin } from "lucide-react";
+import { useCompanyMembers } from "@/hooks/useCompanyMembers";
 
 const PlatformIcon = ({ platform }: { platform: string }) => {
   const icons: Record<string, React.ReactNode> = {
