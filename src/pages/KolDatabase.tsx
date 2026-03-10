@@ -206,6 +206,7 @@ export default function KolDatabase() {
         await supabase.from("kol_database").insert({
           ...kolData,
           created_by: session.session.user.id,
+          company_id: companyId || null,
         });
       }
     }
