@@ -117,6 +117,7 @@ export default function KolDatabase() {
 
       return filteredData;
     },
+    enabled: !!companyId,
   });
 
   const formatFollowers = (count: number | null) => {
