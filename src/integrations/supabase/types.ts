@@ -2916,6 +2916,7 @@ export type Database = {
           bank_account_number: string | null
           campaign_name: string
           client_id: string | null
+          company_id: string | null
           created_at: string
           created_by: string
           evidence_url: string | null
@@ -2941,6 +2942,7 @@ export type Database = {
           bank_account_number?: string | null
           campaign_name: string
           client_id?: string | null
+          company_id?: string | null
           created_at?: string
           created_by: string
           evidence_url?: string | null
@@ -2966,6 +2968,7 @@ export type Database = {
           bank_account_number?: string | null
           campaign_name?: string
           client_id?: string | null
+          company_id?: string | null
           created_at?: string
           created_by?: string
           evidence_url?: string | null
@@ -2992,6 +2995,13 @@ export type Database = {
             columns: ["client_id"]
             isOneToOne: false
             referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "kol_campaigns_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
             referencedColumns: ["id"]
           },
           {
@@ -3027,6 +3037,7 @@ export type Database = {
       kol_database: {
         Row: {
           category: string
+          company_id: string | null
           created_at: string
           created_by: string
           id: string
@@ -3057,6 +3068,7 @@ export type Database = {
         }
         Insert: {
           category?: string
+          company_id?: string | null
           created_at?: string
           created_by: string
           id?: string
@@ -3087,6 +3099,7 @@ export type Database = {
         }
         Update: {
           category?: string
+          company_id?: string | null
           created_at?: string
           created_by?: string
           id?: string
@@ -3115,7 +3128,15 @@ export type Database = {
           youtube_followers?: number | null
           youtube_url?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "kol_database_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       landing_content: {
         Row: {
