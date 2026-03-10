@@ -194,17 +194,20 @@ export default function HRAnalytics() {
     },
   });
 
-   // Fetch projects
+   // Fetch projects (filtered by company members)
   const { data: projects } = useQuery({
-    queryKey: ["hr-analytics-projects"],
+    queryKey: ["hr-analytics-projects", memberIds],
     queryFn: async () => {
+      if (memberIds.length === 0) return [];
       const { data, error } = await supabase
         .from("projects")
         .select("id, title")
+        .in("created_by", memberIds)
         .order("title");
       if (error) throw error;
       return data || [];
     },
+    enabled: memberIds.length > 0,
   });
 
   // Fetch task status logs for duration tracking
