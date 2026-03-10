@@ -30,6 +30,7 @@ interface CreateKolDialogProps {
 
 export function CreateKolDialog({ open, onOpenChange, industries }: CreateKolDialogProps) {
   const queryClient = useQueryClient();
+  const { activeWorkspace } = useWorkspace();
   const [formData, setFormData] = useState({
     name: "",
     username: "",
