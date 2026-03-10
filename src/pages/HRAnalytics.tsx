@@ -103,20 +103,21 @@ export default function HRAnalytics() {
 
   // Fetch attendance for comparison period (only when compareMonth is set)
   const { data: compareAttendance } = useQuery({
-    queryKey: ["hr-analytics-compare-attendance", compareMonth],
+    queryKey: ["hr-analytics-compare-attendance", compareMonth, memberIds],
     queryFn: async () => {
-      if (!compareMonth) return [];
+      if (!compareMonth || memberIds.length === 0) return [];
       const compareStart = format(startOfMonth(new Date(compareMonth + '-01')), 'yyyy-MM-dd');
       const compareEnd = format(endOfMonth(new Date(compareMonth + '-01')), 'yyyy-MM-dd');
       const { data, error } = await supabase
         .from("attendance")
         .select("*")
+        .in("user_id", memberIds)
         .gte("date", compareStart)
         .lte("date", compareEnd);
       if (error) throw error;
       return data || [];
     },
-    enabled: !!compareMonth,
+    enabled: !!compareMonth && memberIds.length > 0,
   });
 
   // Fetch tasks
