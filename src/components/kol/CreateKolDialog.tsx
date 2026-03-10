@@ -87,6 +87,7 @@ export function CreateKolDialog({ open, onOpenChange, industries }: CreateKolDia
         notes: data.notes || null,
         created_by: userId,
         updated_by: userId,
+        company_id: activeWorkspace?.id || null,
       });
 
       if (error) throw error;
