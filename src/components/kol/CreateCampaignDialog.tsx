@@ -62,15 +62,18 @@ export function CreateCampaignDialog({ open, onOpenChange }: CreateCampaignDialo
   });
 
   const { data: kols } = useQuery({
-    queryKey: ["kol-list"],
+    queryKey: ["kol-list", companyId],
     queryFn: async () => {
+      if (!companyId) return [];
       const { data, error } = await supabase
         .from("kol_database")
         .select("id, name, username")
+        .eq("company_id", companyId)
         .order("name");
       if (error) throw error;
       return data;
     },
+    enabled: !!companyId,
   });
 
   const { data: clients } = useQuery({
