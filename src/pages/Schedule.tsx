@@ -264,6 +264,8 @@ export default function Schedule() {
   }, [shootingCrew]);
 
   // Apply client & person filters
+  const priorityOrder: Record<string, number> = { high: 0, medium: 1, low: 2 };
+
   const filteredTasks = useMemo(() => {
     return (tasks || []).filter((task: any) => {
       if (filterClient !== "all") {
@@ -276,7 +278,7 @@ export default function Schedule() {
         if (!isAssigned && !isInAssignees) return false;
       }
       return true;
-    });
+    }).sort((a: any, b: any) => (priorityOrder[a.priority] ?? 2) - (priorityOrder[b.priority] ?? 2));
   }, [tasks, filterClient, filterPerson, taskPersonMap]);
 
   const filteredProjects = useMemo(() => {
