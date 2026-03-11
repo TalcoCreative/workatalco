@@ -12,17 +12,20 @@ import type {
 } from "@/lib/report-constants";
 
 // Platform Accounts
-export const usePlatformAccounts = (clientId?: string) => {
+export const usePlatformAccounts = (clientId?: string, companyId?: string) => {
   return useQuery({
-    queryKey: ["platform-accounts", clientId],
+    queryKey: ["platform-accounts", clientId, companyId],
     queryFn: async () => {
       let query = (supabase
         .from("platform_accounts") as any)
-        .select("*, clients(name)")
+        .select("*, clients!inner(name, company_id)")
         .order("created_at", { ascending: false });
 
       if (clientId) {
         query = query.eq("client_id", clientId);
+      }
+      if (companyId) {
+        query = query.eq("clients.company_id", companyId);
       }
 
       const { data, error } = await query;
@@ -124,13 +127,14 @@ export const useOrganicReports = (filters?: {
   platform?: string;
   year?: number;
   month?: number;
+  companyId?: string;
 }) => {
   return useQuery({
     queryKey: ["organic-reports", filters],
     queryFn: async () => {
       let query = (supabase
         .from("monthly_organic_reports") as any)
-        .select("*, platform_accounts(*, clients(name))")
+        .select("*, platform_accounts!inner(*, clients!inner(name, company_id))")
         .order("report_year", { ascending: false })
         .order("report_month", { ascending: false });
 
@@ -139,6 +143,9 @@ export const useOrganicReports = (filters?: {
       }
       if (filters?.month) {
         query = query.eq("report_month", filters.month);
+      }
+      if (filters?.companyId) {
+        query = query.eq("platform_accounts.clients.company_id", filters.companyId);
       }
 
       const { data, error } = await query;
@@ -290,13 +297,14 @@ export const useAdsReports = (filters?: {
   platform?: string;
   year?: number;
   month?: number;
+  companyId?: string;
 }) => {
   return useQuery({
     queryKey: ["ads-reports", filters],
     queryFn: async () => {
       let query = (supabase
         .from("monthly_ads_reports") as any)
-        .select("*, clients(name), platform_accounts(*)")
+        .select("*, clients!inner(name, company_id), platform_accounts(*)")
         .order("report_year", { ascending: false })
         .order("report_month", { ascending: false });
 
@@ -311,6 +319,9 @@ export const useAdsReports = (filters?: {
       }
       if (filters?.month) {
         query = query.eq("report_month", filters.month);
+      }
+      if (filters?.companyId) {
+        query = query.eq("clients.company_id", filters.companyId);
       }
 
       const { data, error } = await query;

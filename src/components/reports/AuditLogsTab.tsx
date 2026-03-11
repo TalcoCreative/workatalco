@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { useCompanyMembers } from "@/hooks/useCompanyMembers";
 import { format } from "date-fns";
 import { id as idLocale } from "date-fns/locale";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -58,17 +59,20 @@ interface AuditLog {
 }
 
 export function AuditLogsTab() {
+  const { memberIds, companyId } = useCompanyMembers();
   const [filterType, setFilterType] = useState<string>("all");
   const [filterAction, setFilterAction] = useState<string>("all");
   const [selectedLog, setSelectedLog] = useState<AuditLog | null>(null);
   const [detailOpen, setDetailOpen] = useState(false);
 
   const { data: logs = [], isLoading } = useQuery({
-    queryKey: ["report-audit-logs", filterType, filterAction],
+    queryKey: ["report-audit-logs", filterType, filterAction, memberIds],
     queryFn: async () => {
+      if (memberIds.length === 0) return [];
       let query = (supabase
         .from("report_audit_logs") as any)
         .select("*")
+        .in("performed_by", memberIds)
         .order("performed_at", { ascending: false })
         .limit(100);
 
@@ -83,17 +87,21 @@ export function AuditLogsTab() {
       if (error) throw error;
       return data as AuditLog[];
     },
+    enabled: memberIds.length > 0,
   });
 
   const { data: profiles = [] } = useQuery({
-    queryKey: ["profiles-for-audit"],
+    queryKey: ["profiles-for-audit", memberIds],
     queryFn: async () => {
+      if (memberIds.length === 0) return [];
       const { data, error } = await supabase
         .from("profiles")
-        .select("id, full_name");
+        .select("id, full_name")
+        .in("id", memberIds);
       if (error) throw error;
       return data;
     },
+    enabled: memberIds.length > 0,
   });
 
   const getProfileName = (id: string) => {

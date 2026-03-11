@@ -94,15 +94,16 @@ export function OrganicReportsTab() {
     report_year: currentYear,
   });
 
+  const { companyId } = useCompanyMembers();
   const { data: reports = [], isLoading } = useOrganicReports({
     clientId: filterClient !== "all" ? filterClient : undefined,
     platform: filterPlatform !== "all" ? filterPlatform : undefined,
     year: filterYear ? parseInt(filterYear) : undefined,
     month: filterMonth !== "all" ? parseInt(filterMonth) : undefined,
+    companyId,
   });
 
-  const { data: accounts = [] } = usePlatformAccounts();
-  const { companyId } = useCompanyMembers();
+  const { data: accounts = [] } = usePlatformAccounts(undefined, companyId);
   const { data: clients = [] } = useQuery({
     queryKey: ["clients-for-reports", companyId],
     queryFn: async () => {
