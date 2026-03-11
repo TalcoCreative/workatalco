@@ -40,6 +40,7 @@ import { BroadcastEmailTab } from "@/components/platform/BroadcastEmailTab";
 import { IntegrationsTab } from "@/components/platform/IntegrationsTab";
 import { ProductsTab } from "@/components/platform/ProductsTab";
 import { SeoSettingsTab } from "@/components/platform/SeoSettingsTab";
+import { ActivityLogTab } from "@/components/platform/ActivityLogTab";
 
 const TIER_PRICES: Record<string, number> = {
   trial: 0, starter: 7000, professional: 21000, enterprise: 25000, fnf: 0,
@@ -87,9 +88,10 @@ export default function SuperAdmin() {
   const { data: memberCounts = {} } = useQuery({
     queryKey: ["super-admin-member-counts"],
     queryFn: async () => {
-      const { data } = await supabase.from("company_members").select("company_id");
+      const { data, error } = await supabase.rpc("admin_get_company_member_counts");
+      if (error) throw error;
       const counts: Record<string, number> = {};
-      (data || []).forEach((m: any) => { counts[m.company_id] = (counts[m.company_id] || 0) + 1; });
+      (data || []).forEach((m: any) => { counts[m.company_id] = Number(m.member_count) || 0; });
       return counts;
     },
   });
@@ -631,6 +633,9 @@ export default function SuperAdmin() {
 
             {/* ═══ SEO ═══ */}
             {activeTab === "seo" && <div className="animate-fade-in"><SeoSettingsTab /></div>}
+
+            {/* ═══ ACTIVITY LOG ═══ */}
+            {activeTab === "activity-log" && <div className="animate-fade-in"><ActivityLogTab /></div>}
           </div>
         </main>
       </div>

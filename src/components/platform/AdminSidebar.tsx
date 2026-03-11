@@ -3,7 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import {
   BarChart3, Building2, DollarSign, Zap, Globe, AlertTriangle,
-  Mail, Crown, LogOut, Image, FileText, Radio, CreditCard, Package, PanelTop, Search,
+  Mail, Crown, LogOut, Image, FileText, Radio, CreditCard, Package, PanelTop, Search, Activity,
 } from "lucide-react";
 
 const navItems = [
@@ -21,6 +21,7 @@ const navItems = [
   { label: "Landing Page", icon: PanelTop, tab: "landing-page" },
   { label: "Landing Images", icon: Image, tab: "landing" },
   { label: "SEO", icon: Search, tab: "seo" },
+  { label: "Activity Log", icon: Activity, tab: "activity-log" },
 ];
 
 interface AdminSidebarProps {

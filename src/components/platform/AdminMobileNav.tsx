@@ -1,7 +1,7 @@
 import { useState } from "react";
 import {
   BarChart3, Building2, DollarSign, Zap, Globe, AlertTriangle,
-  Mail, Image, FileText, Menu, X, LogOut, Crown, Radio, CreditCard, Package, PanelTop, Search,
+  Mail, Image, FileText, Menu, X, LogOut, Crown, Radio, CreditCard, Package, PanelTop, Search, Activity,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -24,6 +24,7 @@ const navItems = [
   { label: "Landing Page", icon: PanelTop, tab: "landing-page" },
   { label: "Images", icon: Image, tab: "landing" },
   { label: "SEO", icon: Search, tab: "seo" },
+  { label: "Activity Log", icon: Activity, tab: "activity-log" },
 ];
 
 // Primary bottom tabs (most used)

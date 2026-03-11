@@ -6486,6 +6486,28 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      admin_get_activity_timeline: {
+        Args: { p_company_id?: string; p_limit?: number; p_offset?: number }
+        Returns: {
+          company_id: string
+          created_at: string
+          description: string
+          entity_id: string
+          entity_name: string
+          entity_type: string
+          event_type: string
+          id: string
+          metadata: Json
+          user_id: string
+        }[]
+      }
+      admin_get_company_member_counts: {
+        Args: never
+        Returns: {
+          company_id: string
+          member_count: number
+        }[]
+      }
       get_next_letter_number: {
         Args: {
           p_category_code: string
