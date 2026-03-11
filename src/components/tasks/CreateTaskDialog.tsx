@@ -18,6 +18,7 @@ import { sendTaskAssignmentEmail, getUserEmailById } from "@/lib/email-notificat
 import { useTrialLock } from "@/hooks/useTrialLock";
 import { sendPushNotification } from "@/lib/push-utils";
 import { useWorkspace } from "@/hooks/useWorkspace";
+import { useCompanySlug } from "@/hooks/useCompanySlug";
 import { SearchableSelect } from "@/components/shared/SearchableSelect";
 
 // TableData kept for backward compat
