@@ -82,6 +82,7 @@ import PersonalNotes from "./pages/PersonalNotes";
 import ProfileSettings from "./pages/ProfileSettings";
 import WorkspaceRedirect from "./pages/WorkspaceRedirect";
 import SitemapRedirect from "./pages/SitemapRedirect";
+import InstallApp from "./pages/InstallApp";
 
 const queryClient = new QueryClient();
 
