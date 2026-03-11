@@ -158,6 +158,8 @@ interface PermissionCache {
 
 export function usePermissions() {
   const [userId, setUserId] = useState<string | null>(null);
+  const { activeWorkspace } = useWorkspace();
+  const companyId = activeWorkspace?.id;
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
@@ -181,14 +183,31 @@ export function usePermissions() {
 
   const isSuperAdmin = oldRoles?.includes("super_admin") ?? false;
 
-  // Get user's dynamic role
+  // Get user's dynamic role - scoped to current company
   const { data: dynamicRole } = useQuery({
-    queryKey: ["user-dynamic-role", userId],
+    queryKey: ["user-dynamic-role", userId, companyId],
     queryFn: async () => {
       if (!userId) return null;
+      
+      // If we have a companyId, find the role that belongs to this company
+      if (companyId) {
+        const { data } = await supabase
+          .from("user_dynamic_roles")
+          .select("role_id, dynamic_roles(id, name, company_id)")
+          .eq("user_id", userId);
+        
+        // Find the role matching the current company
+        const companyRole = data?.find((d: any) => d.dynamic_roles?.company_id === companyId);
+        if (companyRole) return companyRole;
+        
+        // Fallback: return first role if no company-specific one found
+        return data?.[0] ?? null;
+      }
+      
+      // No company context - get any role
       const { data } = await supabase
         .from("user_dynamic_roles")
-        .select("role_id, dynamic_roles(id, name)")
+        .select("role_id, dynamic_roles(id, name, company_id)")
         .eq("user_id", userId)
         .maybeSingle();
       return data;
