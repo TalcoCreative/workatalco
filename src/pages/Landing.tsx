@@ -295,8 +295,8 @@ export default function Landing() {
           <div className="flex items-center gap-3">
             {session ? (
               <>
-                <Link to="/"><Button size="sm" className="shadow-glow-primary rounded-xl font-semibold">Dashboard</Button></Link>
-                <Button variant="ghost" size="sm" className="font-medium text-muted-foreground" onClick={async () => { await supabase.auth.signOut(); window.location.reload(); }}>Logout</Button>
+                <Link to={companySlug ? `/${companySlug}` : "/auth"}><Button size="sm" className="shadow-glow-primary rounded-xl font-semibold">Dashboard</Button></Link>
+                <Button variant="ghost" size="sm" className="font-medium text-muted-foreground" onClick={async () => { await supabase.auth.signOut(); setCompanySlug(null); window.location.reload(); }}>Logout</Button>
               </>
             ) : (
               <>
