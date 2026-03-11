@@ -16,6 +16,8 @@ import { RichBriefEditor, RichBriefData, getBriefPlainText } from "@/components/
 import { MultiUserSelect } from "@/components/tasks/MultiUserSelect";
 import { sendTaskAssignmentEmail, getUserEmailById } from "@/lib/email-notifications";
 import { useTrialLock } from "@/hooks/useTrialLock";
+import { sendPushNotification } from "@/lib/push-utils";
+import { useWorkspace } from "@/hooks/useWorkspace";
 import { SearchableSelect } from "@/components/shared/SearchableSelect";
 
 // TableData kept for backward compat
