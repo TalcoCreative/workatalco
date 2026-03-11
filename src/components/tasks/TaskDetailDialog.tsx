@@ -18,7 +18,6 @@ import { RichBriefEditor, RichBriefData, parseTaskBriefData, getBriefPlainText }
 import { MentionInput, extractMentions, renderCommentWithMentions } from "@/components/tasks/MentionInput";
 import { MultiUserSelect } from "@/components/tasks/MultiUserSelect";
 import { sendTaskAssignmentEmail, sendMentionEmail } from "@/lib/email-notifications";
-import { sendPushNotification } from "@/lib/push-utils";
 import { useCompanySlug } from "@/hooks/useCompanySlug";
 import { RelatedShootingSection } from "@/components/tasks/RelatedShootingSection";
 import { ShootingDetailDialog } from "@/components/shooting/ShootingDetailDialog";
@@ -398,21 +397,6 @@ export function TaskDetailDialog({ taskId, open, onOpenChange }: TaskDetailDialo
             }).catch(err => console.error("Mention email failed:", err));
           }
 
-          // Push notification to mentioned users
-          const mentionPushTargets = mentionedUserIds.filter(id => id !== session.session!.user.id);
-          if (mentionPushTargets.length > 0) {
-            const { data: cp } = await supabase.from("companies").select("id").eq("slug", companySlug).maybeSingle();
-            if (cp) {
-              sendPushNotification({
-                companyId: cp.id,
-                userIds: mentionPushTargets,
-                title: "💬 Kamu di-mention",
-                message: `${currentProfile?.full_name || "Someone"} mention kamu di task "${task?.title || "Task"}"`,
-                actionUrl: `/${companySlug}/tasks`,
-                eventType: "mention",
-              });
-            }
-          }
         }
       }
 

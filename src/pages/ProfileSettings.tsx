@@ -11,7 +11,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
 import { Camera, Compass, Globe, Lock, User } from "lucide-react";
 import { EmailPreferencesCard } from "@/components/notifications/EmailPreferencesCard";
-import { PushNotificationCard } from "@/components/notifications/PushNotificationCard";
+
 import { useOnboarding } from "@/hooks/useOnboarding";
 
 export default function ProfileSettings() {
@@ -261,9 +261,6 @@ export default function ProfileSettings() {
           </Button>
         </CardContent>
       </Card>
-
-      {/* Push Notification */}
-      <PushNotificationCard />
 
       {/* Email Preferences */}
       <EmailPreferencesCard />

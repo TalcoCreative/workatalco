@@ -148,47 +148,6 @@ export default function InstallApp() {
           </Card>
         )}
 
-        <Separator />
-
-        {/* Push Notification Onboarding */}
-        <Card className="border-primary/30 bg-primary/5">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-base">
-              <Bell className="h-5 w-5 text-primary" />
-              Aktifkan Push Notification
-            </CardTitle>
-            <CardDescription>
-              Setelah install, aktifkan push notification agar tidak ketinggalan update penting
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="space-y-3">
-              <Step number={1} icon={<Smartphone className="h-4 w-4" />}>
-                Buka WORKA dari app yang sudah di-install
-              </Step>
-              <Step number={2} icon={<ArrowRight className="h-4 w-4" />}>
-                Buka <strong>Profile Settings</strong>
-              </Step>
-              <Step number={3} icon={<Bell className="h-4 w-4" />}>
-                Nyalakan toggle <strong>Push Notification</strong> dan izinkan saat browser meminta
-              </Step>
-              <Step number={4} icon={<CheckCircle2 className="h-4 w-4" />}>
-                Klik <strong>"Test Notifikasi"</strong> untuk memastikan berhasil
-              </Step>
-            </div>
-
-            {companySlug && (
-              <Button
-                onClick={() => navigate(`/${companySlug}/profile`)}
-                className="gap-2 w-full sm:w-auto"
-              >
-                <Bell className="h-4 w-4" />
-                Buka Profile Settings
-                <ArrowRight className="h-4 w-4" />
-              </Button>
-            )}
-          </CardContent>
-        </Card>
       </div>
     </div>
   );

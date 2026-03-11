@@ -2,7 +2,6 @@ import { useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { sendPushNotification } from "@/lib/push-utils";
 import { useCompanySlug } from "@/hooks/useCompanySlug";
 import {
   Dialog,
@@ -99,18 +98,6 @@ export function CreateAnnouncementDialog({
             }
           }
         }
-      }
-
-      // Push notification to all company users
-      const { data: cp } = await supabase.from("companies").select("id").eq("slug", companySlug).maybeSingle();
-      if (cp) {
-        sendPushNotification({
-          companyId: cp.id,
-          title: "📢 Pengumuman Baru",
-          message: title.trim(),
-          actionUrl: `/${companySlug}`,
-          eventType: "announcement",
-        });
       }
 
       toast.success("Pengumuman berhasil dibuat dan dikirim ke semua anggota tim");
