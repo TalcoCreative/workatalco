@@ -18,6 +18,8 @@ import { RichBriefEditor, RichBriefData, parseTaskBriefData, getBriefPlainText }
 import { MentionInput, extractMentions, renderCommentWithMentions } from "@/components/tasks/MentionInput";
 import { MultiUserSelect } from "@/components/tasks/MultiUserSelect";
 import { sendTaskAssignmentEmail, sendMentionEmail } from "@/lib/email-notifications";
+import { sendPushNotification } from "@/lib/push-utils";
+import { useCompanySlug } from "@/hooks/useCompanySlug";
 import { RelatedShootingSection } from "@/components/tasks/RelatedShootingSection";
 import { ShootingDetailDialog } from "@/components/shooting/ShootingDetailDialog";
 import { SubTasksChecklist } from "@/components/tasks/SubTasksChecklist";
