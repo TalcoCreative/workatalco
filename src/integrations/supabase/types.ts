@@ -6529,6 +6529,10 @@ export type Database = {
         Args: { _company_id: string; _user_id: string }
         Returns: boolean
       }
+      is_task_assignee: {
+        Args: { _task_id: string; _user_id: string }
+        Returns: boolean
+      }
       log_client_activity: {
         Args: {
           p_action: string
