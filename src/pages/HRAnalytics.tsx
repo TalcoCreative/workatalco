@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useCompanyMembers } from "@/hooks/useCompanyMembers";
 import { AppLayout } from "@/components/layout/AppLayout";
+import { MobileDesktopBanner } from "@/components/shared/MobileDesktopBanner";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -366,9 +367,10 @@ export default function HRAnalytics() {
   return (
     <AppLayout>
       <div className="space-y-6">
+        <MobileDesktopBanner />
         {/* Header */}
         <div>
-          <h1 className="text-3xl font-bold">HR Analytics Overview</h1>
+            <h1 className="text-3xl font-bold">HR Analytics Overview</h1>
           <p className="text-muted-foreground">Gambaran besar performa SDM berdasarkan jam kerja, aktivitas, dan konsistensi</p>
         </div>
 

@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useCompanyUsers } from "@/hooks/useCompanyUsers";
 import { AppLayout } from "@/components/layout/AppLayout";
+import { MobileDesktopBanner } from "@/components/shared/MobileDesktopBanner";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -314,6 +315,7 @@ const Meeting = () => {
   return (
     <AppLayout>
       <div className="space-y-4 sm:space-y-6">
+        <MobileDesktopBanner />
         <div className="flex flex-col gap-3 sm:flex-row sm:justify-between sm:items-center">
           <div className="min-w-0">
             <h1 className="text-xl sm:text-2xl font-bold">

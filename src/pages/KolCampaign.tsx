@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useCompanyMembers } from "@/hooks/useCompanyMembers";
 import { useWorkspace } from "@/hooks/useWorkspace";
 import { AppLayout } from "@/components/layout/AppLayout";
+import { MobileDesktopBanner } from "@/components/shared/MobileDesktopBanner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
@@ -185,6 +186,7 @@ export default function KolCampaign() {
   return (
     <AppLayout>
       <div className="space-y-6">
+        <MobileDesktopBanner />
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-bold tracking-tight">KOL Campaign</h1>

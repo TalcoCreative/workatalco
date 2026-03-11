@@ -3,6 +3,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useCompanyMembers } from "@/hooks/useCompanyMembers";
 import { AppLayout } from "@/components/layout/AppLayout";
+import { MobileDesktopBanner } from "@/components/shared/MobileDesktopBanner";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -693,6 +694,7 @@ export default function HRDashboard() {
   return (
     <AppLayout>
       <div className="space-y-6">
+        <MobileDesktopBanner />
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
             <h1 className="text-3xl font-bold">HR Dashboard</h1>

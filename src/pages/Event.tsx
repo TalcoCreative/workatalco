@@ -4,6 +4,7 @@ import { useCompanyNavigate } from "@/hooks/useCompanyNavigate";
 import { supabase } from "@/integrations/supabase/client";
 import { useCompanyMembers } from "@/hooks/useCompanyMembers";
 import { AppLayout } from "@/components/layout/AppLayout";
+import { MobileDesktopBanner } from "@/components/shared/MobileDesktopBanner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Plus, Search, Filter, Calendar, MapPin, Users } from "lucide-react";
@@ -130,6 +131,7 @@ export default function Event() {
   return (
     <AppLayout>
       <div className="space-y-6">
+        <MobileDesktopBanner />
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div>
             <h1 className="text-2xl font-bold">Event Management</h1>
