@@ -88,9 +88,10 @@ export default function SuperAdmin() {
   const { data: memberCounts = {} } = useQuery({
     queryKey: ["super-admin-member-counts"],
     queryFn: async () => {
-      const { data } = await supabase.from("company_members").select("company_id");
+      const { data, error } = await supabase.rpc("admin_get_company_member_counts");
+      if (error) throw error;
       const counts: Record<string, number> = {};
-      (data || []).forEach((m: any) => { counts[m.company_id] = (counts[m.company_id] || 0) + 1; });
+      (data || []).forEach((m: any) => { counts[m.company_id] = Number(m.member_count) || 0; });
       return counts;
     },
   });
