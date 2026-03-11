@@ -40,6 +40,7 @@ import { BroadcastEmailTab } from "@/components/platform/BroadcastEmailTab";
 import { IntegrationsTab } from "@/components/platform/IntegrationsTab";
 import { ProductsTab } from "@/components/platform/ProductsTab";
 import { SeoSettingsTab } from "@/components/platform/SeoSettingsTab";
+import { ActivityLogTab } from "@/components/platform/ActivityLogTab";
 
 const TIER_PRICES: Record<string, number> = {
   trial: 0, starter: 7000, professional: 21000, enterprise: 25000, fnf: 0,
