@@ -297,13 +297,14 @@ export const useAdsReports = (filters?: {
   platform?: string;
   year?: number;
   month?: number;
+  companyId?: string;
 }) => {
   return useQuery({
     queryKey: ["ads-reports", filters],
     queryFn: async () => {
       let query = (supabase
         .from("monthly_ads_reports") as any)
-        .select("*, clients(name), platform_accounts(*)")
+        .select("*, clients!inner(name, company_id), platform_accounts(*)")
         .order("report_year", { ascending: false })
         .order("report_month", { ascending: false });
 
@@ -318,6 +319,9 @@ export const useAdsReports = (filters?: {
       }
       if (filters?.month) {
         query = query.eq("report_month", filters.month);
+      }
+      if (filters?.companyId) {
+        query = query.eq("clients.company_id", filters.companyId);
       }
 
       const { data, error } = await query;
