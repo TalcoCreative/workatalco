@@ -367,9 +367,10 @@ export default function HRAnalytics() {
   return (
     <AppLayout>
       <div className="space-y-6">
+        <MobileDesktopBanner />
         {/* Header */}
         <div>
-          <h1 className="text-3xl font-bold">HR Analytics Overview</h1>
+            <h1 className="text-3xl font-bold">HR Analytics Overview</h1>
           <p className="text-muted-foreground">Gambaran besar performa SDM berdasarkan jam kerja, aktivitas, dan konsistensi</p>
         </div>
 

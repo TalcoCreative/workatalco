@@ -131,6 +131,7 @@ export default function Event() {
   return (
     <AppLayout>
       <div className="space-y-6">
+        <MobileDesktopBanner />
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div>
             <h1 className="text-2xl font-bold">Event Management</h1>

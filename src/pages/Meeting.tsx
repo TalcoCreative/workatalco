@@ -315,6 +315,7 @@ const Meeting = () => {
   return (
     <AppLayout>
       <div className="space-y-4 sm:space-y-6">
+        <MobileDesktopBanner />
         <div className="flex flex-col gap-3 sm:flex-row sm:justify-between sm:items-center">
           <div className="min-w-0">
             <h1 className="text-xl sm:text-2xl font-bold">
