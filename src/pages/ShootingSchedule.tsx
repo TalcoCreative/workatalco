@@ -82,7 +82,7 @@ export default function ShootingSchedule() {
           projects(title)
         `) as any;
       
-      query = query.in("created_by", memberIds).order("scheduled_date", { ascending: true });
+      query = query.in("requested_by", memberIds).order("scheduled_date", { ascending: true });
       
       if (clientFilter) {
         query = query.eq("client_id", clientFilter);
