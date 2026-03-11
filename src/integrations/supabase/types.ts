@@ -6542,6 +6542,10 @@ export type Database = {
         }
         Returns: string
       }
+      shares_company_with: {
+        Args: { _target_user_id: string; _viewer_id: string }
+        Returns: boolean
+      }
     }
     Enums: {
       account_type:
