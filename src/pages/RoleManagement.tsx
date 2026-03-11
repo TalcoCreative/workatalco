@@ -17,6 +17,7 @@ import { toast } from "sonner";
 import { FEATURE_GROUPS, ALL_FEATURE_KEYS, PermissionAction } from "@/hooks/usePermissions";
 import { usePermissions } from "@/hooks/usePermissions";
 import { useTierAccess } from "@/hooks/useTierAccess";
+import { useCompanyMembers } from "@/hooks/useCompanyMembers";
 import { format } from "date-fns";
 
 const PERMISSION_ACTIONS: { key: PermissionAction; label: string }[] = [
@@ -33,6 +34,7 @@ export default function RoleManagement() {
   const queryClient = useQueryClient();
   const { isSuperAdmin } = usePermissions();
   const { tier, allowedFeatures, isTierFeature } = useTierAccess();
+  const { memberIds, companyId } = useCompanyMembers();
   const [createOpen, setCreateOpen] = useState(false);
   const [editRoleId, setEditRoleId] = useState<string | null>(null);
   const [newRoleName, setNewRoleName] = useState("");
@@ -40,26 +42,31 @@ export default function RoleManagement() {
   const [saving, setSaving] = useState(false);
   const [permState, setPermState] = useState<Record<string, Record<PermissionAction, boolean>>>({});
 
-  // Fetch roles
+  // Fetch roles filtered by company
   const { data: roles, isLoading } = useQuery({
-    queryKey: ["dynamic-roles"],
+    queryKey: ["dynamic-roles", companyId],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from("dynamic_roles")
+      if (!companyId) return [];
+      const { data, error } = await (supabase
+        .from("dynamic_roles") as any)
         .select("*, role_permissions(*)")
+        .eq("company_id", companyId)
         .order("created_at", { ascending: true });
       if (error) throw error;
       return data;
     },
+    enabled: !!companyId,
   });
 
-  // Fetch user counts per role
+  // Fetch user counts per role — only count users from this company
   const { data: userCounts } = useQuery({
-    queryKey: ["user-dynamic-role-counts"],
+    queryKey: ["user-dynamic-role-counts", companyId, memberIds],
     queryFn: async () => {
+      if (memberIds.length === 0) return {};
       const { data, error } = await supabase
         .from("user_dynamic_roles")
-        .select("role_id");
+        .select("role_id, user_id")
+        .in("user_id", memberIds);
       if (error) throw error;
       const counts: Record<string, number> = {};
       data?.forEach((r: any) => {
@@ -67,6 +74,7 @@ export default function RoleManagement() {
       });
       return counts;
     },
+    enabled: memberIds.length > 0,
   });
 
   const handleCreateRole = async () => {
