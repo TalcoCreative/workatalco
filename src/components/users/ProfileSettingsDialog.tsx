@@ -138,7 +138,7 @@ function ProfileSettingsContent({ open }: { open: boolean }) {
           icon: "/icons/icon-192x192.png",
           badge: "/icons/icon-192x192.png",
           tag: "test-notification",
-          vibrate: [200, 100, 200],
+          vibrate: [200, 100, 200] as any,
         });
         toast.success("Notifikasi test terkirim!");
       } else {
