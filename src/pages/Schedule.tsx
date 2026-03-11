@@ -958,7 +958,7 @@ export default function Schedule() {
                               <div
                                 key={task.id}
                                 onClick={() => setSelectedTaskId(task.id)}
-                                className="p-3 border rounded-lg mb-2 hover:bg-accent cursor-pointer"
+                              className={`p-3 border rounded-lg mb-2 hover:bg-accent cursor-pointer ${getPriorityBorderClass(task.priority)}`}
                               >
                                 <div className="flex justify-between items-start">
                                   <div>
