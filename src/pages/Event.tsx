@@ -4,6 +4,7 @@ import { useCompanyNavigate } from "@/hooks/useCompanyNavigate";
 import { supabase } from "@/integrations/supabase/client";
 import { useCompanyMembers } from "@/hooks/useCompanyMembers";
 import { AppLayout } from "@/components/layout/AppLayout";
+import { MobileDesktopBanner } from "@/components/shared/MobileDesktopBanner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Plus, Search, Filter, Calendar, MapPin, Users } from "lucide-react";
