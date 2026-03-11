@@ -397,6 +397,22 @@ export function TaskDetailDialog({ taskId, open, onOpenChange }: TaskDetailDialo
               shareToken: task?.share_token,
             }).catch(err => console.error("Mention email failed:", err));
           }
+
+          // Push notification to mentioned users
+          const mentionPushTargets = mentionedUserIds.filter(id => id !== session.session!.user.id);
+          if (mentionPushTargets.length > 0) {
+            const { data: cp } = await supabase.from("companies").select("id").eq("slug", companySlug).maybeSingle();
+            if (cp) {
+              sendPushNotification({
+                companyId: cp.id,
+                userIds: mentionPushTargets,
+                title: "💬 Kamu di-mention",
+                message: `${currentProfile?.full_name || "Someone"} mention kamu di task "${task?.title || "Task"}"`,
+                actionUrl: `/${companySlug}/tasks`,
+                eventType: "mention",
+              });
+            }
+          }
         }
       }
 
