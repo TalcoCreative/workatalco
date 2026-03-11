@@ -92,38 +92,35 @@ const PlatformIcon = ({ platform }: { platform: string }) => {
 
 const currentMonth = new Date().getMonth() + 1;
 
-export function ClientAnalyticsDashboard() {
+  const { companyId } = useCompanyMembers();
   const [selectedClient, setSelectedClient] = useState<string | null>(null);
   const [filterMonth, setFilterMonth] = useState<string>(currentMonth.toString());
   
   // Date range filter state
   const [startDate, setStartDate] = useState<Date>(() => {
-    // Default to 6 months ago to avoid always starting from Jan
     const d = new Date();
     d.setMonth(d.getMonth() - 5);
     d.setDate(1);
     return d;
   });
-  const [endDate, setEndDate] = useState<Date>(new Date()); // Current date
+  const [endDate, setEndDate] = useState<Date>(new Date());
 
   const { data: clients = [] } = useQuery({
-    queryKey: ["company-clients-analytics"],
+    queryKey: ["company-clients-analytics", companyId],
     queryFn: async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) return [];
-      const { data: memberships } = await supabase.from("company_members").select("company_id").eq("user_id", session.user.id).limit(1);
-      const cid = memberships?.[0]?.company_id;
-      if (!cid) return [];
-      const { data, error } = await supabase.from("clients").select("id, name, company, status, dashboard_slug").eq("company_id", cid).order("name");
+      if (!companyId) return [];
+      const { data, error } = await supabase.from("clients").select("id, name, company, status, dashboard_slug").eq("company_id", companyId).order("name");
       if (error) throw error;
       return data;
     },
+    enabled: !!companyId,
   });
 
   // Fetch all ads reports for the selected month/year (for client list view)
   const { data: allAdsReports = [] } = useAdsReports({
     year: startDate.getFullYear(),
     month: parseInt(filterMonth),
+    companyId,
   });
 
   // Calculate spend per client for the selected month
