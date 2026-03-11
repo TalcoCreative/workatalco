@@ -264,6 +264,8 @@ export default function Schedule() {
   }, [shootingCrew]);
 
   // Apply client & person filters
+  const priorityOrder: Record<string, number> = { high: 0, medium: 1, low: 2 };
+
   const filteredTasks = useMemo(() => {
     return (tasks || []).filter((task: any) => {
       if (filterClient !== "all") {
@@ -276,7 +278,7 @@ export default function Schedule() {
         if (!isAssigned && !isInAssignees) return false;
       }
       return true;
-    });
+    }).sort((a: any, b: any) => (priorityOrder[a.priority] ?? 2) - (priorityOrder[b.priority] ?? 2));
   }, [tasks, filterClient, filterPerson, taskPersonMap]);
 
   const filteredProjects = useMemo(() => {
@@ -449,6 +451,17 @@ export default function Schedule() {
         return "border-yellow-500 text-yellow-500";
       default:
         return "border-green-500 text-green-500";
+    }
+  };
+
+  const getPriorityBorderClass = (priority: string) => {
+    switch (priority) {
+      case "high":
+        return "border-l-4 border-l-red-500";
+      case "medium":
+        return "border-l-4 border-l-yellow-500";
+      default:
+        return "border-l-4 border-l-green-500";
     }
   };
 
@@ -682,7 +695,7 @@ export default function Schedule() {
                           <div
                             key={task.id}
                             onClick={() => setSelectedTaskId(task.id)}
-                            className="p-3 rounded-lg border bg-card hover:bg-accent transition-colors cursor-pointer"
+                            className={`p-3 rounded-lg border bg-card hover:bg-accent transition-colors cursor-pointer ${getPriorityBorderClass(task.priority)}`}
                           >
                             <div className="flex items-start justify-between gap-2">
                               <div className="flex-1">
@@ -945,7 +958,7 @@ export default function Schedule() {
                               <div
                                 key={task.id}
                                 onClick={() => setSelectedTaskId(task.id)}
-                                className="p-3 border rounded-lg mb-2 hover:bg-accent cursor-pointer"
+                              className={`p-3 border rounded-lg mb-2 hover:bg-accent cursor-pointer ${getPriorityBorderClass(task.priority)}`}
                               >
                                 <div className="flex justify-between items-start">
                                   <div>
@@ -1148,7 +1161,7 @@ export default function Schedule() {
                           {monthEvents.tasks.map((task: any) => (
                             <TableRow 
                               key={task.id} 
-                              className="cursor-pointer hover:bg-accent"
+                              className={`cursor-pointer hover:bg-accent ${getPriorityBorderClass(task.priority)}`}
                               onClick={() => setSelectedTaskId(task.id)}
                             >
                               <TableCell className="font-medium">{task.title}</TableCell>
