@@ -285,6 +285,24 @@ export function CreateTaskDialog({ projects, users, open: controlledOpen, onOpen
         }
       }
 
+      // Push notification to assignees & watchers
+      if (taskData) {
+        const pushTargets = [...new Set([...assignedUsers, ...notifyUsers])].filter(id => id !== session.session!.user.id);
+        if (pushTargets.length > 0) {
+          const { data: cp } = await supabase.from("companies").select("id").eq("slug", companySlug).maybeSingle();
+          if (cp) {
+            sendPushNotification({
+              companyId: cp.id,
+              userIds: pushTargets,
+              title: "📋 Task Baru",
+              message: `${creatorProfile?.full_name || "Someone"} membuat task: "${formData.title.trim()}"`,
+              actionUrl: `/${companySlug}/tasks`,
+              eventType: "task_assigned",
+            });
+          }
+        }
+      }
+
       toast.success("Task created successfully!");
       setOpen(false);
       setFormData({
