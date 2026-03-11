@@ -1161,7 +1161,7 @@ export default function Schedule() {
                           {monthEvents.tasks.map((task: any) => (
                             <TableRow 
                               key={task.id} 
-                              className="cursor-pointer hover:bg-accent"
+                              className={`cursor-pointer hover:bg-accent ${getPriorityBorderClass(task.priority)}`}
                               onClick={() => setSelectedTaskId(task.id)}
                             >
                               <TableCell className="font-medium">{task.title}</TableCell>
