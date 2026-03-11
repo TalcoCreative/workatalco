@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useEffect, useState } from "react";
+import { useWorkspace } from "@/hooks/useWorkspace";
 
 export type PermissionAction = "can_view" | "can_create" | "can_edit" | "can_delete" | "can_export" | "can_comment" | "can_mention";
 
