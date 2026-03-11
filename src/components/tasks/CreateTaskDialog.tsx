@@ -297,7 +297,7 @@ export function CreateTaskDialog({ projects, users, open: controlledOpen, onOpen
               companyId: cp.id,
               userIds: pushTargets,
               title: "📋 Task Baru",
-              message: `${creatorProfile?.full_name || "Someone"} membuat task: "${formData.title.trim()}"`,
+              message: `Task baru: "${formData.title.trim()}"`,
               actionUrl: `/${companySlug}/tasks`,
               eventType: "task_assigned",
             });
