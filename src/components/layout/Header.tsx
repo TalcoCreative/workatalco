@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { LogOut, Megaphone, Building2, AlertTriangle } from "lucide-react";
+import { LogOut, Megaphone, Building2, AlertTriangle, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { supabase } from "@/integrations/supabase/client";
