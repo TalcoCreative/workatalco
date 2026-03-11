@@ -146,6 +146,10 @@ export function Header() {
         
         <HeaderNotifications onTaskClick={(taskId) => setSelectedTaskId(taskId)} />
 
+        <Button variant="ghost" size="icon" onClick={() => setProfileSettingsOpen(true)} title="Profile Settings" className="h-9 w-9 rounded-xl">
+          <Settings className="h-4 w-4" />
+        </Button>
+
         <Button variant="ghost" size="icon" onClick={handleLogout} className="h-9 w-9 rounded-xl">
           <LogOut className="h-4 w-4" />
         </Button>
