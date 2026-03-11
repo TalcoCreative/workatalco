@@ -16,7 +16,6 @@ import { toast } from "sonner";
 import { Plus, Trash2, Video, MapPin, Calendar, ExternalLink, Copy } from "lucide-react";
 import { sendMeetingInvitationEmail } from "@/lib/email-notifications";
 import { useTrialLock } from "@/hooks/useTrialLock";
-import { sendPushNotification } from "@/lib/push-utils";
 import { useCompanySlug } from "@/hooks/useCompanySlug";
 
 interface CreateMeetingDialogProps {
