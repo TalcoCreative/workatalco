@@ -35,6 +35,7 @@ interface TaskDetailDialogProps {
 export function TaskDetailDialog({ taskId, open, onOpenChange }: TaskDetailDialogProps) {
   const [comment, setComment] = useState("");
   const [loading, setLoading] = useState(false);
+  const companySlug = useCompanySlug();
   const [uploadingFile, setUploadingFile] = useState(false);
   const [linkUrl, setLinkUrl] = useState("");
   const [linkName, setLinkName] = useState("");
