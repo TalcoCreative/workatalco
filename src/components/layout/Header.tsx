@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { LogOut, Megaphone, Building2, AlertTriangle } from "lucide-react";
+import { LogOut, Megaphone, Building2, AlertTriangle, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { supabase } from "@/integrations/supabase/client";
@@ -12,6 +12,7 @@ import { HeaderNotifications } from "@/components/layout/HeaderNotifications";
 import { WorkspaceSwitcher } from "@/components/saas/WorkspaceSwitcher";
 import { TaskDetailDialog } from "@/components/tasks/TaskDetailDialog";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { ProfileSettingsDialog } from "@/components/users/ProfileSettingsDialog";
 import { useWorkspace } from "@/hooks/useWorkspace";
 import { differenceInDays, parseISO } from "date-fns";
 import {
@@ -29,6 +30,7 @@ export function Header() {
   const [manageAnnouncementsOpen, setManageAnnouncementsOpen] = useState(false);
   const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
   const [workspaceSwitcherOpen, setWorkspaceSwitcherOpen] = useState(false);
+  const [profileSettingsOpen, setProfileSettingsOpen] = useState(false);
 
   const { data: currentUser } = useQuery({
     queryKey: ["current-user"],
@@ -145,6 +147,10 @@ export function Header() {
         
         <HeaderNotifications onTaskClick={(taskId) => setSelectedTaskId(taskId)} />
 
+        <Button variant="ghost" size="icon" onClick={() => setProfileSettingsOpen(true)} title="Profile Settings" className="h-9 w-9 rounded-xl">
+          <Settings className="h-4 w-4" />
+        </Button>
+
         <Button variant="ghost" size="icon" onClick={handleLogout} className="h-9 w-9 rounded-xl">
           <LogOut className="h-4 w-4" />
         </Button>
@@ -160,6 +166,7 @@ export function Header() {
         />
       )}
       <WorkspaceSwitcher open={workspaceSwitcherOpen} onOpenChange={setWorkspaceSwitcherOpen} />
+      <ProfileSettingsDialog open={profileSettingsOpen} onOpenChange={setProfileSettingsOpen} />
       </header>
     </>
   );
