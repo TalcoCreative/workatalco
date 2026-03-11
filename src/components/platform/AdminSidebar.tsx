@@ -21,6 +21,7 @@ const navItems = [
   { label: "Landing Page", icon: PanelTop, tab: "landing-page" },
   { label: "Landing Images", icon: Image, tab: "landing" },
   { label: "SEO", icon: Search, tab: "seo" },
+  { label: "Activity Log", icon: Activity, tab: "activity-log" },
 ];
 
 interface AdminSidebarProps {

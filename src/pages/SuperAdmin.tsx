@@ -633,6 +633,9 @@ export default function SuperAdmin() {
 
             {/* ═══ SEO ═══ */}
             {activeTab === "seo" && <div className="animate-fade-in"><SeoSettingsTab /></div>}
+
+            {/* ═══ ACTIVITY LOG ═══ */}
+            {activeTab === "activity-log" && <div className="animate-fade-in"><ActivityLogTab /></div>}
           </div>
         </main>
       </div>
