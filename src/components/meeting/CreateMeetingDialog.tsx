@@ -16,6 +16,8 @@ import { toast } from "sonner";
 import { Plus, Trash2, Video, MapPin, Calendar, ExternalLink, Copy } from "lucide-react";
 import { sendMeetingInvitationEmail } from "@/lib/email-notifications";
 import { useTrialLock } from "@/hooks/useTrialLock";
+import { sendPushNotification } from "@/lib/push-utils";
+import { useCompanySlug } from "@/hooks/useCompanySlug";
 
 interface CreateMeetingDialogProps {
   open: boolean;
@@ -31,6 +33,7 @@ interface ExternalParticipant {
 
 const CreateMeetingDialog = ({ open, onOpenChange, onSuccess }: CreateMeetingDialogProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const companySlug = useCompanySlug();
   const [formData, setFormData] = useState({
     title: "",
     type: "internal",
@@ -230,6 +233,21 @@ const CreateMeetingDialog = ({ open, onOpenChange, onSuccess }: CreateMeetingDia
             .insert(externalRecords);
 
           if (externalError) throw externalError;
+        }
+      }
+
+      // Push notification to meeting participants
+      if (selectedParticipants.length > 0 && meeting) {
+        const { data: cp } = await supabase.from("companies").select("id").eq("slug", companySlug).maybeSingle();
+        if (cp) {
+          sendPushNotification({
+            companyId: cp.id,
+            userIds: selectedParticipants.filter(id => id !== userId),
+            title: "📅 Undangan Meeting",
+            message: `Meeting baru: "${formData.title}" - ${formData.meeting_date} ${formData.start_time}`,
+            actionUrl: `/${companySlug}/meeting`,
+            eventType: "meeting_invitation",
+          });
         }
       }
 

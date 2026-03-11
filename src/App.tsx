@@ -82,6 +82,7 @@ import PersonalNotes from "./pages/PersonalNotes";
 import ProfileSettings from "./pages/ProfileSettings";
 import WorkspaceRedirect from "./pages/WorkspaceRedirect";
 import SitemapRedirect from "./pages/SitemapRedirect";
+import InstallApp from "./pages/InstallApp";
 
 const queryClient = new QueryClient();
 
@@ -103,6 +104,7 @@ const App = () => (
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
           <Route path="/request-demo" element={<RequestDemo />} />
           <Route path="/thank-you" element={<ThankYou />} />
+          <Route path="/install-app" element={<InstallApp />} />
           <Route path="/blog" element={<Blog />} />
           <Route path="/blog/:slug" element={<BlogPost />} />
 

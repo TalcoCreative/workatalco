@@ -16,6 +16,9 @@ import { RichBriefEditor, RichBriefData, getBriefPlainText } from "@/components/
 import { MultiUserSelect } from "@/components/tasks/MultiUserSelect";
 import { sendTaskAssignmentEmail, getUserEmailById } from "@/lib/email-notifications";
 import { useTrialLock } from "@/hooks/useTrialLock";
+import { sendPushNotification } from "@/lib/push-utils";
+import { useWorkspace } from "@/hooks/useWorkspace";
+import { useCompanySlug } from "@/hooks/useCompanySlug";
 import { SearchableSelect } from "@/components/shared/SearchableSelect";
 
 // TableData kept for backward compat
@@ -49,6 +52,7 @@ export function CreateTaskDialog({ projects, users, open: controlledOpen, onOpen
   const open = isControlled ? controlledOpen : internalOpen;
   const setOpen = isControlled ? onOpenChange! : setInternalOpen;
   const [loading, setLoading] = useState(false);
+  const companySlug = useCompanySlug();
   const [formData, setFormData] = useState({
     title: "",
     priority: "medium",
@@ -280,6 +284,24 @@ export function CreateTaskDialog({ projects, users, open: controlledOpen, onOpen
             priority: formData.priority,
             creatorName: creatorProfile?.full_name || "Someone",
           }).catch(err => console.error("Watcher email failed:", err));
+        }
+      }
+
+      // Push notification to assignees & watchers
+      if (taskData) {
+        const pushTargets = [...new Set([...assignedUsers, ...notifyUsers])].filter(id => id !== session.session!.user.id);
+        if (pushTargets.length > 0) {
+          const { data: cp } = await supabase.from("companies").select("id").eq("slug", companySlug).maybeSingle();
+          if (cp) {
+            sendPushNotification({
+              companyId: cp.id,
+              userIds: pushTargets,
+              title: "📋 Task Baru",
+              message: `Task baru: "${formData.title.trim()}"`,
+              actionUrl: `/${companySlug}/tasks`,
+              eventType: "task_assigned",
+            });
+          }
         }
       }
 
