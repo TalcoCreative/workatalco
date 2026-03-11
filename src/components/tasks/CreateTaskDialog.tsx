@@ -16,7 +16,6 @@ import { RichBriefEditor, RichBriefData, getBriefPlainText } from "@/components/
 import { MultiUserSelect } from "@/components/tasks/MultiUserSelect";
 import { sendTaskAssignmentEmail, getUserEmailById } from "@/lib/email-notifications";
 import { useTrialLock } from "@/hooks/useTrialLock";
-import { sendPushNotification } from "@/lib/push-utils";
 import { useWorkspace } from "@/hooks/useWorkspace";
 import { useCompanySlug } from "@/hooks/useCompanySlug";
 import { SearchableSelect } from "@/components/shared/SearchableSelect";
