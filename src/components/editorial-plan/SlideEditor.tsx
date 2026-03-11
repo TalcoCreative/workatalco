@@ -331,7 +331,7 @@ export function SlideEditor({ slide, epId, isEditable, onStatusChange }: SlideEd
   };
 
   const debounce = useCallback((fn: Function, delay: number) => {
-    let timeoutId: NodeJS.Timeout;
+    let timeoutId: ReturnType<typeof setTimeout>;
     return (...args: any[]) => {
       clearTimeout(timeoutId);
       timeoutId = setTimeout(() => fn(...args), delay);
