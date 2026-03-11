@@ -12,6 +12,7 @@ import { HeaderNotifications } from "@/components/layout/HeaderNotifications";
 import { WorkspaceSwitcher } from "@/components/saas/WorkspaceSwitcher";
 import { TaskDetailDialog } from "@/components/tasks/TaskDetailDialog";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { ProfileSettingsDialog } from "@/components/users/ProfileSettingsDialog";
 import { useWorkspace } from "@/hooks/useWorkspace";
 import { differenceInDays, parseISO } from "date-fns";
 import {
