@@ -24,6 +24,7 @@ const navItems = [
   { label: "Landing Page", icon: PanelTop, tab: "landing-page" },
   { label: "Images", icon: Image, tab: "landing" },
   { label: "SEO", icon: Search, tab: "seo" },
+  { label: "Activity Log", icon: Activity, tab: "activity-log" },
 ];
 
 // Primary bottom tabs (most used)
