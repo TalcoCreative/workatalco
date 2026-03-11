@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useCompanyUsers } from "@/hooks/useCompanyUsers";
+import { useCompanyMembers } from "@/hooks/useCompanyMembers";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -64,6 +65,7 @@ export function CreateShootingDialog() {
   const queryClient = useQueryClient();
 
   const { activeUsers: users } = useCompanyUsers();
+  const { memberIds } = useCompanyMembers();
 
   const { data: clients } = useQuery({
     queryKey: ["company-clients-shooting"],
@@ -95,11 +97,13 @@ export function CreateShootingDialog() {
   });
 
   const { data: availableTasks } = useQuery({
-    queryKey: ["available-tasks-for-shooting", taskSearchQuery],
+    queryKey: ["available-tasks-for-shooting", taskSearchQuery, memberIds],
     queryFn: async () => {
+      if (!memberIds || memberIds.length === 0) return [];
       let query = supabase
         .from("tasks")
         .select("id, title, status, deadline")
+        .in("created_by", memberIds)
         .order("created_at", { ascending: false })
         .limit(50);
 
@@ -111,6 +115,7 @@ export function CreateShootingDialog() {
       if (error) throw error;
       return data as Task[];
     },
+    enabled: memberIds.length > 0,
   });
 
   const addFreelancer = () => {

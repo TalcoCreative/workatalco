@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { useCompanyMembers } from "@/hooks/useCompanyMembers";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -18,6 +19,7 @@ interface RelatedTasksSectionProps {
 
 export function RelatedTasksSection({ shootingId, onTaskClick }: RelatedTasksSectionProps) {
   const queryClient = useQueryClient();
+  const { memberIds } = useCompanyMembers();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedTaskIds, setSelectedTaskIds] = useState<string[]>([]);
@@ -49,10 +51,11 @@ export function RelatedTasksSection({ shootingId, onTaskClick }: RelatedTasksSec
     enabled: !!shootingId,
   });
 
-  // Fetch all tasks for search
+  // Fetch tasks filtered by company members
   const { data: allTasks } = useQuery({
-    queryKey: ["all-tasks-for-relation"],
+    queryKey: ["company-tasks-for-relation", memberIds],
     queryFn: async () => {
+      if (!memberIds || memberIds.length === 0) return [];
       const { data, error } = await supabase
         .from("tasks")
         .select(`
@@ -63,11 +66,12 @@ export function RelatedTasksSection({ shootingId, onTaskClick }: RelatedTasksSec
           deadline,
           projects(title, clients(name))
         `)
+        .in("created_by", memberIds)
         .order("created_at", { ascending: false });
       if (error) throw error;
       return data;
     },
-    enabled: dialogOpen,
+    enabled: dialogOpen && memberIds.length > 0,
   });
 
   // Get IDs of already related tasks
