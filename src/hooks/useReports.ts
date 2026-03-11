@@ -127,13 +127,14 @@ export const useOrganicReports = (filters?: {
   platform?: string;
   year?: number;
   month?: number;
+  companyId?: string;
 }) => {
   return useQuery({
     queryKey: ["organic-reports", filters],
     queryFn: async () => {
       let query = (supabase
         .from("monthly_organic_reports") as any)
-        .select("*, platform_accounts(*, clients(name))")
+        .select("*, platform_accounts!inner(*, clients!inner(name, company_id))")
         .order("report_year", { ascending: false })
         .order("report_month", { ascending: false });
 
@@ -142,6 +143,9 @@ export const useOrganicReports = (filters?: {
       }
       if (filters?.month) {
         query = query.eq("report_month", filters.month);
+      }
+      if (filters?.companyId) {
+        query = query.eq("platform_accounts.clients.company_id", filters.companyId);
       }
 
       const { data, error } = await query;
