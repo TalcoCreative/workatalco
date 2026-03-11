@@ -117,10 +117,10 @@ export function Header() {
           </a>
         </div>
       )}
-      <header className="flex h-14 items-center justify-between bg-card/70 backdrop-blur-2xl px-4 sm:px-6 gap-3 sticky top-0 z-40 border-b border-border/20">
+      <header className={`flex h-14 items-center justify-between bg-card/70 backdrop-blur-2xl px-4 sm:px-6 gap-3 sticky top-0 z-40 border-b border-border/20 ${isMobile ? "pt-[env(safe-area-inset-top,0px)]" : ""}`}>
         {!isMobile && <SidebarTrigger className="flex-shrink-0" />}
         {isMobile && (
-          <h1 className="text-sm font-semibold tracking-tight truncate text-foreground">Talco</h1>
+          <h1 className="text-sm font-semibold tracking-tight truncate text-foreground">Worka</h1>
         )}
       
       <div className="flex items-center gap-0.5">
