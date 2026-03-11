@@ -51,6 +51,7 @@ export function CreateTaskDialog({ projects, users, open: controlledOpen, onOpen
   const open = isControlled ? controlledOpen : internalOpen;
   const setOpen = isControlled ? onOpenChange! : setInternalOpen;
   const [loading, setLoading] = useState(false);
+  const companySlug = useCompanySlug();
   const [formData, setFormData] = useState({
     title: "",
     priority: "medium",
