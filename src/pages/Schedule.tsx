@@ -454,6 +454,17 @@ export default function Schedule() {
     }
   };
 
+  const getPriorityBorderClass = (priority: string) => {
+    switch (priority) {
+      case "high":
+        return "border-l-4 border-l-red-500";
+      case "medium":
+        return "border-l-4 border-l-yellow-500";
+      default:
+        return "border-l-4 border-l-green-500";
+    }
+  };
+
   return (
     <AppLayout>
       <div className="space-y-6">
