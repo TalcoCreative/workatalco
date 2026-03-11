@@ -82,7 +82,7 @@ export function PlatformAccountsTab() {
     status: "active" as "active" | "inactive",
   });
 
-  const { data: accounts = [], isLoading } = usePlatformAccounts();
+  const { data: accounts = [], isLoading } = usePlatformAccounts(undefined, companyId);
   const { data: clients = [] } = useQuery({
     queryKey: ["clients-for-reports", companyId],
     queryFn: async () => {
