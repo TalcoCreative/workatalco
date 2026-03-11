@@ -29,6 +29,7 @@ export function Header() {
   const [manageAnnouncementsOpen, setManageAnnouncementsOpen] = useState(false);
   const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
   const [workspaceSwitcherOpen, setWorkspaceSwitcherOpen] = useState(false);
+  const [profileSettingsOpen, setProfileSettingsOpen] = useState(false);
 
   const { data: currentUser } = useQuery({
     queryKey: ["current-user"],
