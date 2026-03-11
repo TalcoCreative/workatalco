@@ -82,9 +82,14 @@ export default function RoleManagement() {
     setSaving(true);
     try {
       const { data: session } = await supabase.auth.getSession();
-      const { data: role, error } = await supabase
-        .from("dynamic_roles")
-        .insert({ name: newRoleName.trim(), description: newRoleDesc.trim() || null, created_by: session.session?.user.id })
+      const { data: role, error } = await (supabase
+        .from("dynamic_roles") as any)
+        .insert({ 
+          name: newRoleName.trim(), 
+          description: newRoleDesc.trim() || null, 
+          created_by: session.session?.user.id,
+          company_id: companyId,
+        })
         .select()
         .single();
       if (error) throw error;
