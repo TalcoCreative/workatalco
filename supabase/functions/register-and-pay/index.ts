@@ -222,6 +222,21 @@ serve(async (req) => {
       }
     }
 
+    // 7. Seed dummy data for the new company
+    try {
+      const seedRes = await fetch(`${supabaseUrl}/functions/v1/seed-dummy-data`, {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ companyId: company.id, userId: adminUserId }),
+      });
+      console.log("Seed dummy data result:", seedRes.status);
+    } catch (seedErr) {
+      console.error("Seed dummy data error (non-blocking):", seedErr);
+    }
+
     console.log("Registration complete for:", cleanSlug);
 
     return new Response(
