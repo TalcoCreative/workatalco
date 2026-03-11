@@ -1,6 +1,7 @@
 import { useState, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { useCompanyMembers } from "@/hooks/useCompanyMembers";
 import { useOrganicReports, useAdsReports, usePlatformAccounts } from "@/hooks/useReports";
 import {
   PLATFORMS,
