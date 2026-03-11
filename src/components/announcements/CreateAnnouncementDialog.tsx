@@ -32,6 +32,7 @@ export function CreateAnnouncementDialog({
   onOpenChange,
 }: CreateAnnouncementDialogProps) {
   const queryClient = useQueryClient();
+  const companySlug = useCompanySlug();
   const [loading, setLoading] = useState(false);
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");

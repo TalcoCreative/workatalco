@@ -33,6 +33,7 @@ interface ExternalParticipant {
 
 const CreateMeetingDialog = ({ open, onOpenChange, onSuccess }: CreateMeetingDialogProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const companySlug = useCompanySlug();
   const [formData, setFormData] = useState({
     title: "",
     type: "internal",
