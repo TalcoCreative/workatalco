@@ -165,6 +165,7 @@ export function Header() {
         />
       )}
       <WorkspaceSwitcher open={workspaceSwitcherOpen} onOpenChange={setWorkspaceSwitcherOpen} />
+      <ProfileSettingsDialog open={profileSettingsOpen} onOpenChange={setProfileSettingsOpen} />
       </header>
     </>
   );
