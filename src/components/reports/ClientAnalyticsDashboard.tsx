@@ -155,7 +155,7 @@ const currentMonth = new Date().getMonth() + 1;
     window.open(`https://ms.talco.id/reports/${slug}`, "_blank");
   };
 
-  const { data: accounts = [] } = usePlatformAccounts(selectedClient || undefined);
+  const { data: accounts = [] } = usePlatformAccounts(selectedClient || undefined, companyId);
 
   // Fetch reports for all years that might be in the date range
   const startYear = startDate.getFullYear();
@@ -164,21 +164,25 @@ const currentMonth = new Date().getMonth() + 1;
   const { data: organicReportsStartYear = [] } = useOrganicReports({
     clientId: selectedClient || undefined,
     year: startYear,
+    companyId,
   });
 
   const { data: organicReportsEndYear = [] } = useOrganicReports({
     clientId: selectedClient || undefined,
     year: endYear,
+    companyId,
   });
 
   const { data: adsReportsStartYear = [] } = useAdsReports({
     clientId: selectedClient || undefined,
     year: startYear,
+    companyId,
   });
 
   const { data: adsReportsEndYear = [] } = useAdsReports({
     clientId: selectedClient || undefined,
     year: endYear,
+    companyId,
   });
 
   // Combine reports from both years and remove duplicates
