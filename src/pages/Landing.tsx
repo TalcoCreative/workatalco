@@ -2,7 +2,7 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Session } from "@supabase/supabase-js";
 import { toast } from "sonner";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -155,6 +155,7 @@ export default function Landing() {
   const [userCounts, setUserCounts] = useState<Record<number, number>>({});
   const [billingCycle, setBillingCycle] = useState<"monthly" | "annual">("monthly");
   const [session, setSession] = useState<Session | null>(null);
+  const [companySlug, setCompanySlug] = useState<string | null>(null);
   const [activeScreenshot, setActiveScreenshot] = useState(0);
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
   const scrollProgress = useScrollProgress();
@@ -165,6 +166,20 @@ export default function Landing() {
     supabase.auth.getSession().then(({ data: { session: s } }) => setSession(s));
     return () => subscription.unsubscribe();
   }, []);
+
+  // Fetch company slug when logged in
+  useEffect(() => {
+    if (!session?.user?.id) { setCompanySlug(null); return; }
+    supabase
+      .from("company_members")
+      .select("company_id, companies(slug)")
+      .eq("user_id", session.user.id)
+      .limit(1)
+      .then(({ data }) => {
+        const slug = (data?.[0] as any)?.companies?.slug;
+        if (slug) setCompanySlug(slug);
+      });
+  }, [session?.user?.id]);
 
   useEffect(() => {
     const timer = setInterval(() => setActiveScreenshot(p => (p + 1) % PRODUCT_SCREENSHOTS.length), 5000);
@@ -280,8 +295,8 @@ export default function Landing() {
           <div className="flex items-center gap-3">
             {session ? (
               <>
-                <Link to="/"><Button size="sm" className="shadow-glow-primary rounded-xl font-semibold">Dashboard</Button></Link>
-                <Button variant="ghost" size="sm" className="font-medium text-muted-foreground" onClick={async () => { await supabase.auth.signOut(); window.location.reload(); }}>Logout</Button>
+                <Link to={companySlug ? `/${companySlug}` : "/auth"}><Button size="sm" className="shadow-glow-primary rounded-xl font-semibold">Dashboard</Button></Link>
+                <Button variant="ghost" size="sm" className="font-medium text-muted-foreground" onClick={async () => { await supabase.auth.signOut(); setCompanySlug(null); window.location.reload(); }}>Logout</Button>
               </>
             ) : (
               <>
