@@ -262,9 +262,6 @@ export default function ProfileSettings() {
         </CardContent>
       </Card>
 
-      {/* Push Notification */}
-      <PushNotificationCard />
-
       {/* Email Preferences */}
       <EmailPreferencesCard />
 
