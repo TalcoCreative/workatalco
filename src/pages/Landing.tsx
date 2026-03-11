@@ -155,6 +155,7 @@ export default function Landing() {
   const [userCounts, setUserCounts] = useState<Record<number, number>>({});
   const [billingCycle, setBillingCycle] = useState<"monthly" | "annual">("monthly");
   const [session, setSession] = useState<Session | null>(null);
+  const [companySlug, setCompanySlug] = useState<string | null>(null);
   const [activeScreenshot, setActiveScreenshot] = useState(0);
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
   const scrollProgress = useScrollProgress();
@@ -165,6 +166,20 @@ export default function Landing() {
     supabase.auth.getSession().then(({ data: { session: s } }) => setSession(s));
     return () => subscription.unsubscribe();
   }, []);
+
+  // Fetch company slug when logged in
+  useEffect(() => {
+    if (!session?.user?.id) { setCompanySlug(null); return; }
+    supabase
+      .from("company_members")
+      .select("company_id, companies(slug)")
+      .eq("user_id", session.user.id)
+      .limit(1)
+      .then(({ data }) => {
+        const slug = (data?.[0] as any)?.companies?.slug;
+        if (slug) setCompanySlug(slug);
+      });
+  }, [session?.user?.id]);
 
   useEffect(() => {
     const timer = setInterval(() => setActiveScreenshot(p => (p + 1) % PRODUCT_SCREENSHOTS.length), 5000);
