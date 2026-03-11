@@ -65,6 +65,7 @@ export function CreateShootingDialog() {
   const queryClient = useQueryClient();
 
   const { activeUsers: users } = useCompanyUsers();
+  const { memberIds } = useCompanyMembers();
 
   const { data: clients } = useQuery({
     queryKey: ["company-clients-shooting"],
