@@ -1466,6 +1466,7 @@ export type Database = {
       }
       dynamic_roles: {
         Row: {
+          company_id: string | null
           created_at: string
           created_by: string | null
           description: string | null
@@ -1474,6 +1475,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          company_id?: string | null
           created_at?: string
           created_by?: string | null
           description?: string | null
@@ -1482,6 +1484,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          company_id?: string | null
           created_at?: string
           created_by?: string | null
           description?: string | null
@@ -1489,7 +1492,15 @@ export type Database = {
           name?: string
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "dynamic_roles_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       editorial_plans: {
         Row: {
