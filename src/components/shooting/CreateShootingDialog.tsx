@@ -97,11 +97,13 @@ export function CreateShootingDialog() {
   });
 
   const { data: availableTasks } = useQuery({
-    queryKey: ["available-tasks-for-shooting", taskSearchQuery],
+    queryKey: ["available-tasks-for-shooting", taskSearchQuery, memberIds],
     queryFn: async () => {
+      if (!memberIds || memberIds.length === 0) return [];
       let query = supabase
         .from("tasks")
         .select("id, title, status, deadline")
+        .in("created_by", memberIds)
         .order("created_at", { ascending: false })
         .limit(50);
 
@@ -113,6 +115,7 @@ export function CreateShootingDialog() {
       if (error) throw error;
       return data as Task[];
     },
+    enabled: memberIds.length > 0,
   });
 
   const addFreelancer = () => {
