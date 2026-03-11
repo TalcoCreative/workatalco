@@ -92,6 +92,7 @@ const PlatformIcon = ({ platform }: { platform: string }) => {
 
 const currentMonth = new Date().getMonth() + 1;
 
+export function ClientAnalyticsDashboard() {
   const { companyId } = useCompanyMembers();
   const [selectedClient, setSelectedClient] = useState<string | null>(null);
   const [filterMonth, setFilterMonth] = useState<string>(currentMonth.toString());
