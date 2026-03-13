@@ -75,6 +75,7 @@ const holidayTypeIcons: Record<string, typeof Calendar> = {
 
 const Holiday = () => {
   const navigate = useCompanyNavigate();
+  const { activeWorkspace } = useWorkspace();
   const queryClient = useQueryClient();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingHoliday, setEditingHoliday] = useState<Holiday | null>(null);

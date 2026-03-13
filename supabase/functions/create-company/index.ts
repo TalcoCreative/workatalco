@@ -348,14 +348,27 @@ serve(async (req) => {
       .update({ owner_id: adminUserId })
       .eq("id", company.id);
 
-    // 7. Seed default roles & permissions (if not already seeded)
-    await seedDefaultRoles(supabaseAdmin);
+    // 7. Seed default roles & permissions for this company
+    try {
+      const seedDefaultsRes = await fetch(`${supabaseUrl}/functions/v1/seed-company-defaults`, {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ companyId: company.id }),
+      });
+      console.log("Seed company defaults result:", seedDefaultsRes.status);
+    } catch (seedErr) {
+      console.error("Seed company defaults error (non-blocking):", seedErr);
+    }
 
     // 8. Auto-assign Super Admin dynamic role to the owner
     const { data: superAdminRole } = await supabaseAdmin
       .from("dynamic_roles")
       .select("id")
       .eq("name", "Super Admin")
+      .eq("company_id", company.id)
       .maybeSingle();
 
     if (superAdminRole) {
