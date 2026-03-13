@@ -107,19 +107,24 @@ const Holiday = () => {
     r === "super_admin" || r === "hr"
   );
 
-  // Fetch holidays
+  // Fetch holidays scoped to company
   const { data: holidays, isLoading } = useQuery({
-    queryKey: ["holidays"],
+    queryKey: ["holidays", activeWorkspace?.id],
     queryFn: async () => {
-      const { data, error } = await supabase
+      let query = supabase
         .from("holidays")
         .select("*")
         .order("start_date", { ascending: false });
       
+      if (activeWorkspace?.id) {
+        query = query.eq("company_id", activeWorkspace.id);
+      }
+      
+      const { data, error } = await query;
       if (error) throw error;
       return data as Holiday[];
     },
-    enabled: canAccess,
+    enabled: canAccess && !!activeWorkspace?.id,
   });
 
   // Create/Update mutation
