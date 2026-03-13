@@ -3,6 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Calendar, Building2, Star, Home } from "lucide-react";
 import { format } from "date-fns";
+import { useWorkspace } from "@/hooks/useWorkspace";
 
 interface Holiday {
   id: string;
@@ -29,20 +30,27 @@ const holidayTypeIcons: Record<string, typeof Calendar> = {
 
 const HolidayBanner = () => {
   const today = format(new Date(), "yyyy-MM-dd");
+  const { activeWorkspace } = useWorkspace();
 
   const { data: todayHolidays } = useQuery({
-    queryKey: ["today-holidays", today],
+    queryKey: ["today-holidays", today, activeWorkspace?.id],
     queryFn: async () => {
-      const { data, error } = await supabase
+      let query = supabase
         .from("holidays")
         .select("*")
         .eq("is_active", true)
         .lte("start_date", today)
         .gte("end_date", today);
 
+      if (activeWorkspace?.id) {
+        query = query.eq("company_id", activeWorkspace.id);
+      }
+
+      const { data, error } = await query;
       if (error) throw error;
       return data as Holiday[];
     },
+    enabled: !!activeWorkspace?.id,
   });
 
   if (!todayHolidays || todayHolidays.length === 0) {

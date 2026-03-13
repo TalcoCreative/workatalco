@@ -152,6 +152,7 @@ const Holiday = () => {
         if (error) throw error;
       } else {
         // Create
+        if (!activeWorkspace?.id) throw new Error("No active workspace");
         const { error } = await supabase
           .from("holidays")
           .insert({
@@ -162,7 +163,8 @@ const Holiday = () => {
             description: data.description || null,
             is_active: data.is_active,
             created_by: user.id,
-          });
+            company_id: activeWorkspace.id,
+          } as any);
         
         if (error) throw error;
       }

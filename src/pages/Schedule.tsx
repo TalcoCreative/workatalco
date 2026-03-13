@@ -121,15 +121,21 @@ export default function Schedule() {
     enabled: memberIds.length > 0,
   });
 
-  // Fetch holidays
+  // Fetch holidays scoped to company
   const { data: holidays } = useQuery({
-    queryKey: ["holidays-schedule"],
+    queryKey: ["holidays-schedule", activeWorkspace?.id],
     queryFn: async () => {
-      const { data, error } = await supabase
+      let query = supabase
         .from("holidays")
         .select("*")
         .eq("is_active", true)
         .order("start_date", { ascending: true });
+      
+      if (activeWorkspace?.id) {
+        query = query.eq("company_id", activeWorkspace.id);
+      }
+      
+      const { data, error } = await query;
       if (error) throw error;
       return data;
     },
