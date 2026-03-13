@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useCompanyNavigate } from "@/hooks/useCompanyNavigate";
+import { useWorkspace } from "@/hooks/useWorkspace";
 import { supabase } from "@/integrations/supabase/client";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { Button } from "@/components/ui/button";
@@ -74,6 +75,7 @@ const holidayTypeIcons: Record<string, typeof Calendar> = {
 
 const Holiday = () => {
   const navigate = useCompanyNavigate();
+  const { activeWorkspace } = useWorkspace();
   const queryClient = useQueryClient();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingHoliday, setEditingHoliday] = useState<Holiday | null>(null);
@@ -107,19 +109,24 @@ const Holiday = () => {
     r === "super_admin" || r === "hr"
   );
 
-  // Fetch holidays
+  // Fetch holidays scoped to company
   const { data: holidays, isLoading } = useQuery({
-    queryKey: ["holidays"],
+    queryKey: ["holidays", activeWorkspace?.id],
     queryFn: async () => {
-      const { data, error } = await supabase
+      let query = supabase
         .from("holidays")
         .select("*")
         .order("start_date", { ascending: false });
       
+      if (activeWorkspace?.id) {
+        query = query.eq("company_id", activeWorkspace.id);
+      }
+      
+      const { data, error } = await query;
       if (error) throw error;
       return data as Holiday[];
     },
-    enabled: canAccess,
+    enabled: canAccess && !!activeWorkspace?.id,
   });
 
   // Create/Update mutation
@@ -145,6 +152,7 @@ const Holiday = () => {
         if (error) throw error;
       } else {
         // Create
+        if (!activeWorkspace?.id) throw new Error("No active workspace");
         const { error } = await supabase
           .from("holidays")
           .insert({
@@ -155,7 +163,8 @@ const Holiday = () => {
             description: data.description || null,
             is_active: data.is_active,
             created_by: user.id,
-          });
+            company_id: activeWorkspace.id,
+          } as any);
         
         if (error) throw error;
       }
