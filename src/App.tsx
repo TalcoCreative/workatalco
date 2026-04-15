@@ -111,8 +111,8 @@ const App = () => (
           {/* Sitemap */}
           <Route path="/sitemap.xml" element={<SitemapRedirect />} />
 
-          {/* Default → auth */}
-          <Route path="/" element={<Navigate to="/auth" replace />} />
+          {/* Default → landing */}
+          <Route path="/" element={<Navigate to="/landing" replace />} />
 
           {/* Platform Admin (global, not per-company) */}
           <Route path="/platform-admin" element={<ProtectedRoute><SuperAdmin /></ProtectedRoute>} />
