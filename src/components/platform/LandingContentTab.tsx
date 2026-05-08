@@ -11,7 +11,7 @@ import { toast } from "sonner";
 import {
   Save, Plus, Trash2, ChevronDown, ChevronUp, GripVertical,
   Type, MessageSquare, Star, HelpCircle, Zap, Layout, Image,
-  Users, FileText, Megaphone,
+  Users, FileText, Megaphone, Sparkles,
 } from "lucide-react";
 import {
   Accordion, AccordionContent, AccordionItem, AccordionTrigger,
@@ -21,6 +21,7 @@ type SectionData = Record<string, any>;
 
 const SECTION_META: Record<string, { label: string; icon: any; description: string }> = {
   hero: { label: "Hero Section", icon: Zap, description: "Judul utama, subtitle, badge, CTA, dan statistik" },
+  scroll_morph_hero: { label: "Scroll Morph Hero (Icon Animation)", icon: Sparkles, description: "Hero animasi icon yang bergerak saat scroll. Bisa ganti icon dan teks." },
   trust_bar: { label: "Trust Bar", icon: Users, description: "Daftar nama perusahaan yang ditampilkan" },
   features: { label: "Features", icon: Layout, description: "Daftar fitur produk beserta deskripsi" },
   product_showcase: { label: "Product Showcase", icon: Image, description: "Screenshot produk dan deskripsi" },
@@ -33,7 +34,7 @@ const SECTION_META: Record<string, { label: string; icon: any; description: stri
   footer: { label: "Footer", icon: Type, description: "Teks dan link di footer" },
 };
 
-const SECTION_ORDER = ["hero", "trust_bar", "features", "product_showcase", "how_it_works", "pricing", "testimonials", "why_worka", "faq", "final_cta", "footer"];
+const SECTION_ORDER = ["scroll_morph_hero", "hero", "trust_bar", "features", "product_showcase", "how_it_works", "pricing", "testimonials", "why_worka", "faq", "final_cta", "footer"];
 
 export function LandingContentTab() {
   const queryClient = useQueryClient();
@@ -155,6 +156,15 @@ function SectionPreview({ sectionKey, data }: { sectionKey: string; data: any })
           <p><span className="text-muted-foreground">Stats:</span> {data.stats?.map((s: any, i: number) => <Badge key={i} variant="outline" className="ml-1 text-xs">{s.value}{s.suffix} {s.label}</Badge>)}</p>
         </div>
       );
+    case "scroll_morph_hero":
+      return (
+        <div className="rounded-xl bg-muted/20 p-4 space-y-1 text-sm">
+          <p><span className="text-muted-foreground">Status:</span> <Badge variant={data.enabled !== false ? "default" : "outline"} className="ml-1">{data.enabled !== false ? "Aktif" : "Disembunyikan"}</Badge></p>
+          <p><span className="text-muted-foreground">Intro Title:</span> <span className="font-medium">{data.intro_title}</span></p>
+          <p><span className="text-muted-foreground">Title:</span> <span className="font-medium">{data.title}</span></p>
+          <p><span className="text-muted-foreground">Jumlah Icon:</span> <span className="font-medium">{data.icons?.length || 0}</span></p>
+        </div>
+      );
     case "trust_bar":
       return (
         <div className="rounded-xl bg-muted/20 p-4 text-sm">
@@ -231,6 +241,72 @@ function SectionEditor({ sectionKey, data, onChange }: { sectionKey: string; dat
                 />
               </div>
             ))}
+          </div>
+        </div>
+      );
+
+    case "scroll_morph_hero":
+      return (
+        <div className="space-y-4">
+          <div className="flex items-center gap-2 rounded-xl bg-muted/30 p-3">
+            <input
+              id="smh-enabled"
+              type="checkbox"
+              checked={data.enabled !== false}
+              onChange={(e) => update("enabled", e.target.checked)}
+              className="h-4 w-4"
+            />
+            <Label htmlFor="smh-enabled" className="text-sm cursor-pointer">Tampilkan section ini di landing page</Label>
+          </div>
+          <Field label="Intro Title" value={data.intro_title || ""} onChange={(v) => update("intro_title", v)} />
+          <Field label="Intro Hint (small text)" value={data.intro_hint || ""} onChange={(v) => update("intro_hint", v)} />
+          <Field label="Main Title (after scroll)" value={data.title || ""} onChange={(v) => update("title", v)} />
+          <Field label="Subtitle (after scroll)" value={data.subtitle || ""} onChange={(v) => update("subtitle", v)} multiline />
+          <div>
+            <Label className="text-xs font-semibold mb-2 block">Icons ({data.icons?.length || 0})</Label>
+            <p className="text-xs text-muted-foreground mb-2">
+              Gunakan nama icon dari <a href="https://lucide.dev/icons" target="_blank" rel="noreferrer" className="underline">lucide.dev/icons</a> (PascalCase, contoh: <code>LayoutDashboard</code>, <code>Wallet</code>).
+            </p>
+            {(data.icons || []).map((ic: any, i: number) => (
+              <div key={i} className="grid grid-cols-[1fr_1fr_auto] gap-2 mb-2">
+                <Input
+                  className="h-8 text-sm"
+                  value={ic.name || ""}
+                  placeholder="Icon name (LayoutDashboard)"
+                  onChange={(e) => {
+                    const arr = [...(data.icons || [])];
+                    arr[i] = { ...arr[i], name: e.target.value };
+                    update("icons", arr);
+                  }}
+                />
+                <Input
+                  className="h-8 text-sm"
+                  value={ic.label || ""}
+                  placeholder="Label (Dashboard)"
+                  onChange={(e) => {
+                    const arr = [...(data.icons || [])];
+                    arr[i] = { ...arr[i], label: e.target.value };
+                    update("icons", arr);
+                  }}
+                />
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-8 w-8 p-0 text-destructive"
+                  onClick={() => update("icons", (data.icons || []).filter((_: any, j: number) => j !== i))}
+                >
+                  <Trash2 className="h-3.5 w-3.5" />
+                </Button>
+              </div>
+            ))}
+            <Button
+              variant="outline"
+              size="sm"
+              className="gap-1.5 mt-1"
+              onClick={() => update("icons", [...(data.icons || []), { name: "Sparkles", label: "New" }])}
+            >
+              <Plus className="h-3 w-3" /> Tambah Icon
+            </Button>
           </div>
         </div>
       );

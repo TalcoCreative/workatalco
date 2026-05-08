@@ -15,6 +15,7 @@ import featureTasks from "@/assets/feature-tasks.jpg";
 import featureTeams from "@/assets/feature-teams.jpg";
 import featureWorkspaces from "@/assets/feature-workspaces.jpg";
 import featureClients from "@/assets/feature-clients.jpg";
+import ScrollMorphHero from "@/components/ui/scroll-morph-hero";
 
 /* ─── Intersection Observer Hook ─── */
 function useInView(threshold = 0.15) {
@@ -84,6 +85,18 @@ export default function Landing() {
     },
   });
 
+  const { data: scrollHeroContent } = useQuery({
+    queryKey: ["landing-content", "scroll_morph_hero"],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("landing_content")
+        .select("content")
+        .eq("section", "scroll_morph_hero")
+        .maybeSingle();
+      return (data?.content as any) || null;
+    },
+  });
+
   const FAQS = [
     { q: "How long is the free trial?", a: "Every new workspace gets 14 days free trial with up to 3 users. No credit card required." },
     { q: "Can I manage multiple companies?", a: "Yes. Each company gets its own isolated workspace with separate data, teams, and settings." },
@@ -141,6 +154,19 @@ export default function Landing() {
       </nav>
 
       {/* ═══ SECTION 1: HERO ═══ */}
+      {scrollHeroContent?.enabled !== false && (
+        <section className="relative">
+          <ScrollMorphHero
+            introTitle={scrollHeroContent?.intro_title}
+            introHint={scrollHeroContent?.intro_hint}
+            title={scrollHeroContent?.title}
+            subtitle={scrollHeroContent?.subtitle}
+            icons={scrollHeroContent?.icons}
+          />
+        </section>
+      )}
+
+      {/* ═══ SECTION 1b: CLASSIC HERO ═══ */}
       <section className="relative px-6 pt-20 pb-16 md:pt-32 md:pb-24">
         <div className="mx-auto max-w-4xl text-center">
           <FadeIn>
