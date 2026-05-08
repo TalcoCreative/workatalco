@@ -156,6 +156,15 @@ function SectionPreview({ sectionKey, data }: { sectionKey: string; data: any })
           <p><span className="text-muted-foreground">Stats:</span> {data.stats?.map((s: any, i: number) => <Badge key={i} variant="outline" className="ml-1 text-xs">{s.value}{s.suffix} {s.label}</Badge>)}</p>
         </div>
       );
+    case "scroll_morph_hero":
+      return (
+        <div className="rounded-xl bg-muted/20 p-4 space-y-1 text-sm">
+          <p><span className="text-muted-foreground">Status:</span> <Badge variant={data.enabled !== false ? "default" : "outline"} className="ml-1">{data.enabled !== false ? "Aktif" : "Disembunyikan"}</Badge></p>
+          <p><span className="text-muted-foreground">Intro Title:</span> <span className="font-medium">{data.intro_title}</span></p>
+          <p><span className="text-muted-foreground">Title:</span> <span className="font-medium">{data.title}</span></p>
+          <p><span className="text-muted-foreground">Jumlah Icon:</span> <span className="font-medium">{data.icons?.length || 0}</span></p>
+        </div>
+      );
     case "trust_bar":
       return (
         <div className="rounded-xl bg-muted/20 p-4 text-sm">
