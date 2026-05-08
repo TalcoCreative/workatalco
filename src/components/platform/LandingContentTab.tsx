@@ -245,6 +245,72 @@ function SectionEditor({ sectionKey, data, onChange }: { sectionKey: string; dat
         </div>
       );
 
+    case "scroll_morph_hero":
+      return (
+        <div className="space-y-4">
+          <div className="flex items-center gap-2 rounded-xl bg-muted/30 p-3">
+            <input
+              id="smh-enabled"
+              type="checkbox"
+              checked={data.enabled !== false}
+              onChange={(e) => update("enabled", e.target.checked)}
+              className="h-4 w-4"
+            />
+            <Label htmlFor="smh-enabled" className="text-sm cursor-pointer">Tampilkan section ini di landing page</Label>
+          </div>
+          <Field label="Intro Title" value={data.intro_title || ""} onChange={(v) => update("intro_title", v)} />
+          <Field label="Intro Hint (small text)" value={data.intro_hint || ""} onChange={(v) => update("intro_hint", v)} />
+          <Field label="Main Title (after scroll)" value={data.title || ""} onChange={(v) => update("title", v)} />
+          <Field label="Subtitle (after scroll)" value={data.subtitle || ""} onChange={(v) => update("subtitle", v)} multiline />
+          <div>
+            <Label className="text-xs font-semibold mb-2 block">Icons ({data.icons?.length || 0})</Label>
+            <p className="text-xs text-muted-foreground mb-2">
+              Gunakan nama icon dari <a href="https://lucide.dev/icons" target="_blank" rel="noreferrer" className="underline">lucide.dev/icons</a> (PascalCase, contoh: <code>LayoutDashboard</code>, <code>Wallet</code>).
+            </p>
+            {(data.icons || []).map((ic: any, i: number) => (
+              <div key={i} className="grid grid-cols-[1fr_1fr_auto] gap-2 mb-2">
+                <Input
+                  className="h-8 text-sm"
+                  value={ic.name || ""}
+                  placeholder="Icon name (LayoutDashboard)"
+                  onChange={(e) => {
+                    const arr = [...(data.icons || [])];
+                    arr[i] = { ...arr[i], name: e.target.value };
+                    update("icons", arr);
+                  }}
+                />
+                <Input
+                  className="h-8 text-sm"
+                  value={ic.label || ""}
+                  placeholder="Label (Dashboard)"
+                  onChange={(e) => {
+                    const arr = [...(data.icons || [])];
+                    arr[i] = { ...arr[i], label: e.target.value };
+                    update("icons", arr);
+                  }}
+                />
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-8 w-8 p-0 text-destructive"
+                  onClick={() => update("icons", (data.icons || []).filter((_: any, j: number) => j !== i))}
+                >
+                  <Trash2 className="h-3.5 w-3.5" />
+                </Button>
+              </div>
+            ))}
+            <Button
+              variant="outline"
+              size="sm"
+              className="gap-1.5 mt-1"
+              onClick={() => update("icons", [...(data.icons || []), { name: "Sparkles", label: "New" }])}
+            >
+              <Plus className="h-3 w-3" /> Tambah Icon
+            </Button>
+          </div>
+        </div>
+      );
+
     case "trust_bar":
       return (
         <div className="space-y-4">
