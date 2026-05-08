@@ -320,6 +320,77 @@ function SectionEditor({ sectionKey, data, onChange }: { sectionKey: string; dat
         </div>
       );
 
+    case "featured_showcase":
+      return (
+        <div className="space-y-4">
+          <div className="flex items-center gap-2 rounded-xl bg-muted/30 p-3">
+            <input
+              id="fs-enabled"
+              type="checkbox"
+              checked={data.enabled !== false}
+              onChange={(e) => update("enabled", e.target.checked)}
+              className="h-4 w-4"
+            />
+            <Label htmlFor="fs-enabled" className="text-sm cursor-pointer">Tampilkan section ini di landing page</Label>
+          </div>
+          <Field label="Section Title" value={data.title || ""} onChange={(v) => update("title", v)} />
+          <Field label="Subtitle" value={data.subtitle || ""} onChange={(v) => update("subtitle", v)} multiline />
+          <div>
+            <Label className="text-xs font-semibold mb-2 block">Tabs ({data.tabs?.length || 0})</Label>
+            <p className="text-xs text-muted-foreground mb-2">
+              Icon name dari <a href="https://lucide.dev/icons" target="_blank" rel="noreferrer" className="underline">lucide.dev/icons</a> (PascalCase). Image bisa URL apapun (Unsplash, dll).
+            </p>
+            {(data.tabs || []).map((tab: any, i: number) => (
+              <Card key={i} className="mb-3 border-border/20">
+                <CardContent className="p-3 space-y-2">
+                  <div className="flex items-center justify-between">
+                    <Badge variant="outline" className="text-xs">Tab #{i + 1}</Badge>
+                    <Button variant="ghost" size="sm" className="h-7 w-7 p-0 text-destructive" onClick={() => {
+                      update("tabs", (data.tabs || []).filter((_: any, j: number) => j !== i));
+                    }}><Trash2 className="h-3 w-3" /></Button>
+                  </div>
+                  <Input className="h-8 text-sm" value={tab.icon || ""} placeholder="Icon (LayoutDashboard)"
+                    onChange={(e) => {
+                      const arr = [...(data.tabs || [])];
+                      arr[i] = { ...arr[i], icon: e.target.value };
+                      update("tabs", arr);
+                    }}
+                  />
+                  <Input className="h-8 text-sm" value={tab.title || ""} placeholder="Title"
+                    onChange={(e) => {
+                      const arr = [...(data.tabs || [])];
+                      arr[i] = { ...arr[i], title: e.target.value };
+                      update("tabs", arr);
+                    }}
+                  />
+                  <Textarea className="text-sm min-h-[60px]" value={tab.description || ""} placeholder="Description"
+                    onChange={(e) => {
+                      const arr = [...(data.tabs || [])];
+                      arr[i] = { ...arr[i], description: e.target.value };
+                      update("tabs", arr);
+                    }}
+                  />
+                  <Input className="h-8 text-sm" value={tab.image || ""} placeholder="Image URL (https://...)"
+                    onChange={(e) => {
+                      const arr = [...(data.tabs || [])];
+                      arr[i] = { ...arr[i], image: e.target.value };
+                      update("tabs", arr);
+                    }}
+                  />
+                  {tab.image && (
+                    <img src={tab.image} alt="preview" className="w-full h-32 object-cover rounded-lg border border-border/30" />
+                  )}
+                </CardContent>
+              </Card>
+            ))}
+            <Button variant="outline" size="sm" className="gap-1.5"
+              onClick={() => update("tabs", [...(data.tabs || []), { icon: "Sparkles", title: "New Tab", description: "Description", image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=1600&q=80" }])}>
+              <Plus className="h-3 w-3" /> Tambah Tab
+            </Button>
+          </div>
+        </div>
+      );
+
     case "trust_bar":
       return (
         <div className="space-y-4">
