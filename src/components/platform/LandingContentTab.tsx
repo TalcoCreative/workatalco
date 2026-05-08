@@ -22,6 +22,7 @@ type SectionData = Record<string, any>;
 const SECTION_META: Record<string, { label: string; icon: any; description: string }> = {
   hero: { label: "Hero Section", icon: Zap, description: "Judul utama, subtitle, badge, CTA, dan statistik" },
   scroll_morph_hero: { label: "Scroll Morph Hero (Icon Animation)", icon: Sparkles, description: "Hero animasi icon yang bergerak saat scroll. Bisa ganti icon dan teks." },
+  featured_showcase: { label: "Featured Showcase (Tabs + Image)", icon: Image, description: "Tab interaktif dengan icon, judul, deskripsi, dan gambar. Semua editable." },
   trust_bar: { label: "Trust Bar", icon: Users, description: "Daftar nama perusahaan yang ditampilkan" },
   features: { label: "Features", icon: Layout, description: "Daftar fitur produk beserta deskripsi" },
   product_showcase: { label: "Product Showcase", icon: Image, description: "Screenshot produk dan deskripsi" },
@@ -34,7 +35,7 @@ const SECTION_META: Record<string, { label: string; icon: any; description: stri
   footer: { label: "Footer", icon: Type, description: "Teks dan link di footer" },
 };
 
-const SECTION_ORDER = ["scroll_morph_hero", "hero", "trust_bar", "features", "product_showcase", "how_it_works", "pricing", "testimonials", "why_worka", "faq", "final_cta", "footer"];
+const SECTION_ORDER = ["scroll_morph_hero", "featured_showcase", "hero", "trust_bar", "features", "product_showcase", "how_it_works", "pricing", "testimonials", "why_worka", "faq", "final_cta", "footer"];
 
 export function LandingContentTab() {
   const queryClient = useQueryClient();
@@ -163,6 +164,14 @@ function SectionPreview({ sectionKey, data }: { sectionKey: string; data: any })
           <p><span className="text-muted-foreground">Intro Title:</span> <span className="font-medium">{data.intro_title}</span></p>
           <p><span className="text-muted-foreground">Title:</span> <span className="font-medium">{data.title}</span></p>
           <p><span className="text-muted-foreground">Jumlah Icon:</span> <span className="font-medium">{data.icons?.length || 0}</span></p>
+        </div>
+      );
+    case "featured_showcase":
+      return (
+        <div className="rounded-xl bg-muted/20 p-4 space-y-1 text-sm">
+          <p><span className="text-muted-foreground">Status:</span> <Badge variant={data.enabled !== false ? "default" : "outline"} className="ml-1">{data.enabled !== false ? "Aktif" : "Disembunyikan"}</Badge></p>
+          <p><span className="text-muted-foreground">Title:</span> <span className="font-medium">{data.title}</span></p>
+          <p><span className="text-muted-foreground">Jumlah Tab:</span> <span className="font-medium">{data.tabs?.length || 0}</span></p>
         </div>
       );
     case "trust_bar":
