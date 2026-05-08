@@ -22,6 +22,7 @@ type SectionData = Record<string, any>;
 const SECTION_META: Record<string, { label: string; icon: any; description: string }> = {
   hero: { label: "Hero Section", icon: Zap, description: "Judul utama, subtitle, badge, CTA, dan statistik" },
   scroll_morph_hero: { label: "Scroll Morph Hero (Icon Animation)", icon: Sparkles, description: "Hero animasi icon yang bergerak saat scroll. Bisa ganti icon dan teks." },
+  featured_showcase: { label: "Featured Showcase (Tabs + Image)", icon: Image, description: "Tab interaktif dengan icon, judul, deskripsi, dan gambar. Semua editable." },
   trust_bar: { label: "Trust Bar", icon: Users, description: "Daftar nama perusahaan yang ditampilkan" },
   features: { label: "Features", icon: Layout, description: "Daftar fitur produk beserta deskripsi" },
   product_showcase: { label: "Product Showcase", icon: Image, description: "Screenshot produk dan deskripsi" },
@@ -34,7 +35,7 @@ const SECTION_META: Record<string, { label: string; icon: any; description: stri
   footer: { label: "Footer", icon: Type, description: "Teks dan link di footer" },
 };
 
-const SECTION_ORDER = ["scroll_morph_hero", "hero", "trust_bar", "features", "product_showcase", "how_it_works", "pricing", "testimonials", "why_worka", "faq", "final_cta", "footer"];
+const SECTION_ORDER = ["scroll_morph_hero", "featured_showcase", "hero", "trust_bar", "features", "product_showcase", "how_it_works", "pricing", "testimonials", "why_worka", "faq", "final_cta", "footer"];
 
 export function LandingContentTab() {
   const queryClient = useQueryClient();
@@ -163,6 +164,14 @@ function SectionPreview({ sectionKey, data }: { sectionKey: string; data: any })
           <p><span className="text-muted-foreground">Intro Title:</span> <span className="font-medium">{data.intro_title}</span></p>
           <p><span className="text-muted-foreground">Title:</span> <span className="font-medium">{data.title}</span></p>
           <p><span className="text-muted-foreground">Jumlah Icon:</span> <span className="font-medium">{data.icons?.length || 0}</span></p>
+        </div>
+      );
+    case "featured_showcase":
+      return (
+        <div className="rounded-xl bg-muted/20 p-4 space-y-1 text-sm">
+          <p><span className="text-muted-foreground">Status:</span> <Badge variant={data.enabled !== false ? "default" : "outline"} className="ml-1">{data.enabled !== false ? "Aktif" : "Disembunyikan"}</Badge></p>
+          <p><span className="text-muted-foreground">Title:</span> <span className="font-medium">{data.title}</span></p>
+          <p><span className="text-muted-foreground">Jumlah Tab:</span> <span className="font-medium">{data.tabs?.length || 0}</span></p>
         </div>
       );
     case "trust_bar":
@@ -306,6 +315,77 @@ function SectionEditor({ sectionKey, data, onChange }: { sectionKey: string; dat
               onClick={() => update("icons", [...(data.icons || []), { name: "Sparkles", label: "New" }])}
             >
               <Plus className="h-3 w-3" /> Tambah Icon
+            </Button>
+          </div>
+        </div>
+      );
+
+    case "featured_showcase":
+      return (
+        <div className="space-y-4">
+          <div className="flex items-center gap-2 rounded-xl bg-muted/30 p-3">
+            <input
+              id="fs-enabled"
+              type="checkbox"
+              checked={data.enabled !== false}
+              onChange={(e) => update("enabled", e.target.checked)}
+              className="h-4 w-4"
+            />
+            <Label htmlFor="fs-enabled" className="text-sm cursor-pointer">Tampilkan section ini di landing page</Label>
+          </div>
+          <Field label="Section Title" value={data.title || ""} onChange={(v) => update("title", v)} />
+          <Field label="Subtitle" value={data.subtitle || ""} onChange={(v) => update("subtitle", v)} multiline />
+          <div>
+            <Label className="text-xs font-semibold mb-2 block">Tabs ({data.tabs?.length || 0})</Label>
+            <p className="text-xs text-muted-foreground mb-2">
+              Icon name dari <a href="https://lucide.dev/icons" target="_blank" rel="noreferrer" className="underline">lucide.dev/icons</a> (PascalCase). Image bisa URL apapun (Unsplash, dll).
+            </p>
+            {(data.tabs || []).map((tab: any, i: number) => (
+              <Card key={i} className="mb-3 border-border/20">
+                <CardContent className="p-3 space-y-2">
+                  <div className="flex items-center justify-between">
+                    <Badge variant="outline" className="text-xs">Tab #{i + 1}</Badge>
+                    <Button variant="ghost" size="sm" className="h-7 w-7 p-0 text-destructive" onClick={() => {
+                      update("tabs", (data.tabs || []).filter((_: any, j: number) => j !== i));
+                    }}><Trash2 className="h-3 w-3" /></Button>
+                  </div>
+                  <Input className="h-8 text-sm" value={tab.icon || ""} placeholder="Icon (LayoutDashboard)"
+                    onChange={(e) => {
+                      const arr = [...(data.tabs || [])];
+                      arr[i] = { ...arr[i], icon: e.target.value };
+                      update("tabs", arr);
+                    }}
+                  />
+                  <Input className="h-8 text-sm" value={tab.title || ""} placeholder="Title"
+                    onChange={(e) => {
+                      const arr = [...(data.tabs || [])];
+                      arr[i] = { ...arr[i], title: e.target.value };
+                      update("tabs", arr);
+                    }}
+                  />
+                  <Textarea className="text-sm min-h-[60px]" value={tab.description || ""} placeholder="Description"
+                    onChange={(e) => {
+                      const arr = [...(data.tabs || [])];
+                      arr[i] = { ...arr[i], description: e.target.value };
+                      update("tabs", arr);
+                    }}
+                  />
+                  <Input className="h-8 text-sm" value={tab.image || ""} placeholder="Image URL (https://...)"
+                    onChange={(e) => {
+                      const arr = [...(data.tabs || [])];
+                      arr[i] = { ...arr[i], image: e.target.value };
+                      update("tabs", arr);
+                    }}
+                  />
+                  {tab.image && (
+                    <img src={tab.image} alt="preview" className="w-full h-32 object-cover rounded-lg border border-border/30" />
+                  )}
+                </CardContent>
+              </Card>
+            ))}
+            <Button variant="outline" size="sm" className="gap-1.5"
+              onClick={() => update("tabs", [...(data.tabs || []), { icon: "Sparkles", title: "New Tab", description: "Description", image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=1600&q=80" }])}>
+              <Plus className="h-3 w-3" /> Tambah Tab
             </Button>
           </div>
         </div>

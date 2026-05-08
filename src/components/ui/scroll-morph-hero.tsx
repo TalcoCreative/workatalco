@@ -21,8 +21,8 @@ export interface ScrollMorphHeroProps {
   className?: string;
 }
 
-const IMG_WIDTH = 64;
-const IMG_HEIGHT = 64;
+const IMG_WIDTH = 88;
+const IMG_HEIGHT = 88;
 const MAX_SCROLL = 3000;
 
 const lerp = (a: number, b: number, t: number) => a * (1 - t) + b * t;
@@ -55,9 +55,9 @@ function IconCard({
       }}
       transition={{ type: "spring", stiffness: 80, damping: 18, mass: 0.8 }}
     >
-      <Icon className="h-7 w-7 text-foreground" strokeWidth={1.75} />
+      <Icon className="h-9 w-9 text-foreground" strokeWidth={1.75} />
       {label && (
-        <span className="text-[8px] mt-0.5 text-muted-foreground font-medium tracking-tight max-w-[55px] truncate">
+        <span className="text-[10px] mt-1 text-muted-foreground font-medium tracking-tight max-w-[78px] truncate">
           {label}
         </span>
       )}
@@ -190,17 +190,17 @@ export default function ScrollMorphHero({
   return (
     <div
       ref={containerRef}
-      className={`relative w-full h-[80vh] min-h-[560px] overflow-hidden bg-gradient-to-b from-white via-white to-muted/30 ${className}`}
+      className={`relative w-full h-screen min-h-[680px] overflow-hidden bg-gradient-to-b from-white via-white to-muted/30 ${className}`}
     >
       {/* Intro text */}
       <motion.div
         style={{ opacity: introOpacity }}
-        className="absolute inset-x-0 top-12 md:top-20 z-10 text-center px-6 pointer-events-none"
+        className="absolute inset-x-0 top-16 md:top-24 z-10 text-center px-6 pointer-events-none"
       >
-        <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-foreground">
+        <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight text-foreground max-w-5xl mx-auto leading-[1.05]">
           {introTitle}
         </h2>
-        <p className="mt-3 text-xs sm:text-sm tracking-[0.25em] text-muted-foreground/70 font-medium">
+        <p className="mt-5 text-xs sm:text-sm tracking-[0.3em] text-muted-foreground/70 font-medium">
           {introHint}
         </p>
       </motion.div>
@@ -208,12 +208,12 @@ export default function ScrollMorphHero({
       {/* Arc-active text */}
       <motion.div
         style={{ opacity: contentOpacity }}
-        className="absolute inset-x-0 top-12 md:top-20 z-10 text-center px-6 pointer-events-none"
+        className="absolute inset-x-0 top-16 md:top-24 z-10 text-center px-6 pointer-events-none"
       >
-        <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-foreground">
+        <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight text-foreground max-w-5xl mx-auto leading-[1.05]">
           {title}
         </h2>
-        <p className="mt-4 mx-auto max-w-xl text-base sm:text-lg text-muted-foreground">
+        <p className="mt-5 mx-auto max-w-2xl text-lg sm:text-xl text-muted-foreground leading-relaxed">
           {subtitle}
         </p>
       </motion.div>
@@ -226,14 +226,14 @@ export default function ScrollMorphHero({
           if (introPhase === "scatter") {
             target = scatterPositions[i];
           } else if (introPhase === "line") {
-            const spacing = 56;
+            const spacing = 76;
             const totalW = TOTAL * spacing;
-            target = { x: i * spacing - totalW / 2, y: 0, rotation: 0, scale: 0.9, opacity: 1 };
+            target = { x: i * spacing - totalW / 2, y: 0, rotation: 0, scale: 1, opacity: 1 };
           } else {
             const isMobile = containerSize.width < 768;
             const minDim = Math.min(containerSize.width, containerSize.height);
 
-            const circleRadius = Math.min(minDim * 0.32, 280);
+            const circleRadius = Math.min(minDim * 0.36, 360);
             const cAngle = (i / TOTAL) * 360;
             const cRad = (cAngle * Math.PI) / 180;
             const circlePos = {

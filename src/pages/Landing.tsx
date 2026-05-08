@@ -16,6 +16,7 @@ import featureTeams from "@/assets/feature-teams.jpg";
 import featureWorkspaces from "@/assets/feature-workspaces.jpg";
 import featureClients from "@/assets/feature-clients.jpg";
 import ScrollMorphHero from "@/components/ui/scroll-morph-hero";
+import FeaturedShowcase from "@/components/ui/featured-showcase";
 
 /* ─── Intersection Observer Hook ─── */
 function useInView(threshold = 0.15) {
@@ -97,7 +98,43 @@ export default function Landing() {
     },
   });
 
-  const FAQS = [
+  const { data: showcaseContent } = useQuery({
+    queryKey: ["landing-content", "featured_showcase"],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("landing_content")
+        .select("content")
+        .eq("section", "featured_showcase")
+        .maybeSingle();
+      return (data?.content as any) || null;
+    },
+  });
+
+  const { data: faqContent } = useQuery({
+    queryKey: ["landing-content", "faq"],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("landing_content")
+        .select("content")
+        .eq("section", "faq")
+        .maybeSingle();
+      return (data?.content as any) || null;
+    },
+  });
+
+  const { data: ctaContent } = useQuery({
+    queryKey: ["landing-content", "final_cta"],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("landing_content")
+        .select("content")
+        .eq("section", "final_cta")
+        .maybeSingle();
+      return (data?.content as any) || null;
+    },
+  });
+
+  const FAQS = (faqContent?.items as Array<{q:string;a:string}>) || [
     { q: "How long is the free trial?", a: "Every new workspace gets 14 days free trial with up to 3 users. No credit card required." },
     { q: "Can I manage multiple companies?", a: "Yes. Each company gets its own isolated workspace with separate data, teams, and settings." },
     { q: "Is my data secure?", a: "Absolutely. We use enterprise-grade encryption, row-level security, and full data isolation between workspaces." },
@@ -164,6 +201,17 @@ export default function Landing() {
             icons={scrollHeroContent?.icons}
           />
         </section>
+      )}
+
+      {/* ═══ SECTION 1.5: FEATURED SHOWCASE (CMS) ═══ */}
+      {showcaseContent?.enabled !== false && (showcaseContent?.tabs?.length ?? 0) > 0 && (
+        <FadeIn>
+          <FeaturedShowcase
+            title={showcaseContent?.title}
+            subtitle={showcaseContent?.subtitle}
+            tabs={showcaseContent?.tabs || []}
+          />
+        </FadeIn>
       )}
 
       {/* ═══ SECTION 1b: CLASSIC HERO ═══ */}
@@ -405,7 +453,10 @@ export default function Landing() {
       <section id="faq" className="px-6 py-24 md:py-32 bg-muted/40">
         <div className="mx-auto max-w-2xl">
           <FadeIn>
-            <h2 className="text-3xl font-bold text-center mb-12">Frequently asked questions</h2>
+            <h2 className="text-3xl font-bold text-center mb-3">{faqContent?.title || "Frequently asked questions"}</h2>
+            {faqContent?.subtitle && (
+              <p className="text-center text-muted-foreground mb-12">{faqContent.subtitle}</p>
+            )}
           </FadeIn>
           <div className="space-y-2">
             {FAQS.map((faq, i) => (
@@ -433,16 +484,17 @@ export default function Landing() {
         <div className="mx-auto max-w-3xl text-center">
           <FadeIn>
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight">
-              Start your workspace
-              <br />in minutes.
+              {ctaContent?.title || "Start your workspace"}
+              {ctaContent?.title_highlight && (<><br /><span className="text-white/70">{ctaContent.title_highlight}</span></>)}
+              {!ctaContent?.title_highlight && !ctaContent?.title && (<><br />in minutes.</>)}
             </h2>
             <p className="mt-4 text-lg text-white/60">
-              14-day free trial. No credit card required.
+              {ctaContent?.subtitle || "14-day free trial. No credit card required."}
             </p>
             <div className="mt-10">
               <Link to="/auth">
                 <Button size="lg" className="rounded-full px-10 h-12 text-base font-semibold bg-white text-foreground hover:bg-white/90">
-                  Try Worka Free
+                  {ctaContent?.cta_primary || "Try Worka Free"}
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
               </Link>
