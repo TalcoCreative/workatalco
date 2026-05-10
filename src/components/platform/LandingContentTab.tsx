@@ -23,6 +23,7 @@ const SECTION_META: Record<string, { label: string; icon: any; description: stri
   hero: { label: "Hero Section", icon: Zap, description: "Judul utama, subtitle, badge, CTA, dan statistik" },
   scroll_morph_hero: { label: "Scroll Morph Hero (Icon Animation)", icon: Sparkles, description: "Hero animasi icon yang bergerak saat scroll. Bisa ganti icon dan teks." },
   featured_showcase: { label: "Featured Showcase (Tabs + Image)", icon: Image, description: "Tab interaktif dengan icon, judul, deskripsi, dan gambar. Semua editable." },
+  scroll_animation: { label: "Scroll Animation (Container)", icon: Sparkles, description: "Section animasi scroll dengan judul dan gambar product yang muncul saat di-scroll." },
   trust_bar: { label: "Trust Bar", icon: Users, description: "Daftar nama perusahaan yang ditampilkan" },
   features: { label: "Features", icon: Layout, description: "Daftar fitur produk beserta deskripsi" },
   product_showcase: { label: "Product Showcase", icon: Image, description: "Screenshot produk dan deskripsi" },
@@ -35,7 +36,7 @@ const SECTION_META: Record<string, { label: string; icon: any; description: stri
   footer: { label: "Footer", icon: Type, description: "Teks dan link di footer" },
 };
 
-const SECTION_ORDER = ["scroll_morph_hero", "featured_showcase", "hero", "trust_bar", "features", "product_showcase", "how_it_works", "pricing", "testimonials", "why_worka", "faq", "final_cta", "footer"];
+const SECTION_ORDER = ["scroll_morph_hero", "scroll_animation", "pricing", "featured_showcase", "hero", "trust_bar", "features", "product_showcase", "how_it_works", "testimonials", "why_worka", "faq", "final_cta", "footer"];
 
 export function LandingContentTab() {
   const queryClient = useQueryClient();
