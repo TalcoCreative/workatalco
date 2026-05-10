@@ -23,6 +23,7 @@ const SECTION_META: Record<string, { label: string; icon: any; description: stri
   hero: { label: "Hero Section", icon: Zap, description: "Judul utama, subtitle, badge, CTA, dan statistik" },
   scroll_morph_hero: { label: "Scroll Morph Hero (Icon Animation)", icon: Sparkles, description: "Hero animasi icon yang bergerak saat scroll. Bisa ganti icon dan teks." },
   featured_showcase: { label: "Featured Showcase (Tabs + Image)", icon: Image, description: "Tab interaktif dengan icon, judul, deskripsi, dan gambar. Semua editable." },
+  scroll_animation: { label: "Scroll Animation (Container)", icon: Sparkles, description: "Section animasi scroll dengan judul dan gambar product yang muncul saat di-scroll." },
   trust_bar: { label: "Trust Bar", icon: Users, description: "Daftar nama perusahaan yang ditampilkan" },
   features: { label: "Features", icon: Layout, description: "Daftar fitur produk beserta deskripsi" },
   product_showcase: { label: "Product Showcase", icon: Image, description: "Screenshot produk dan deskripsi" },
@@ -35,7 +36,7 @@ const SECTION_META: Record<string, { label: string; icon: any; description: stri
   footer: { label: "Footer", icon: Type, description: "Teks dan link di footer" },
 };
 
-const SECTION_ORDER = ["scroll_morph_hero", "featured_showcase", "hero", "trust_bar", "features", "product_showcase", "how_it_works", "pricing", "testimonials", "why_worka", "faq", "final_cta", "footer"];
+const SECTION_ORDER = ["scroll_morph_hero", "scroll_animation", "pricing", "featured_showcase", "hero", "trust_bar", "features", "product_showcase", "how_it_works", "testimonials", "why_worka", "faq", "final_cta", "footer"];
 
 export function LandingContentTab() {
   const queryClient = useQueryClient();
@@ -172,6 +173,14 @@ function SectionPreview({ sectionKey, data }: { sectionKey: string; data: any })
           <p><span className="text-muted-foreground">Status:</span> <Badge variant={data.enabled !== false ? "default" : "outline"} className="ml-1">{data.enabled !== false ? "Aktif" : "Disembunyikan"}</Badge></p>
           <p><span className="text-muted-foreground">Title:</span> <span className="font-medium">{data.title}</span></p>
           <p><span className="text-muted-foreground">Jumlah Tab:</span> <span className="font-medium">{data.tabs?.length || 0}</span></p>
+        </div>
+      );
+    case "scroll_animation":
+      return (
+        <div className="rounded-xl bg-muted/20 p-4 space-y-1 text-sm">
+          <p><span className="text-muted-foreground">Status:</span> <Badge variant={data.enabled !== false ? "default" : "outline"} className="ml-1">{data.enabled !== false ? "Aktif" : "Disembunyikan"}</Badge></p>
+          <p><span className="text-muted-foreground">Title:</span> <span className="font-medium">{data.title_top} {data.title_highlight}</span></p>
+          <p><span className="text-muted-foreground">Image:</span> <span className="font-medium text-xs">{data.image_url?.substring(0, 60)}...</span></p>
         </div>
       );
     case "trust_bar":
@@ -391,6 +400,28 @@ function SectionEditor({ sectionKey, data, onChange }: { sectionKey: string; dat
         </div>
       );
 
+    case "scroll_animation":
+      return (
+        <div className="space-y-4">
+          <div className="flex items-center gap-2 rounded-xl bg-muted/30 p-3">
+            <input
+              id="sa-enabled"
+              type="checkbox"
+              checked={data.enabled !== false}
+              onChange={(e) => update("enabled", e.target.checked)}
+              className="h-4 w-4"
+            />
+            <Label htmlFor="sa-enabled" className="text-sm cursor-pointer">Tampilkan section ini di landing page</Label>
+          </div>
+          <Field label="Title (Top line)" value={data.title_top || ""} onChange={(v) => update("title_top", v)} />
+          <Field label="Title (Highlight / Big)" value={data.title_highlight || ""} onChange={(v) => update("title_highlight", v)} />
+          <Field label="Image URL (screenshot product)" value={data.image_url || ""} onChange={(v) => update("image_url", v)} />
+          {data.image_url && (
+            <img src={data.image_url} alt="preview" className="w-full max-h-64 object-cover rounded-lg border border-border/30" />
+          )}
+        </div>
+      );
+
     case "trust_bar":
       return (
         <div className="space-y-4">
@@ -560,6 +591,8 @@ function SectionEditor({ sectionKey, data, onChange }: { sectionKey: string; dat
           <Field label="Section Title" value={data.title || ""} onChange={(v) => update("title", v)} />
           <Field label="Highlight Word" value={data.title_highlight || ""} onChange={(v) => update("title_highlight", v)} />
           <Field label="Subtitle" value={data.subtitle || ""} onChange={(v) => update("subtitle", v)} />
+          <Field label="Card Title (di dalam pricing card)" value={data.card_title || ""} onChange={(v) => update("card_title", v)} />
+          <Field label="Card Subtitle" value={data.card_subtitle || ""} onChange={(v) => update("card_subtitle", v)} />
           <Field label="Free Trial Title" value={data.free_trial_title || ""} onChange={(v) => update("free_trial_title", v)} />
           <Field label="Free Trial Subtitle" value={data.free_trial_subtitle || ""} onChange={(v) => update("free_trial_subtitle", v)} />
           <Field label="Free Trial CTA" value={data.free_trial_cta || ""} onChange={(v) => update("free_trial_cta", v)} />
