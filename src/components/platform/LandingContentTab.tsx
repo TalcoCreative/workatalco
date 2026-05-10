@@ -400,6 +400,28 @@ function SectionEditor({ sectionKey, data, onChange }: { sectionKey: string; dat
         </div>
       );
 
+    case "scroll_animation":
+      return (
+        <div className="space-y-4">
+          <div className="flex items-center gap-2 rounded-xl bg-muted/30 p-3">
+            <input
+              id="sa-enabled"
+              type="checkbox"
+              checked={data.enabled !== false}
+              onChange={(e) => update("enabled", e.target.checked)}
+              className="h-4 w-4"
+            />
+            <Label htmlFor="sa-enabled" className="text-sm cursor-pointer">Tampilkan section ini di landing page</Label>
+          </div>
+          <Field label="Title (Top line)" value={data.title_top || ""} onChange={(v) => update("title_top", v)} />
+          <Field label="Title (Highlight / Big)" value={data.title_highlight || ""} onChange={(v) => update("title_highlight", v)} />
+          <Field label="Image URL (screenshot product)" value={data.image_url || ""} onChange={(v) => update("image_url", v)} />
+          {data.image_url && (
+            <img src={data.image_url} alt="preview" className="w-full max-h-64 object-cover rounded-lg border border-border/30" />
+          )}
+        </div>
+      );
+
     case "trust_bar":
       return (
         <div className="space-y-4">
