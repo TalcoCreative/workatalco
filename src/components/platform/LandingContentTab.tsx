@@ -569,6 +569,8 @@ function SectionEditor({ sectionKey, data, onChange }: { sectionKey: string; dat
           <Field label="Section Title" value={data.title || ""} onChange={(v) => update("title", v)} />
           <Field label="Highlight Word" value={data.title_highlight || ""} onChange={(v) => update("title_highlight", v)} />
           <Field label="Subtitle" value={data.subtitle || ""} onChange={(v) => update("subtitle", v)} />
+          <Field label="Card Title (di dalam pricing card)" value={data.card_title || ""} onChange={(v) => update("card_title", v)} />
+          <Field label="Card Subtitle" value={data.card_subtitle || ""} onChange={(v) => update("card_subtitle", v)} />
           <Field label="Free Trial Title" value={data.free_trial_title || ""} onChange={(v) => update("free_trial_title", v)} />
           <Field label="Free Trial Subtitle" value={data.free_trial_subtitle || ""} onChange={(v) => update("free_trial_subtitle", v)} />
           <Field label="Free Trial CTA" value={data.free_trial_cta || ""} onChange={(v) => update("free_trial_cta", v)} />
