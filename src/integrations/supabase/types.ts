@@ -6519,6 +6519,10 @@ export type Database = {
           member_count: number
         }[]
       }
+      company_has_tier_feature: {
+        Args: { _company_id: string; _feature: string }
+        Returns: boolean
+      }
       get_next_letter_number: {
         Args: {
           p_category_code: string
@@ -6540,6 +6544,7 @@ export type Database = {
         Args: { _company_id: string; _user_id: string }
         Returns: boolean
       }
+      is_platform_admin: { Args: { _user_id: string }; Returns: boolean }
       is_task_assignee: {
         Args: { _task_id: string; _user_id: string }
         Returns: boolean
@@ -6555,6 +6560,10 @@ export type Database = {
       }
       shares_company_with: {
         Args: { _target_user_id: string; _viewer_id: string }
+        Returns: boolean
+      }
+      user_has_tier_feature: {
+        Args: { _feature: string; _user_id: string }
         Returns: boolean
       }
     }
